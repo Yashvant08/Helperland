@@ -52,11 +52,10 @@ const controller: UsersController = new UsersController(service);
  *    Subject:
  *     type: string
  *     description: subject
- *     example: 'subject'
  *    PhoneNumber:
  *     type: integer
  *     description: phone number
- *     example: '7990602480'
+ *     example: '1234567810'
  *    Message:
  *     type: string
  *     description: designation of the employee
@@ -67,22 +66,19 @@ const controller: UsersController = new UsersController(service);
  *    CreatedBy:
  *     type: integer
  *     description: creator
- *     example: 1
  *    Status:
  *     type: integer
  *     description: status
- *     example: 0|1
  *    Priority:
  *     type: integer
  *     description: priority
  *    AssignedToUser:
  *     type: integer
  *     description: 1|0
- *     example: ''
  *    IsDeleted:
  *     type: integer
  *     description: deleted 
- *     example: 1|0 
+ *     example: 1
  */
 
 //ContectUs routes
