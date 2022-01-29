@@ -12,7 +12,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      email: {
+      Email: {
         allowNull: false,
         type: Sequelize.STRING
       },
