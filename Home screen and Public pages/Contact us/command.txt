@@ -1,0 +1,12 @@
+
+/*For generating model using migration */
+npx sequelize-cli model:generate --name ContactUs --attributes Name:string,email:string,SubjectType:string,Subject:string,PhoneNumber:string,Message:string,UploadFileName:string,CreatedBy:integer,Status:integer,Priority:integer,AssignedToUser:integer,IsDeleted:integer
+
+
+npx sequelize-cli model:generate --name ContactUs --attributes Name:string,lastName:string,email:string
+
+/*For generating ContactUsAttachment model*/
+npx sequelize-cli model:generate --name ContactUsAttachment --attributes Name:string,FileName:string
+
+
+npx sequelize-cli db:migrate
