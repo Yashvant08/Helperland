@@ -1,4 +1,5 @@
 node_modules
 command.txt
 uploadFiles
-.env    
+.env
+apiList.yaml

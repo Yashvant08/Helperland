@@ -7,10 +7,6 @@ var celebrate_1 = require("celebrate");
 var users_service_1 = require("../Login API/Users/users.service");
 var users_controller_1 = require("../Login API/Users/users.controller");
 var users_repository_1 = require("../Login API/Users/users.repository");
-var users_model_1 = require("../Login API/Users/users.model");
-var helpers_model_1 = require("../Login API/ServiceProviders/helpers.model");
-var login_model_1 = require("../Login API/Login/login.model");
-var resetPassword_model_1 = require("../Login API/ResetPassword/resetPassword.model");
 var helpers_service_1 = require("../Login API/ServiceProviders/helpers.service");
 var helpers_controller_1 = require("../Login API/ServiceProviders/helpers.controller");
 var helpers_repository_1 = require("../Login API/ServiceProviders/helpers.repository");
@@ -20,9 +16,13 @@ var login_controller_1 = require("../Login API/Login/login.controller");
 var resetPassword_repository_1 = require("../Login API/ResetPassword/resetPassword.repository");
 var resetPassword_service_1 = require("../Login API/ResetPassword/resetPassword.service");
 var resetPassword_controller_1 = require("../Login API/ResetPassword/resetPassword.controller");
+var users_model_1 = require("../Login API/Users/users.model");
 var add = users_model_1.UserSchema.add;
+var helpers_model_1 = require("../Login API/ServiceProviders/helpers.model");
 var validate = helpers_model_1.HelperSchema.validate;
+var login_model_1 = require("../Login API/Login/login.model");
 var addLogin = login_model_1.LoginSchema.addLogin;
+var resetPassword_model_1 = require("../Login API/ResetPassword/resetPassword.model");
 var addReset = resetPassword_model_1.ResetSchema.addReset, addPassword = resetPassword_model_1.ResetSchema.addPassword;
 var router = express_1.default.Router();
 var userRepo = new users_repository_1.UsersRepository();
@@ -119,7 +119,7 @@ router.get('/activate/user/:token', userController.activateAccount);
 // service provider sign-up routes
 /**
  * @swagger
- * /trainee2021/sp-sign-up:
+ * /trainee2021/Login-User/sp-sign-up:
  *  post:
  *   summary: Become Helper
  *   description: Helper registration
@@ -141,7 +141,7 @@ router.get('/activate/helper/:token', helperController.activateAccount);
 //Login routes
 /**
  * @swagger
- * /trainee2021/login:
+ * /trainee2021/Login-User/login:
  *  post:
  *   summary: User Login
  *   description: Login
@@ -153,17 +153,38 @@ router.get('/activate/helper/:token', helperController.activateAccount);
  *   responses:
  *    200:
  *     description: Login successful.
+ *     cookie:
+ *      token:
+ *       schema:
+ *        type: string
  *    401:
  *     description: invalid username or password.
  *    500:
  *     description: something went wrong.
  */
 router.post('/login', (0, celebrate_1.celebrate)(addLogin), loginController.checkLogin);
+/**
+ * @swagger
+ * /trainee2021/Login-User/logout:
+ *  delete:
+ *   summary: User Logout
+ *   description: Logout
+ *   parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
+ *   responses:
+ *    200:
+ *     description: Logout successful.
+ *    500:
+ *     description: something went wrong.
+ */
 router.delete('/logout', loginController.validateToken, loginController.removeToken);
 //Forgot password routes
 /**
  * @swagger
- * /trainee2021/forgot-password:
+ * /trainee2021/Login-User/forgot-password:
  *  post:
  *   summary: forgot Password
  *   description: Enter email
@@ -183,7 +204,7 @@ router.delete('/logout', loginController.validateToken, loginController.removeTo
 router.post('/forgot-password', (0, celebrate_1.celebrate)(addReset), resetPassController.forgotPassword);
 /**
  * @swagger
- * /trainee2021/reset-password:
+ * /trainee2021/Login-User/reset-password:
  *  post:
  *   summary: Reset Password
  *   description: Enter new password

@@ -6,11 +6,14 @@ import  swaggerUI from "swagger-ui-express";
 import bookservice from "./routes/bookservice";
 import contactUs from "./routes/contactus";
 import login from "./routes/login";
+import customer from "./routes/customer";
+// import Yaml from "yamljs"
 
 
 require('dotenv').config();
 
 const app = express();
+// const swaggerDc = Yaml.load('./apiList.yaml');
 const swaggerOption={
     definition:{
         openapi:'3.0.0',
@@ -29,7 +32,7 @@ const swaggerOption={
             ]
         }
     },
-    apis:["./routes/contactus.ts","./routes/login.ts","./routes/bookservice.ts"]
+    apis:["./routes/contactus.ts","./routes/login.ts","./routes/bookservice.ts", "./routes/customer.ts"]
 }
 const swaggerDocs = swaggerJSDoc(swaggerOption);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
@@ -41,17 +44,18 @@ app.use(multer({dest:'uploadFiles'}).single('file'));
 app.use('/trainee2021/contact-us',contactUs);
 app.use('/trainee2021/Login-User',login);
 app.use('/trainee2021/bookservice',bookservice);
+app.use('/trainee2021/customer',customer);
 
 app.listen(process.env.PORT, () => {
     console.log(`Server starting at ${process.env.PORT}`)
     sequelize.authenticate().then(async() => {
         console.log("database connected");
 
-        try {
-            await sequelize.sync();
-        } catch (error) {
-            console.log(error)
-        }
+        // try {
+        //     await sequelize.sync();
+        // } catch (error) {
+        //     console.log(error)
+        // }
 
     }).catch( (e: any) => {
         console.log(e.message)

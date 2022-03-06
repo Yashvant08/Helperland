@@ -131,6 +131,11 @@ var zipcode = bookservice_model_1.BookServiceSchema.zipcode, userAddress = books
  *  post:
  *   summary: Check helper availibility
  *   description: Enter zip code
+ *   parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
  *   requestBody:
  *    content:
  *     application/json:
@@ -154,12 +159,11 @@ router.post('/postalcode-check', (0, celebrate_1.celebrate)(zipcode), loginContr
  *  post:
  *   summary: Create Service Request
  *   description: service setup
- *   securityDefinitions:
- *    JWT:
- *     schema:
- *     type: apiKey
- *     name: authorization
- *     in: header
+ *   parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
  *   requestBody:
  *    content:
  *     application/json:
@@ -183,6 +187,11 @@ router.post('/CreateRequest', (0, celebrate_1.celebrate)(createService), loginCo
  *  post:
  *   summary: Create Address
  *   description: Enter address
+ *   parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
  *   requestBody:
  *    content:
  *     application/json:
@@ -205,6 +214,11 @@ router.post('/UserAddress', (0, celebrate_1.celebrate)(userAddress), loginContro
  *  get:
  *   summary: Get user addresses
  *   description: get address
+ *   parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
  *   responses:
  *    200:
  *     description: address found
@@ -223,6 +237,11 @@ router.post('/createfb', loginController.validateToken, controller.createFavorit
  *  get:
  *   summary: Get favorite and blocked
  *   description: favorite and blocked user
+ *   parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
  *   responses:
  *    200:
  *     description: user found

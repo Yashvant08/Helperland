@@ -10,45 +10,46 @@ module.exports = {
       },
       FirstName: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING(100)
       },
       LastName: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING(100)
       },
       Email: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING(100)
       },
       Password: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(100)
       },
       Mobile: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING(20),
+        unique:true
       },
       UserTypeId: {
-        // allowNull: false,
+        allowNull: false,
         type: Sequelize.INTEGER
       },
       Gender: {
         type: Sequelize.INTEGER
       },
       DateOfBirth: {
-        type: Sequelize.STRING
+        type: Sequelize.DATE
       },
       UserProfilePicture: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(200)
       },
       IsRegisteredUser: {
-        // allowNull: false,
+        allowNull: false,
         type: Sequelize.BOOLEAN
       },
       PaymentGatewayUserRef: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(200)
       },
       ZipCode: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(20)
       },
       WorksWithPets: {
         type: Sequelize.BOOLEAN
@@ -60,7 +61,6 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       ModifiedBy: {
-        // allowNull: false,
         type: Sequelize.INTEGER
       },
       IsApproved: {

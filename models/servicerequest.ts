@@ -46,14 +46,14 @@
 //   return ServiceRequest;
 // };
 
-import { Model, DataTypes, ModelAttributes, DecimalDataType } from 'sequelize';
+import { Model, DataTypes, ModelAttributes} from 'sequelize';
 
 export class ServiceRequest extends Model{
 
     ServiceRequestId!:number;
     UserId!: number;
     ServiceId!: number;
-    ServiceStartDat!:Date;
+    ServiceStartDate!:Date;
     ServiceStartTime!:number;
     ZipCode!:string;
     ServiceHourlyRate!: number;
@@ -90,7 +90,7 @@ export const ServiceRequestModelAttributes:ModelAttributes = {
       },
       ServiceStartDate: {
         allowNull: false,
-        type: DataTypes.DATE
+        type: DataTypes.DATEONLY
       },
       ServiceStartTime: {
         allowNull: false,
@@ -98,10 +98,10 @@ export const ServiceRequestModelAttributes:ModelAttributes = {
       },
       ZipCode: {
         allowNull: false,
-        type: DataTypes.STRING
+        type: DataTypes.STRING(10)
       },
       ServiceHourlyRate: {
-        type: DataTypes.DECIMAL
+        type: DataTypes.DECIMAL(8,2)
       },
       ServiceHours: {
         allowNull: false,
@@ -112,20 +112,20 @@ export const ServiceRequestModelAttributes:ModelAttributes = {
       },
       SubTotal: {
         allowNull: false,
-        type: DataTypes.DECIMAL
+        type: DataTypes.DECIMAL(8,2)
       },
       Discount: {
-        type: DataTypes.DECIMAL
+        type: DataTypes.DECIMAL(8,2)
       },
       TotalCost: {
         allowNull: false,
-        type: DataTypes.DECIMAL
+        type: DataTypes.DECIMAL(8,2)
       },
       Comments: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING(500)
       },
       PaymentTransactionRefNo: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING(50)
       },
       PaymentDue: {
         allowNull: false,
@@ -152,10 +152,10 @@ export const ServiceRequestModelAttributes:ModelAttributes = {
         type: DataTypes.INTEGER
       },
       RefundedAmount: {
-        type: DataTypes.DECIMAL
+        type: DataTypes.DECIMAL(8,2)
       },
       Distance: {
-        type: DataTypes.DECIMAL
+        type: DataTypes.DECIMAL(18,2)
       },
       HasIssue: {
         type: DataTypes.BOOLEAN

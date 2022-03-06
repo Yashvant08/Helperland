@@ -21,11 +21,11 @@ export class ResetService {
 
   public createData(userEmail:string, token:string): typeof data{
     const data = {
-        from: 'helperland-team@gmail.com',
+        from: 'yashvantdesai7@gmail.com',
         to: userEmail,
-        subject: 'Account activation link',
-        html: `<h2>Please click here to activate you account</h2>
-              <a href="${process.env.CLIENT_URL}/reset-password/${token}">Please click here to activate you account</a>`
+        subject: 'Reset Password',
+        html: `<h2>Please click on reset password to change password</h2>
+              <a href="${process.env.CLIENT_URL}/reset-password/${token}">reset password</a>`
     }
     return data;
   }

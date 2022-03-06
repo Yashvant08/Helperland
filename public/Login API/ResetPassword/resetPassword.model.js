@@ -18,6 +18,7 @@ exports.ResetSchema = {
                 .required()
                 .description('reset link'),
             newPassword: celebrate_1.Joi.string()
+                .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)
                 .required()
                 .description('password of user'),
         })

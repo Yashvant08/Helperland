@@ -58,22 +58,22 @@ exports.FAndBModelAttributes = {
         primaryKey: true,
         type: sequelize_1.DataTypes.INTEGER
     },
-    UserId: {
-        allowNull: false,
-        references: {
-            model: 'User',
-            key: 'UserId'
-        },
-        type: sequelize_1.DataTypes.INTEGER
-    },
-    TargetUserId: {
-        allowNull: false,
-        references: {
-            model: 'User',
-            key: 'UserId'
-        },
-        type: sequelize_1.DataTypes.INTEGER
-    },
+    // UserId: {
+    //   allowNull: false,
+    //   references: {
+    //     model: 'User',
+    //     key: 'UserId'
+    //   },
+    //   type: DataTypes.INTEGER
+    // },
+    // TargetUserId: {
+    //   allowNull: false,
+    //   references: {
+    //     model: 'User',
+    //     key: 'UserId'
+    //   },
+    //   type: DataTypes.INTEGER
+    // },
     IsFavorite: {
         allowNull: false,
         type: sequelize_1.DataTypes.BOOLEAN

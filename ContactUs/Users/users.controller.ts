@@ -1,5 +1,4 @@
 import { Request, Response, RequestHandler } from "express";
-import { nextTick } from "process";
 import { ContactUs } from "../../models/contactus";
 import { UsersService } from "./users.service";
 import jwt from "jsonwebtoken";
@@ -62,7 +61,8 @@ export class UsersController {
   };
 
   public authenticate: RequestHandler = async (req,res,next): Promise<Response | void> => {
-    const token = req.headers.authorization!;
+    const token = req.headers.authorization! || req.header('auth');
+    console.log(token);
     return this.usersService
       .getUserByEmail(req.body.Email)
       .then((user) => {

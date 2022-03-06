@@ -53,6 +53,7 @@ var servicerequestaddress_1 = require("./servicerequestaddress");
 var servicerequestextra_1 = require("./servicerequestextra");
 var useraddress_1 = require("./useraddress");
 var favoriteandblocked_1 = require("./favoriteandblocked");
+var rating_1 = require("./rating");
 var env = process.env.NODE_ENV || 'development';
 var config = require('../config/config')[env];
 var sequelize = config.url
@@ -83,6 +84,9 @@ var ContactUsDefineModel = sequelize.define('ContactUs', __assign({}, contactus_
 var SubUserDefineModel = sequelize.define('SubUser', __assign({}, subuser_1.SubUserModelAttributes), {
     tableName: 'SubUser'
 });
+var RatingDefineModel = sequelize.define('Rating', __assign({}, rating_1.RatingModelAttributes), {
+    tableName: 'Rating'
+});
 exports.db = {
     sequelize: sequelize,
     ContactUs: ContactUsDefineModel,
@@ -93,6 +97,7 @@ exports.db = {
     SRExtra: SRExtraDefineModel,
     SRAddress: SRAddressDefineModel,
     FavoriteAndBlocked: FAndBDefineModel,
+    Rating: RatingDefineModel
 };
 exports.db.User.hasMany(exports.db.UserAddress, {
     foreignKey: {
@@ -124,7 +129,8 @@ exports.db.SRAddress.belongsTo(exports.db.ServiceRequest, { foreignKey: {
         allowNull: false,
     },
     constraints: true,
-    onDelete: "CASCADE", });
+    onDelete: "CASCADE",
+});
 exports.db.ServiceRequest.belongsTo(exports.db.User, {
     foreignKey: {
         name: "UserId",
@@ -176,6 +182,50 @@ exports.db.User.hasMany(exports.db.FavoriteAndBlocked, {
         allowNull: false,
     },
     as: 'FavoriteAndBlocked',
+    constraints: true,
+    onDelete: "CASCADE",
+});
+exports.db.User.hasMany(exports.db.FavoriteAndBlocked, {
+    foreignKey: {
+        name: "TargetUserId",
+        allowNull: false,
+    },
+    as: 'TargetUserId',
+    constraints: true,
+    onDelete: "CASCADE",
+});
+exports.db.ServiceRequest.hasOne(exports.db.Rating, {
+    foreignKey: {
+        name: "ServiceRequestId",
+        allowNull: false,
+    },
+    as: 'ServiceRequestRating',
+    constraints: true,
+    onDelete: "CASCADE",
+});
+exports.db.Rating.belongsTo(exports.db.ServiceRequest, {
+    foreignKey: {
+        name: "ServiceRequestId",
+        allowNull: false,
+    },
+    constraints: true,
+    onDelete: "CASCADE",
+});
+exports.db.User.hasMany(exports.db.Rating, {
+    foreignKey: {
+        name: "RatingFrom",
+        allowNull: false,
+    },
+    as: 'RatingFrom',
+    constraints: true,
+    onDelete: "CASCADE",
+});
+exports.db.User.hasMany(exports.db.Rating, {
+    foreignKey: {
+        name: "RatingTo",
+        allowNull: false,
+    },
+    as: 'RatingTo',
     constraints: true,
     onDelete: "CASCADE",
 });

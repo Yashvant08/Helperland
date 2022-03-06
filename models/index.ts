@@ -49,6 +49,7 @@ import { SRAddress, SRAddressModelAttributes } from "./servicerequestaddress";
 import { SRExtra, SRExtraModelAttributes } from "./servicerequestextra";
 import { UserAddress, UserAddressModelAttributes } from "./useraddress";
 import { FavoriteAndBlocked, FAndBModelAttributes } from "./favoriteandblocked";
+import { Rating, RatingModelAttributes } from './rating';
 
 const env = process.env.NODE_ENV || 'development';
 
@@ -88,6 +89,10 @@ const  sequelize = config.url
   
   type FAndBModelStatic = typeof Model & {
     new (values?: object, options?: BuildOptions): FavoriteAndBlocked;
+  };
+
+  type RatingModelStatic = typeof Model & {
+    new (values?: object, options?: BuildOptions): Rating;
   };
 
 
@@ -169,6 +174,16 @@ const  sequelize = config.url
       tableName: 'SubUser'
     }
   ) as SubUserModelStatic;
+
+  const RatingDefineModel = sequelize.define(
+    'Rating',
+    {
+      ...RatingModelAttributes
+    },
+    {
+      tableName: 'Rating'
+    }
+  ) as RatingModelStatic;
   
   export interface DbContext {
     sequelize: Sequelize;
@@ -180,6 +195,7 @@ const  sequelize = config.url
     SRAddress: SRAddressModelStatic;
     SRExtra: SRExtraModelStatic;
     FavoriteAndBlocked: FAndBModelStatic;
+    Rating: RatingModelStatic;
 
   }
   
@@ -193,6 +209,7 @@ const  sequelize = config.url
     SRExtra: SRExtraDefineModel,
     SRAddress: SRAddressDefineModel,
     FavoriteAndBlocked: FAndBDefineModel,
+    Rating: RatingDefineModel
   }
 
   db.User.hasMany(db.UserAddress, {
@@ -211,6 +228,7 @@ const  sequelize = config.url
     constraints: true,
     onDelete: "CASCADE",
   });
+
   
   db.ServiceRequest.hasOne(db.SRAddress, {
     foreignKey: {
@@ -226,7 +244,9 @@ const  sequelize = config.url
     allowNull: false,
   },
   constraints: true,
-  onDelete: "CASCADE",});
+  onDelete: "CASCADE",
+  });
+
   
   db.ServiceRequest.belongsTo(db.User,{
     foreignKey: {
@@ -246,6 +266,8 @@ const  sequelize = config.url
     constraints: true,
     onDelete: "CASCADE",
   });
+
+
   db.ServiceRequest.belongsTo(db.User,{
     foreignKey: {
       name: "ServiceProviderId",
@@ -264,6 +286,8 @@ const  sequelize = config.url
     constraints: true,
     onDelete: "CASCADE",
   });
+
+
   db.ServiceRequest.hasMany(db.SRExtra,{
     foreignKey: {
       name: "ServiceRequestId",
@@ -274,6 +298,7 @@ const  sequelize = config.url
     onDelete: "CASCADE",
   });
   
+
   db.User.hasMany(db.FavoriteAndBlocked,{
     foreignKey: {
       name: "UserId",
@@ -283,6 +308,54 @@ const  sequelize = config.url
     constraints: true,
     onDelete: "CASCADE",
   });
+  db.User.hasMany(db.FavoriteAndBlocked,{
+    foreignKey: {
+      name: "TargetUserId",
+      allowNull: false,
+    },
+    as:'TargetUserId',
+    constraints: true,
+    onDelete: "CASCADE",
+  });
+
+
+  db.ServiceRequest.hasOne(db.Rating, {
+    foreignKey: {
+      name: "ServiceRequestId",
+      allowNull: false,
+    },
+    as:'ServiceRequestRating',
+    constraints: true,
+    onDelete: "CASCADE",
+  });
+  db.Rating.belongsTo(db.ServiceRequest, {
+    foreignKey: {
+    name: "ServiceRequestId",
+    allowNull: false,
+  },
+  constraints: true,
+  onDelete: "CASCADE",});
+
+
+  db.User.hasMany(db.Rating, {
+    foreignKey: {
+    name: "RatingFrom",
+    allowNull: false,
+  },
+  as:'RatingFrom',
+  constraints: true,
+  onDelete: "CASCADE",});  
+
+
+  db.User.hasMany(db.Rating, {
+    foreignKey: {
+    name: "RatingTo",
+    allowNull: false,
+  },
+  as:'RatingTo',
+  constraints: true,
+  onDelete: "CASCADE",});
+
   export default db;
   // export {ContactUsDefineModel};
   // export {SubUserDefineModel};

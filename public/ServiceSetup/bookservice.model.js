@@ -73,6 +73,9 @@ exports.BookServiceSchema = {
                 .required()
                 .example('true')
                 .description('Have pets at home'),
+            // ServiceProviderId: Joi.number()
+            //      .integer()   
+            //      .example('1'),
             ServiceRequestAddress: celebrate_1.Joi.object()
                 .required(),
             ExtraService: celebrate_1.Joi.array()

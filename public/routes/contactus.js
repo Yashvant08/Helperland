@@ -69,10 +69,15 @@ var subUserController = new subuser_controller_1.SubUserController(subUserServic
 //ContectUs routes
 /**
  * @swagger
- * /createContact:
+ * /trainee2021/contact-us/createContact:
  *  post:
  *   summary: create user
  *   description: create user for contact
+ *   parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
  *   requestBody:
  *    content:
  *     multipart/form-data:
@@ -87,7 +92,7 @@ var subUserController = new subuser_controller_1.SubUserController(subUserServic
 router.post('/createContact', controller.authenticate, controller.createUsers);
 /**
  * @swagger
- * /contactus:
+ * /trainee2021/contact-us/contactus:
  *  get:
  *   summary: get all users
  *   description: get all users
@@ -100,7 +105,7 @@ router.post('/createContact', controller.authenticate, controller.createUsers);
 router.get('/getContact', controller.getUsers);
 /**
  * @swagger
- *  /contactus/{id}:
+ *  /trainee2021/contact-us/contactus/{id}:
  *   get:
  *    summary: get user by id
  *    description: get user by id
@@ -125,7 +130,7 @@ router.get('/getContact/:id', controller.getUserById);
 // create subscriber
 /**
  * @swagger
- * /newsletter/sb-user:
+ * /trainee2021/contact-us/newsletter/sb-user:
  *  post:
  *   summary: Subscribe to NewsLetter
  *   description: Enter email

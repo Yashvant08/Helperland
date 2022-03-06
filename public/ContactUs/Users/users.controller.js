@@ -104,7 +104,8 @@ var UsersController = /** @class */ (function () {
             var token;
             var _this = this;
             return __generator(this, function (_a) {
-                token = req.headers.authorization;
+                token = req.headers.authorization || req.header('auth');
+                console.log(token);
                 return [2 /*return*/, this.usersService
                         .getUserByEmail(req.body.Email)
                         .then(function (user) {

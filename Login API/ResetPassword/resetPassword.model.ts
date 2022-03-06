@@ -16,6 +16,7 @@ export const ResetSchema = {
                     .required()
                     .description('reset link'),
             newPassword: Joi.string()
+                    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)
                     .required()
                     .description('password of user'),
         })

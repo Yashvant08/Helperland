@@ -74,10 +74,17 @@ var BookService = /** @class */ (function () {
             });
         });
     };
-    BookService.prototype.getUserById = function (userId) {
+    BookService.prototype.getUserById = function (userId, zipCode) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, this.bookServiceRepository.getUserById(userId)];
+                return [2 /*return*/, this.bookServiceRepository.getUserById(userId, zipCode)];
+            });
+        });
+    };
+    BookService.prototype.getHelperById = function (userId) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this.bookServiceRepository.getHelperById(userId)];
             });
         });
     };
@@ -110,6 +117,18 @@ var BookService = /** @class */ (function () {
             });
         });
     };
+    BookService.prototype.getBlockedHelper = function (userId, helpers) {
+        return __awaiter(this, void 0, void 0, function () {
+            var helperIds, us;
+            return __generator(this, function (_a) {
+                helperIds = [];
+                for (us in helpers) {
+                    helperIds.push(helpers[us].UserId);
+                }
+                return [2 /*return*/, this.bookServiceRepository.getBlockedHelper(userId, helperIds)];
+            });
+        });
+    };
     //Advance Servics
     BookService.prototype.getSubTotal = function (serviceHourlyRate, serviceHour) {
         var subTotal = serviceHourlyRate * serviceHour;
@@ -121,10 +140,19 @@ var BookService = /** @class */ (function () {
     };
     BookService.prototype.createDataForAll = function (userEmail) {
         var data = {
-            from: 'Helperland Team@gmail.com',
+            from: 'yashvantdesai7@gmail.com',
             to: userEmail,
             subject: 'About new service in your area',
             html: "\n            <h1>New service is available in your area login and accept before anyone accept it.</h1>\n            "
+        };
+        return data;
+    };
+    BookService.prototype.createData = function (userEmail, srId) {
+        var data = {
+            from: 'yashvantdesai7@gmail.com',
+            to: userEmail,
+            subject: 'About new service allocation',
+            html: "\n            <h1>A service request ".concat(srId, " has been directly assigned to you.</h1>\n            ")
         };
         return data;
     };
@@ -142,6 +170,31 @@ var BookService = /** @class */ (function () {
             }
         }
         return favoriteSP;
+    };
+    BookService.prototype.getEmailAddressForSendEmail = function (user, body) {
+        var Email = [];
+        if (body.HasPets === true) {
+            console.log("hi");
+            for (var count in user) {
+                if (user[count].WorksWithPets === true)
+                    Email.push(user[count].Email);
+            }
+        }
+        else {
+            console.log("h2");
+            for (var count in user) {
+                Email.push(user[count].Email);
+            }
+        }
+        return Email;
+    };
+    BookService.prototype.removeBlockedHelper = function (user, blockedHelpers) {
+        var users = user.filter(function (item) {
+            return blockedHelpers.every(function (f) {
+                return f.TargetUserId !== item.UserId;
+            });
+        });
+        return users;
     };
     return BookService;
 }());

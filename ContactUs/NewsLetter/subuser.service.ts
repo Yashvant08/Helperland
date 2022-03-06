@@ -25,7 +25,7 @@ export class SubUserService{
 
     public createData(userEmail:string, token:string): typeof data{
         const data = {
-            from: 'Helperland Team@gmail.com',
+            from: 'yashvantdesai7@gmail.com',
             to: userEmail,
             subject: 'Newsletter confirmation, entry in our mailing list',
             html: `
@@ -68,7 +68,7 @@ export class SubUserService{
 
     public createDataForAll(userEmail:string): typeof data{
         const data = {
-            from: 'Helperland Team@gmail.com',
+            from: 'yashvantdesai7@gmail.com',
             to: userEmail,
             subject: 'Newsletter confirmation, entry in our mailing list',
             html: `

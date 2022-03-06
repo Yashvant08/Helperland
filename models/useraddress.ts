@@ -72,31 +72,23 @@ export const UserAddressModelAttributes:ModelAttributes = {
         primaryKey: true,
         type: DataTypes.INTEGER
       },
-      // UserId: {
-      //   allowNull: false,
-      //   references: {
-      //       model: 'User',
-      //       key: 'UserId'
-      //   },
-      //   type: DataTypes.INTEGER
-      // },
       Addressline1: {
         allowNull: false,
-        type: DataTypes.STRING
+        type: DataTypes.STRING(200)
       },
       Addressline2: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING(200)
       },
       City: {
         allowNull: false,
-        type: DataTypes.STRING
+        type: DataTypes.STRING(50)
       },
       State: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING(50)
       },
       PostalCode: {
         allowNull: false,
-        type: DataTypes.STRING
+        type: DataTypes.STRING(20)
       },
       IsDefault: {
         allowNull: false,
@@ -107,7 +99,7 @@ export const UserAddressModelAttributes:ModelAttributes = {
         type: DataTypes.BOOLEAN
       },
       Mobile: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING(20)
       },
       Email: {
         type: DataTypes.STRING

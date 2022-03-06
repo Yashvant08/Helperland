@@ -81,47 +81,47 @@ exports.UserModelAttributes = {
     },
     FirstName: {
         allowNull: false,
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(100)
     },
     LastName: {
         allowNull: false,
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(100)
     },
     Email: {
         allowNull: false,
-        type: sequelize_1.DataTypes.STRING,
+        type: sequelize_1.DataTypes.STRING(100),
         unique: true
     },
     Password: {
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(100)
     },
     Mobile: {
         allowNull: false,
-        type: sequelize_1.DataTypes.STRING,
+        type: sequelize_1.DataTypes.STRING(20),
         unique: true
     },
     UserTypeId: {
-        // allowNull: false,
+        allowNull: false,
         type: sequelize_1.DataTypes.INTEGER
     },
     Gender: {
         type: sequelize_1.DataTypes.INTEGER
     },
     DateOfBirth: {
-        type: sequelize_1.DataTypes.DATEONLY
+        type: sequelize_1.DataTypes.DATE
     },
     UserProfilePicture: {
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(200)
     },
     IsRegisteredUser: {
-        // allowNull: false,
+        allowNull: false,
         type: sequelize_1.DataTypes.BOOLEAN
     },
     PaymentGatewayUserRef: {
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(200)
     },
     ZipCode: {
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(20)
     },
     WorksWithPets: {
         type: sequelize_1.DataTypes.BOOLEAN
@@ -133,7 +133,6 @@ exports.UserModelAttributes = {
         type: sequelize_1.DataTypes.INTEGER
     },
     ModifiedBy: {
-        // allowNull: false,
         type: sequelize_1.DataTypes.INTEGER
     },
     IsApproved: {

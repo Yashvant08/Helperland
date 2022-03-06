@@ -62,33 +62,26 @@ exports.SRAddressModelAttributes = {
         primaryKey: true,
         type: sequelize_1.DataTypes.INTEGER
     },
-    // ServiceRequestId: {
-    //   references: {
-    //     model:'ServiceRequest',
-    //     key: 'ServiceRequestId'
-    //   },
-    //   type: DataTypes.INTEGER
-    // },
     Addressline1: {
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(200)
     },
     Addressline2: {
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(200)
     },
     City: {
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(50)
     },
     State: {
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(50)
     },
     PostalCode: {
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(20)
     },
     Mobile: {
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(20)
     },
     Email: {
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(100)
     },
     createdAt: {
         allowNull: false,

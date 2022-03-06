@@ -68,7 +68,7 @@ export class LoginController {
   };
 
   public validateToken: RequestHandler = async (req, res, next) :Promise<Response|undefined>=> {
-    const token = req.headers.authorization;
+    const token = req.headers.authorization || req.header('auth');
 
     if (token == null) {
       return res.status(401).json({ message: "invalid login credential null" });
@@ -77,13 +77,15 @@ export class LoginController {
       if (err) {
         return res.status(401).json({message:'invalid login credential'});
       } else {
+        req.body.email = user.userEmail;
         return this.loginService.getUserByEmail(user.userEmail)
         .then(user => {
           if(user === null){
             return res.status(401).json({message:'Unauthorised user'});
           }else{
+            req.body.userId = user.UserId;
+            req.body.userTypeId = user.UserTypeId;
             if(user.IsRegisteredUser === true){
-              console.log(user.IsRegisteredUser);
               next();
             }else{
               return res.status(401).json({message:'Activate your account'});

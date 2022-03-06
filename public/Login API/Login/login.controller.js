@@ -112,7 +112,7 @@ var LoginController = /** @class */ (function () {
             var token;
             var _this = this;
             return __generator(this, function (_a) {
-                token = req.headers.authorization;
+                token = req.headers.authorization || req.header('auth');
                 if (token == null) {
                     return [2 /*return*/, res.status(401).json({ message: "invalid login credential null" })];
                 }
@@ -121,14 +121,16 @@ var LoginController = /** @class */ (function () {
                         return res.status(401).json({ message: 'invalid login credential' });
                     }
                     else {
+                        req.body.email = user.userEmail;
                         return _this.loginService.getUserByEmail(user.userEmail)
                             .then(function (user) {
                             if (user === null) {
                                 return res.status(401).json({ message: 'Unauthorised user' });
                             }
                             else {
+                                req.body.userId = user.UserId;
+                                req.body.userTypeId = user.UserTypeId;
                                 if (user.IsRegisteredUser === true) {
-                                    console.log(user.IsRegisteredUser);
                                     next();
                                 }
                                 else {

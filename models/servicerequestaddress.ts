@@ -51,34 +51,26 @@ export const SRAddressModelAttributes:ModelAttributes = {
         primaryKey: true,
         type: DataTypes.INTEGER
       },
-      // ServiceRequestId: {
-      //   references: {
-      //     model:'ServiceRequest',
-            
-      //     key: 'ServiceRequestId'
-      //   },
-      //   type: DataTypes.INTEGER
-      // },
       Addressline1: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING(200)
       },
       Addressline2: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING(200)
       },
       City: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING(50)
       },
       State: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING(50)
       },
       PostalCode: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING(20)
       },
       Mobile: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING(20)
       },
       Email: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING(100)
       },
       createdAt: {
         allowNull: false,

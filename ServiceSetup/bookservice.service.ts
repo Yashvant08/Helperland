@@ -30,8 +30,12 @@ export class BookService {
     return this.bookServiceRepository.getFavoriteAndBlocked(userId);
   }
 
-  public async getUserById(userId: number[]): Promise<User[]> {
-    return this.bookServiceRepository.getUserById(userId);
+  public async getUserById(userId: number[], zipCode:string): Promise<User[]> {
+    return this.bookServiceRepository.getUserById(userId, zipCode);
+  }
+
+  public async getHelperById(userId: number): Promise<User|null> {
+    return this.bookServiceRepository.getHelperById(userId);
   }
 
   public async getAllHelper(): Promise<User[]> {
@@ -54,6 +58,14 @@ export class BookService {
     return this.bookServiceRepository.getHelpersByZipcode(zipCode);
   }
 
+  public async getBlockedHelper(userId:number, helpers:User[]):Promise<FavoriteAndBlocked[]|null>{
+    const helperIds:number[] = [];
+    for(let us in helpers){
+      helperIds.push(helpers[us].UserId);
+    }
+    return this.bookServiceRepository.getBlockedHelper(userId, helperIds);
+  }
+
 
   //Advance Servics
   public getSubTotal(serviceHourlyRate: number, serviceHour: number): number {
@@ -68,11 +80,23 @@ export class BookService {
 
   public createDataForAll(userEmail:string): typeof data{
     const data = {
-        from: 'Helperland Team@gmail.com',
+        from: 'yashvantdesai7@gmail.com',
         to: userEmail,
         subject: 'About new service in your area',
         html: `
             <h1>New service is available in your area login and accept before anyone accept it.</h1>
+            `
+    }
+    return data;
+  }
+
+  public createData(userEmail:string, srId:number): typeof data{
+    const data = {
+        from: 'yashvantdesai7@gmail.com',
+        to: userEmail,
+        subject: 'About new service allocation',
+        html: `
+            <h1>A service request ${srId} has been directly assigned to you.</h1>
             `
     }
     return data;
@@ -94,24 +118,35 @@ export class BookService {
     }
     return favoriteSP;
   }
+  
+  public getEmailAddressForSendEmail(user:User[], body:any){
+    let Email =[];
+    if(body.HasPets === true){
+      console.log("hi");
+      for (let count in user) {
+        if(user[count].WorksWithPets === true)
+        Email.push(user[count].Email!);
+      }
+    }else{
+      console.log("h2");
+      for (let count in user) {
+        Email.push(user[count].Email!);
+      }
+    }
+    return Email;
 
-  // public async getUserWithRequest(): Promise<User[]> {
-  //   return this.bookServiceRepository.getUserWithRequest();
-  // }
+  }
 
-  // public async getRequestWithUser(): Promise<ServiceRequest[]> {
-  //   return this.bookServiceRepository.getRequestWithUser();
-  // }
+  public removeBlockedHelper(user:User[], blockedHelpers:FavoriteAndBlocked[]):User[]{
 
-  // public async createServiceRequest(serviceRequest: {
-  //   [key: number | string]: ServiceRequest;
-  // }): Promise<ServiceRequest> {
-  //   return this.bookServiceRepository.createServiceRequest(serviceRequest);
-  // }
+    const users = user.filter((item) =>{
+      return blockedHelpers.every((f) => {
+        return f.TargetUserId !== item.UserId;
+      });
+    });
+    return users;
 
-  // public async getUsers(): Promise<User[]> {
-  //   return this.bookServiceRepository.getUsers();
-  // }
+  }
 
 
 }

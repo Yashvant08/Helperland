@@ -59,7 +59,7 @@ module.exports = {
       },
       ServiceStartDate: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATEONLY
       },
       ServiceStartTime: {
         allowNull: false,
@@ -67,10 +67,10 @@ module.exports = {
       },
       ZipCode: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING(10)
       },
       ServiceHourlyRate: {
-        type: Sequelize.DECIMAL
+        type: Sequelize.DECIMAL(8,2)
       },
       ServiceHours: {
         allowNull: false,
@@ -81,20 +81,20 @@ module.exports = {
       },
       SubTotal: {
         allowNull: false,
-        type: Sequelize.DECIMAL
+        type: Sequelize.DECIMAL(8,2)
       },
       Discount: {
-        type: Sequelize.DECIMAL
+        type: Sequelize.DECIMAL(8,2)
       },
       TotalCost: {
         allowNull: false,
-        type: Sequelize.DECIMAL
+        type: Sequelize.DECIMAL(8,2)
       },
       Comments: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(500)
       },
       PaymentTransactionRefNo: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(500)
       },
       PaymentDue: {
         allowNull: false,
@@ -121,10 +121,10 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       RefundedAmount: {
-        type: Sequelize.DECIMAL
+        type: Sequelize.DECIMAL(8,2)
       },
       Distance: {
-        type: Sequelize.DECIMAL
+        type: Sequelize.DECIMAL(18,2)
       },
       HasIssue: {
         type: Sequelize.BOOLEAN

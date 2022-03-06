@@ -47,8 +47,11 @@ var swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 var bookservice_1 = __importDefault(require("./routes/bookservice"));
 var contactus_1 = __importDefault(require("./routes/contactus"));
 var login_1 = __importDefault(require("./routes/login"));
+var customer_1 = __importDefault(require("./routes/customer"));
+// import Yaml from "yamljs"
 require('dotenv').config();
 var app = (0, express_1.default)();
+// const swaggerDc = Yaml.load('./apiList.yaml');
 var swaggerOption = {
     definition: {
         openapi: '3.0.0',
@@ -67,7 +70,7 @@ var swaggerOption = {
             ]
         }
     },
-    apis: ["./routes/contactus.ts", "./routes/login.ts", "./routes/bookservice.ts"]
+    apis: ["./routes/contactus.ts", "./routes/login.ts", "./routes/bookservice.ts", "./routes/customer.ts"]
 };
 var swaggerDocs = (0, swagger_jsdoc_1.default)(swaggerOption);
 app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocs));
@@ -77,27 +80,13 @@ app.use((0, multer_1.default)({ dest: 'uploadFiles' }).single('file'));
 app.use('/trainee2021/contact-us', contactus_1.default);
 app.use('/trainee2021/Login-User', login_1.default);
 app.use('/trainee2021/bookservice', bookservice_1.default);
+app.use('/trainee2021/customer', customer_1.default);
 app.listen(process.env.PORT, function () {
     console.log("Server starting at ".concat(process.env.PORT));
     models_1.sequelize.authenticate().then(function () { return __awaiter(void 0, void 0, void 0, function () {
-        var error_1;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    console.log("database connected");
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 3, , 4]);
-                    return [4 /*yield*/, models_1.sequelize.sync()];
-                case 2:
-                    _a.sent();
-                    return [3 /*break*/, 4];
-                case 3:
-                    error_1 = _a.sent();
-                    console.log(error_1);
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
-            }
+            console.log("database connected");
+            return [2 /*return*/];
         });
     }); }).catch(function (e) {
         console.log(e.message);

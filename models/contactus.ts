@@ -45,7 +45,7 @@ export class ContactUs extends Model{
 
     Subject?: string;
 
-    PhoneNumber?: number;
+    PhoneNumber?: string;
 
     Message?: string;
 
@@ -73,20 +73,20 @@ export const ContactUsModelAttributes: ModelAttributes = {
       },
       Name: {
         allowNull: false,
-        type: DataTypes.STRING
+        type: DataTypes.STRING(50)
       },
       Email: {
         allowNull: false,
         unique:true,
-        type: DataTypes.STRING
+        type: DataTypes.STRING(200)
       },
       Subject: {
         allowNull: true,
-        type: DataTypes.STRING
+        type: DataTypes.STRING(500)
       },
       PhoneNumber: {
         allowNull: false,
-        type: DataTypes.BIGINT
+        type: DataTypes.STRING(20)
       },
       Message: {
         allowNull: false,
@@ -94,11 +94,11 @@ export const ContactUsModelAttributes: ModelAttributes = {
       },
       UploadFileName: {
         allowNull: true,
-        type: DataTypes.STRING
+        type: DataTypes.STRING(100)
       },
       FilePath: {
         allowNull: true,
-        type:DataTypes.STRING
+        type:DataTypes.STRING(500)
       },
       CreatedBy: {
         allowNull: true,

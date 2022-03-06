@@ -28,9 +28,11 @@ exports.UserSchema = {
                 .example('abc@gmail.com')
                 .description('email of user'),
             Password: celebrate_1.Joi.string()
+                .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)
                 .required()
                 .description('password'),
             ConfirmPassword: celebrate_1.Joi.string()
+                .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)
                 .required()
                 .description('confirmPassword'),
             Mobile: celebrate_1.Joi.string()

@@ -27,9 +27,11 @@ export const HelperSchema = {
                     .example('abc@gmail.com')
                     .description('email of helper'),
             Password: Joi.string()
+                .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)
                 .required()
                 .description('password'),
             ConfirmPassword: Joi.string()
+                .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)
                 .required()
                 .description('confirmPassword'),
             Mobile: Joi.string()

@@ -43,22 +43,22 @@ export const FAndBModelAttributes:ModelAttributes = {
         primaryKey: true,
         type: DataTypes.INTEGER
       },
-      UserId: {
-        allowNull: false,
-        references: {
-          model: 'User',
-          key: 'UserId'
-        },
-        type: DataTypes.INTEGER
-      },
-      TargetUserId: {
-        allowNull: false,
-        references: {
-          model: 'User',
-          key: 'UserId'
-        },
-        type: DataTypes.INTEGER
-      },
+      // UserId: {
+      //   allowNull: false,
+      //   references: {
+      //     model: 'User',
+      //     key: 'UserId'
+      //   },
+      //   type: DataTypes.INTEGER
+      // },
+      // TargetUserId: {
+      //   allowNull: false,
+      //   references: {
+      //     model: 'User',
+      //     key: 'UserId'
+      //   },
+      //   type: DataTypes.INTEGER
+      // },
       IsFavorite: {
         allowNull: false,
         type: DataTypes.BOOLEAN

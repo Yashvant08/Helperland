@@ -14,23 +14,25 @@ exports.ContactUsSchema = {
     },
     add: {
         body: celebrate_1.Joi.object({
-            Name: celebrate_1.Joi.string()
+            FirstName: celebrate_1.Joi.string()
                 .required()
                 .example('Yashvant')
-                .description('Name of user'),
+                .description('First Name of user'),
+            LastName: celebrate_1.Joi.string()
+                .required()
+                .example('desai')
+                .description('Last Name of user'),
             Email: celebrate_1.Joi.string()
                 .required()
                 .email()
                 .example('abc@gmail.com')
                 .description('email of user'),
-            SubjectType: celebrate_1.Joi.string()
+            Subject: celebrate_1.Joi.string()
                 .required()
                 .example('General')
                 .description('Subject type'),
-            // Subject: Joi.string()
-            //     .example('abc')
-            //     .description('Subject type'),
-            PhoneNumber: celebrate_1.Joi.number()
+            PhoneNumber: celebrate_1.Joi.string()
+                .length(10)
                 .required()
                 .example('6756443451')
                 .description('Phone Number of user'),
@@ -38,17 +40,6 @@ exports.ContactUsSchema = {
                 .required()
                 .example('xyz')
                 .description('Message'),
-            // UploadFileName: Joi.string(),
-            // .example('abc.pdf')
-            // .description('File'),
-            // Status: Joi.number()
-            //     .integer(),
-            // .example('0')
-            // .description('status'),
-            IsDeleted: celebrate_1.Joi.number()
-                .integer()
-                .example('0')
-                .description('isdeleted'),
         })
     },
 };

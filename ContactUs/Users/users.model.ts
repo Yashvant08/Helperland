@@ -13,23 +13,25 @@ export const ContactUsSchema = {
     },
     add: {
         body: Joi.object({
-            Name: Joi.string()
+            FirstName: Joi.string()
                 .required()
                 .example('Yashvant')
-                .description('Name of user'),
+                .description('First Name of user'),
+            LastName: Joi.string()
+                .required()
+                .example('desai')
+                .description('Last Name of user'),
             Email: Joi.string()
                     .required()
                     .email()
                     .example('abc@gmail.com')
                     .description('email of user'),
-            SubjectType: Joi.string()
+            Subject: Joi.string()
                 .required()
                 .example('General')
                 .description('Subject type'),
-            // Subject: Joi.string()
-            //     .example('abc')
-            //     .description('Subject type'),
-            PhoneNumber: Joi.number()
+            PhoneNumber: Joi.string()
+                .length(10)
                 .required()
                 .example('6756443451')
                 .description('Phone Number of user'),
@@ -37,17 +39,6 @@ export const ContactUsSchema = {
                 .required()
                 .example('xyz')
                 .description('Message'),
-            // UploadFileName: Joi.string(),
-                // .example('abc.pdf')
-                // .description('File'),
-            // Status: Joi.number()
-            //     .integer(),
-                // .example('0')
-                // .description('status'),
-            IsDeleted: Joi.number()
-                .integer()
-                .example('0')
-                .description('isdeleted'),
         })
     },
 }

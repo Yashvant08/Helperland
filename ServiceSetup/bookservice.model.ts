@@ -74,6 +74,9 @@ export const BookServiceSchema = {
                         .required()
                         .example('true')
                         .description('Have pets at home'),
+                // ServiceProviderId: Joi.number()
+                //      .integer()   
+                //      .example('1'),
                 ServiceRequestAddress: Joi.object()
                         .required(),
                 ExtraService: Joi.array()

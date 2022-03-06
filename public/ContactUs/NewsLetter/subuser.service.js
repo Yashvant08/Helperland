@@ -76,7 +76,7 @@ var SubUserService = /** @class */ (function () {
     };
     SubUserService.prototype.createData = function (userEmail, token) {
         var data = {
-            from: 'Helperland Team@gmail.com',
+            from: 'yashvantdesai7@gmail.com',
             to: userEmail,
             subject: 'Newsletter confirmation, entry in our mailing list',
             html: "\n                <html>\n                    <head>\n                        <style>\n                        a{\n                        background-color: #f44336;\n                        color: white;\n                        padding: 14px 25px;\n                        text-align: center;\n                        text-decoration: none;\n                        display: inline-block;\n                        }\n                        \n                        a:hover, a:active {\n                        background-color: red;\n                        }\n                        </style>\n                    </head>\n                    <body>\n                        <h1>Hello,</h1>\n                        </br>\n                        </br>\n                        <h2>Application for newsletter subscription</h2>\n                        </br>\n                        <h2>Thank you, we have received your registration for the newsletter. To confirm that you would like to receive the newsletter by email, please click on the following button:</h2>\n                        </br>\n                        <a href=\"".concat(process.env.CLIENT_URL, "/trainee2021/contact-us/sb-User/activate/").concat(token, "\">confirm subscription</a>\n                        </br>\n                        <h2>Many greetings</h2>\n                        </br>\n                        <h2>your Helperland team</h2>\n                    </body>\n                </html>\n                ")
@@ -85,7 +85,7 @@ var SubUserService = /** @class */ (function () {
     };
     SubUserService.prototype.createDataForAll = function (userEmail) {
         var data = {
-            from: 'Helperland Team@gmail.com',
+            from: 'yashvantdesai7@gmail.com',
             to: userEmail,
             subject: 'Newsletter confirmation, entry in our mailing list',
             html: "\n                <h1>Hello,</h1>\n                "

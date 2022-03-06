@@ -72,20 +72,20 @@ exports.ContactUsModelAttributes = {
     },
     Name: {
         allowNull: false,
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(50)
     },
     Email: {
         allowNull: false,
         unique: true,
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(200)
     },
     Subject: {
         allowNull: true,
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(500)
     },
     PhoneNumber: {
         allowNull: false,
-        type: sequelize_1.DataTypes.BIGINT
+        type: sequelize_1.DataTypes.STRING(20)
     },
     Message: {
         allowNull: false,
@@ -93,11 +93,11 @@ exports.ContactUsModelAttributes = {
     },
     UploadFileName: {
         allowNull: true,
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(100)
     },
     FilePath: {
         allowNull: true,
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(500)
     },
     CreatedBy: {
         allowNull: true,

@@ -63,10 +63,10 @@ var ResetService = /** @class */ (function () {
     };
     ResetService.prototype.createData = function (userEmail, token) {
         var data = {
-            from: 'helperland-team@gmail.com',
+            from: 'yashvantdesai7@gmail.com',
             to: userEmail,
-            subject: 'Account activation link',
-            html: "<h2>Please click here to activate you account</h2>\n              <a href=\"".concat(process.env.CLIENT_URL, "/reset-password/").concat(token, "\">Please click here to activate you account</a>")
+            subject: 'Reset Password',
+            html: "<h2>Please click on reset password to change password</h2>\n              <a href=\"".concat(process.env.CLIENT_URL, "/reset-password/").concat(token, "\">reset password</a>")
         };
         return data;
     };

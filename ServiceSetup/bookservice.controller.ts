@@ -1,8 +1,6 @@
 import { Request, Response, RequestHandler } from "express";
 import { UserAddress } from "../models/useraddress";
-import { User } from "../models/user";
 import { BookService } from "./bookservice.service";
-import { db } from "../models";
 import jwt from "jsonwebtoken";
 import mailgun from "mailgun-js";
 
@@ -24,6 +22,7 @@ export class BookServiceController {
     req,
     res
   ): Promise<Response> => {
+    const token = req.headers.authorization! || req.header('auth')!;
     let zipCode = [];
     if (!req.body.postalcode) {
       return res.status(400).json({ message: "No ZipCode Entered" });
@@ -39,7 +38,7 @@ export class BookServiceController {
               }
             }
             if (isAvailable) {
-              jwt.verify(req.headers.authorization!,process.env.SECRET_KEY!,(err,user:any) => {
+              jwt.verify(token,process.env.SECRET_KEY!,(err,user:any) => {
                   if (err) {
                     return res
                       .status(401)
@@ -81,10 +80,11 @@ export class BookServiceController {
     req,
     res
   ): Promise<Response | undefined> => {
+    const token = req.headers.authorization! || req.header('auth')!;
     let address: UserAddress[] = [];
-    if (req.headers.authorization) {
+    if (token) {
       jwt.verify(
-        req.headers.authorization,
+        token,
         process.env.SECRET_KEY!,
         (error, user: any) => {
           if (error) {
@@ -143,9 +143,10 @@ export class BookServiceController {
   };
 
   public createUserAddress: RequestHandler = async (req, res) => {
-    if (req.headers.authorization) {
+    const token = req.headers.authorization || req.header('auth');
+    if (token) {
       jwt.verify(
-        req.headers.authorization,
+        token,
         process.env.SECRET_KEY!,
         (error, user: any) => {
           if (error) {
@@ -188,7 +189,7 @@ export class BookServiceController {
   };
 
   public decodeToken: RequestHandler = async (req,res,next):Promise<Response|undefined> => {
-    const token = req.headers.authorization;
+    const token = req.headers.authorization || req.header('auth');
     if (token) {
       jwt.verify(token, process.env.SECRET_KEY!, (err, user: any) => {
         if (err) {
@@ -200,7 +201,11 @@ export class BookServiceController {
             .getUserByEmail(user.userEmail)
             .then((user) => {
               if (user?.UserTypeId === 4) {
-                next();
+                if(req.body.ServiceHours <3){
+                  return res.status(400).json({message:'service hours must be minimum 3 hours'});
+                }else{
+                  next();
+                }
               } else {
                 return res.status(401).json({ message: "unauthorised user" });
               }
@@ -218,7 +223,7 @@ export class BookServiceController {
     }
   };
 
-  public CreateServiceRequest: RequestHandler = async (req, res, next) => {
+  public CreateServiceRequest: RequestHandler = async (req, res, next):Promise<Response> => {
     const token = req.headers.authorization;
     req.body.Status = 1;
     req.body.ServiceHourlyRate = 18;
@@ -249,32 +254,26 @@ export class BookServiceController {
           .createServiceRequestWithAddress(req.body)
           .then((request) => {
             if (request) {
-              return this.bookService
-                .getHelpersByZipCode(request.ZipCode)
-                .then(async (user) => {
-                  if (user.length > 0) {
-                    for (let count in user) {
-                      email.push(user[count].Email!);
-                    }
-                    for (let e in email) {
-                      console.log(email[e]);
-                      const data = await this.bookService.createDataForAll(
-                        email[e]
-                      );
-                      await mg.messages().send(data, function (error, body) {
-                        if (error) {
-                          return res.json({
-                            error: error.message,
-                          });
-                        }
-                      });
-                    }
+              if(request.ServiceProviderId){
+                return this.bookService.getHelperById(request.ServiceProviderId)
+                .then(helper => {
+                  if(helper){
+                    const data = this.bookService.createData(helper.Email!, request.ServiceRequestId);
+                    mg.messages().send(data, (error, user) => {
+                      if(error){
+                        return res.json({
+                          error: error.message,
+                        });
+                      }
+                    })
+                  }else{
                     return res
-                      .status(200)
-                      .json({ message: "service book successfully" });
-                  } else {
-                    return res.status(404).json({ message: "user not found" });
+                      .status(404)
+                      .json({ message: "helper not found"});
                   }
+                  return res
+                      .status(200)
+                      .json({ message: "service booked successfully" });
                 })
                 .catch((error: Error) => {
                   console.log(error);
@@ -282,6 +281,52 @@ export class BookServiceController {
                     error: error,
                   });
                 });
+              }else{
+                return this.bookService
+                .getHelpersByZipCode(request.ZipCode)
+                .then(async (user) => {
+                  if (user.length > 0) {
+                    return this.bookService.getBlockedHelper(parseInt(req.body.userId), user)
+                    .then(async blockedHelper => {
+                      if(blockedHelper){
+                        const users = this.bookService.removeBlockedHelper(user,blockedHelper);
+                        console.log(users);
+                      email = this.bookService.getEmailAddressForSendEmail(users, req.body);
+                      console.log(email);
+                      for (let e in email) {
+                        console.log(email[e]);
+                        const data = await this.bookService.createDataForAll(
+                          email[e]
+                        );
+                        await mg.messages().send(data, function (error, body) {
+                          if (error) {
+                            return res.json({
+                              error: error.message,
+                            });
+                          }
+                        });
+                      }
+                      }
+                        return res
+                        .status(200)
+                        .json({ message: "service booked successfully" });
+                      
+                      
+                      })
+                    .catch((error: Error) => {
+                      console.log(error);
+                      return res.status(500).json({error: error});
+                    });
+                  } else {
+                    return res.status(404).json({ message: "user not found" });
+                  }
+                })
+                .catch((error: Error) => {
+                  console.log(error);
+                  return res.status(500).json({error: error});
+                });
+              }
+              
             } else {
               return res.status(500).json({ message: "error" });
             }
@@ -316,15 +361,16 @@ export class BookServiceController {
   };
 
   public getFavoriteAndBlocked: RequestHandler = async (req,res):Promise<Response | undefined> => {
-    if (req.headers.authorization) {
-      jwt.verify(req.headers.authorization,process.env.SECRET_KEY!,(error, user: any) => {
+    const token = req.headers.authorization! || req.header('auth')!;
+    if (token) {
+      jwt.verify(token,process.env.SECRET_KEY!,(error, userToken: any) => {
           if (error) {
             return res
               .status(401)
               .json({ message: "invalid or expired token" });
           } else {
             return this.bookService
-              .getUserByEmail(user.userEmail)
+              .getUserByEmail(userToken.userEmail)
               .then((user) => {
                 if (user === null) {
                   return res.status(404).json({ message: "user not found" });
@@ -332,7 +378,6 @@ export class BookServiceController {
                   return this.bookService
                     .getFavoriteAndBlocked(user.UserId)
                     .then(async (user) => {
-                      let sp = [];
                       if (user === null) {
                         return res
                           .status(404)
@@ -343,7 +388,7 @@ export class BookServiceController {
                         );
                         if (favoriteSP.length > 0) {
                           return this.bookService
-                            .getUserById(favoriteSP)
+                            .getUserById(favoriteSP, userToken.postalCode)
                             .then((helper) => {
                               return res.status(200).json(helper);
                             })

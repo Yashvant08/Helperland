@@ -10,19 +10,20 @@ module.exports = {
       },
       Name: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING(50)
       },
       Email: {
         allowNull: false,
-        type: Sequelize.STRING
+        unique: true,
+        type: Sequelize.STRING(200)
       },
       Subject: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING(500)
       },
       PhoneNumber: {
         allowNull: false,
-        type: Sequelize.BIGINT
+        type: Sequelize.STRING(20)
       },
       Message: {
         allowNull: false,
@@ -30,11 +31,11 @@ module.exports = {
       },
       UploadFileName: {
         allowNull: true,
-        type: Sequelize.STRING
+        type: Sequelize.STRING(100)
       },
       FilePath: {
         allowNull: true,
-        type: Sequelize.STRING
+        type: Sequelize.STRING(500)
       },
       CreatedBy: {
         allowNull: true,

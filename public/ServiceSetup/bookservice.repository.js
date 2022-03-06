@@ -38,6 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookServiceRepository = void 0;
 var index_1 = require("../models/index");
+var sequelize_1 = require("sequelize");
 var BookServiceRepository = /** @class */ (function () {
     function BookServiceRepository() {
     }
@@ -69,10 +70,17 @@ var BookServiceRepository = /** @class */ (function () {
             });
         });
     };
-    BookServiceRepository.prototype.getUserById = function (userId) {
+    BookServiceRepository.prototype.getUserById = function (userId, zipCode) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, index_1.db.User.findAll({ where: { UserId: userId } })];
+                return [2 /*return*/, index_1.db.User.findAll({ where: { UserId: userId, ZipCode: zipCode } })];
+            });
+        });
+    };
+    BookServiceRepository.prototype.getHelperById = function (userId) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, index_1.db.User.findOne({ where: { UserId: userId, UserTypeId: 3 } })];
             });
         });
     };
@@ -86,7 +94,7 @@ var BookServiceRepository = /** @class */ (function () {
     BookServiceRepository.prototype.getHelpersByZipcode = function (zipCode) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, index_1.db.User.findAll({ where: { UserTypeId: 3, ZipCode: zipCode } })];
+                return [2 /*return*/, index_1.db.User.findAll({ where: { UserTypeId: 3, ZipCode: zipCode }, include: 'TargetUserId' })];
             });
         });
     };
@@ -109,6 +117,14 @@ var BookServiceRepository = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, index_1.db.ServiceRequest.create(ServiceRequest, { include: ['ServiceRequestAddress', 'ExtraService'] })];
+            });
+        });
+    };
+    BookServiceRepository.prototype.getBlockedHelper = function (userId, helperIds) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a;
+            return __generator(this, function (_b) {
+                return [2 /*return*/, index_1.db.FavoriteAndBlocked.findAll({ where: { UserId: userId, TargetUserId: (_a = {}, _a[sequelize_1.Op.or] = helperIds, _a), IsBlocked: true } })];
             });
         });
     };

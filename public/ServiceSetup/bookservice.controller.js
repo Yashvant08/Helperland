@@ -54,9 +54,10 @@ var BookServiceController = /** @class */ (function () {
         var _this = this;
         this.bookService = bookService;
         this.checkAvailibility = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var zipCode;
+            var token, zipCode;
             var _this = this;
             return __generator(this, function (_a) {
+                token = req.headers.authorization || req.header('auth');
                 zipCode = [];
                 if (!req.body.postalcode) {
                     return [2 /*return*/, res.status(400).json({ message: "No ZipCode Entered" })];
@@ -73,7 +74,7 @@ var BookServiceController = /** @class */ (function () {
                                     }
                                 }
                                 if (isAvailable) {
-                                    jsonwebtoken_1.default.verify(req.headers.authorization, process.env.SECRET_KEY, function (err, user) {
+                                    jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY, function (err, user) {
                                         if (err) {
                                             return res
                                                 .status(401)
@@ -82,10 +83,10 @@ var BookServiceController = /** @class */ (function () {
                                         else {
                                             var userEmail = user.userEmail;
                                             var postalCode = req.body.postalcode;
-                                            var token = _this.bookService.createToken(userEmail, postalCode);
+                                            var token_1 = _this.bookService.createToken(userEmail, postalCode);
                                             return res
                                                 .status(200)
-                                                .cookie("token", token, { httpOnly: true });
+                                                .cookie("token", token_1, { httpOnly: true });
                                         }
                                     });
                                     return res.status(200).json({ message: "found" });
@@ -111,12 +112,13 @@ var BookServiceController = /** @class */ (function () {
             });
         }); };
         this.getUserAddresses = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var address;
+            var token, address;
             var _this = this;
             return __generator(this, function (_a) {
+                token = req.headers.authorization || req.header('auth');
                 address = [];
-                if (req.headers.authorization) {
-                    jsonwebtoken_1.default.verify(req.headers.authorization, process.env.SECRET_KEY, function (error, user) {
+                if (token) {
+                    jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY, function (error, user) {
                         if (error) {
                             return res
                                 .status(401)
@@ -178,10 +180,12 @@ var BookServiceController = /** @class */ (function () {
             });
         }); };
         this.createUserAddress = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+            var token;
             var _this = this;
             return __generator(this, function (_a) {
-                if (req.headers.authorization) {
-                    jsonwebtoken_1.default.verify(req.headers.authorization, process.env.SECRET_KEY, function (error, user) {
+                token = req.headers.authorization || req.header('auth');
+                if (token) {
+                    jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY, function (error, user) {
                         if (error) {
                             return res
                                 .status(401)
@@ -227,7 +231,7 @@ var BookServiceController = /** @class */ (function () {
             var token;
             var _this = this;
             return __generator(this, function (_a) {
-                token = req.headers.authorization;
+                token = req.headers.authorization || req.header('auth');
                 if (token) {
                     jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY, function (err, user) {
                         if (err) {
@@ -240,7 +244,12 @@ var BookServiceController = /** @class */ (function () {
                                 .getUserByEmail(user.userEmail)
                                 .then(function (user) {
                                 if ((user === null || user === void 0 ? void 0 : user.UserTypeId) === 4) {
-                                    next();
+                                    if (req.body.ServiceHours < 3) {
+                                        return res.status(400).json({ message: 'service hours must be minimum 3 hours' });
+                                    }
+                                    else {
+                                        next();
+                                    }
                                 }
                                 else {
                                     return res.status(401).json({ message: "unauthorised user" });
@@ -291,55 +300,100 @@ var BookServiceController = /** @class */ (function () {
                             .createServiceRequestWithAddress(req.body)
                             .then(function (request) {
                             if (request) {
-                                return _this.bookService
-                                    .getHelpersByZipCode(request.ZipCode)
-                                    .then(function (user) { return __awaiter(_this, void 0, void 0, function () {
-                                    var count, _a, _b, _i, e, data;
-                                    return __generator(this, function (_c) {
-                                        switch (_c.label) {
-                                            case 0:
-                                                if (!(user.length > 0)) return [3 /*break*/, 6];
-                                                for (count in user) {
-                                                    email.push(user[count].Email);
+                                if (request.ServiceProviderId) {
+                                    return _this.bookService.getHelperById(request.ServiceProviderId)
+                                        .then(function (helper) {
+                                        if (helper) {
+                                            var data = _this.bookService.createData(helper.Email, request.ServiceRequestId);
+                                            mg.messages().send(data, function (error, user) {
+                                                if (error) {
+                                                    return res.json({
+                                                        error: error.message,
+                                                    });
                                                 }
-                                                _a = [];
-                                                for (_b in email)
-                                                    _a.push(_b);
-                                                _i = 0;
-                                                _c.label = 1;
-                                            case 1:
-                                                if (!(_i < _a.length)) return [3 /*break*/, 5];
-                                                e = _a[_i];
-                                                console.log(email[e]);
-                                                return [4 /*yield*/, this.bookService.createDataForAll(email[e])];
-                                            case 2:
-                                                data = _c.sent();
-                                                return [4 /*yield*/, mg.messages().send(data, function (error, body) {
-                                                        if (error) {
-                                                            return res.json({
-                                                                error: error.message,
-                                                            });
-                                                        }
-                                                    })];
-                                            case 3:
-                                                _c.sent();
-                                                _c.label = 4;
-                                            case 4:
-                                                _i++;
-                                                return [3 /*break*/, 1];
-                                            case 5: return [2 /*return*/, res
-                                                    .status(200)
-                                                    .json({ message: "service book successfully" })];
-                                            case 6: return [2 /*return*/, res.status(404).json({ message: "user not found" })];
+                                            });
                                         }
+                                        else {
+                                            return res
+                                                .status(404)
+                                                .json({ message: "helper not found" });
+                                        }
+                                        return res
+                                            .status(200)
+                                            .json({ message: "service booked successfully" });
+                                    })
+                                        .catch(function (error) {
+                                        console.log(error);
+                                        return res.status(500).json({
+                                            error: error,
+                                        });
                                     });
-                                }); })
-                                    .catch(function (error) {
-                                    console.log(error);
-                                    return res.status(500).json({
-                                        error: error,
+                                }
+                                else {
+                                    return _this.bookService
+                                        .getHelpersByZipCode(request.ZipCode)
+                                        .then(function (user) { return __awaiter(_this, void 0, void 0, function () {
+                                        var _this = this;
+                                        return __generator(this, function (_a) {
+                                            if (user.length > 0) {
+                                                return [2 /*return*/, this.bookService.getBlockedHelper(parseInt(req.body.userId), user)
+                                                        .then(function (blockedHelper) { return __awaiter(_this, void 0, void 0, function () {
+                                                        var users, _a, _b, _i, e, data;
+                                                        return __generator(this, function (_c) {
+                                                            switch (_c.label) {
+                                                                case 0:
+                                                                    if (!blockedHelper) return [3 /*break*/, 5];
+                                                                    users = this.bookService.removeBlockedHelper(user, blockedHelper);
+                                                                    console.log(users);
+                                                                    email = this.bookService.getEmailAddressForSendEmail(users, req.body);
+                                                                    console.log(email);
+                                                                    _a = [];
+                                                                    for (_b in email)
+                                                                        _a.push(_b);
+                                                                    _i = 0;
+                                                                    _c.label = 1;
+                                                                case 1:
+                                                                    if (!(_i < _a.length)) return [3 /*break*/, 5];
+                                                                    e = _a[_i];
+                                                                    console.log(email[e]);
+                                                                    return [4 /*yield*/, this.bookService.createDataForAll(email[e])];
+                                                                case 2:
+                                                                    data = _c.sent();
+                                                                    return [4 /*yield*/, mg.messages().send(data, function (error, body) {
+                                                                            if (error) {
+                                                                                return res.json({
+                                                                                    error: error.message,
+                                                                                });
+                                                                            }
+                                                                        })];
+                                                                case 3:
+                                                                    _c.sent();
+                                                                    _c.label = 4;
+                                                                case 4:
+                                                                    _i++;
+                                                                    return [3 /*break*/, 1];
+                                                                case 5: return [2 /*return*/, res
+                                                                        .status(200)
+                                                                        .json({ message: "service booked successfully" })];
+                                                            }
+                                                        });
+                                                    }); })
+                                                        .catch(function (error) {
+                                                        console.log(error);
+                                                        return res.status(500).json({ error: error });
+                                                    })];
+                                            }
+                                            else {
+                                                return [2 /*return*/, res.status(404).json({ message: "user not found" })];
+                                            }
+                                            return [2 /*return*/];
+                                        });
+                                    }); })
+                                        .catch(function (error) {
+                                        console.log(error);
+                                        return res.status(500).json({ error: error });
                                     });
-                                });
+                                }
                             }
                             else {
                                 return res.status(500).json({ message: "error" });
@@ -376,10 +430,12 @@ var BookServiceController = /** @class */ (function () {
             });
         }); };
         this.getFavoriteAndBlocked = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+            var token;
             var _this = this;
             return __generator(this, function (_a) {
-                if (req.headers.authorization) {
-                    jsonwebtoken_1.default.verify(req.headers.authorization, process.env.SECRET_KEY, function (error, user) {
+                token = req.headers.authorization || req.header('auth');
+                if (token) {
+                    jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY, function (error, userToken) {
                         if (error) {
                             return res
                                 .status(401)
@@ -387,7 +443,7 @@ var BookServiceController = /** @class */ (function () {
                         }
                         else {
                             return _this.bookService
-                                .getUserByEmail(user.userEmail)
+                                .getUserByEmail(userToken.userEmail)
                                 .then(function (user) {
                                 if (user === null) {
                                     return res.status(404).json({ message: "user not found" });
@@ -396,11 +452,10 @@ var BookServiceController = /** @class */ (function () {
                                     return _this.bookService
                                         .getFavoriteAndBlocked(user.UserId)
                                         .then(function (user) { return __awaiter(_this, void 0, void 0, function () {
-                                        var sp, favoriteSP;
+                                        var favoriteSP;
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
                                                 case 0:
-                                                    sp = [];
                                                     if (!(user === null)) return [3 /*break*/, 1];
                                                     return [2 /*return*/, res
                                                             .status(404)
@@ -410,7 +465,7 @@ var BookServiceController = /** @class */ (function () {
                                                     favoriteSP = _a.sent();
                                                     if (favoriteSP.length > 0) {
                                                         return [2 /*return*/, this.bookService
-                                                                .getUserById(favoriteSP)
+                                                                .getUserById(favoriteSP, userToken.postalCode)
                                                                 .then(function (helper) {
                                                                 return res.status(200).json(helper);
                                                             })

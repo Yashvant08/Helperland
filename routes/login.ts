@@ -1,26 +1,32 @@
 import express from 'express';
 import { celebrate } from 'celebrate';
+
 import {UsersService} from '../Login API/Users/users.service';
 import {UsersController} from '../Login API/Users/users.controller';
 import {UsersRepository} from '../Login API/Users/users.repository';
-import { UserSchema } from '../Login API/Users/users.model';
-import { HelperSchema } from '../Login API/ServiceProviders/helpers.model';
-import { LoginSchema } from '../Login API/Login/login.model';
-import {ResetSchema} from '../Login API/ResetPassword/resetPassword.model';
+
 import {HelpersService} from '../Login API/ServiceProviders/helpers.service';
 import {HelpersController} from '../Login API/ServiceProviders/helpers.controller';
 import {HelpersRepository} from '../Login API/ServiceProviders/helpers.repository';
+
 import { LoginRepository } from '../Login API/Login/login.repository';
 import { LoginService } from '../Login API/Login/login.service';
 import { LoginController} from '../Login API/Login/login.controller';
+
 import { ResetRepository } from '../Login API/ResetPassword/resetPassword.repository';
 import { ResetService } from '../Login API/ResetPassword/resetPassword.service';
 import { ResetController } from '../Login API/ResetPassword/resetPassword.controller';
 
-
+import { UserSchema } from '../Login API/Users/users.model';
 const {add} = UserSchema;
+
+import { HelperSchema } from '../Login API/ServiceProviders/helpers.model';
 const {validate} = HelperSchema;
+
+import { LoginSchema } from '../Login API/Login/login.model';
 const {addLogin} = LoginSchema;
+
+import {ResetSchema} from '../Login API/ResetPassword/resetPassword.model';
 const {addReset, addPassword} = ResetSchema;
 
 
@@ -130,7 +136,7 @@ router.get('/activate/user/:token',userController.activateAccount);
 
 /**
  * @swagger
- * /trainee2021/sp-sign-up:
+ * /trainee2021/Login-User/sp-sign-up:
  *  post:
  *   summary: Become Helper
  *   description: Helper registration
@@ -154,7 +160,7 @@ router.get('/activate/helper/:token', helperController.activateAccount);
 
 /**
  * @swagger
- * /trainee2021/login:
+ * /trainee2021/Login-User/login:
  *  post:
  *   summary: User Login
  *   description: Login
@@ -166,19 +172,40 @@ router.get('/activate/helper/:token', helperController.activateAccount);
  *   responses:
  *    200:
  *     description: Login successful.
+ *     cookie:
+ *      token:
+ *       schema:
+ *        type: string
  *    401:
  *     description: invalid username or password.
  *    500:
  *     description: something went wrong.
  */
 router.post('/login',celebrate(addLogin),loginController.checkLogin);
+/**
+ * @swagger
+ * /trainee2021/Login-User/logout:
+ *  delete:
+ *   summary: User Logout
+ *   description: Logout
+ *   parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
+ *   responses:
+ *    200:
+ *     description: Logout successful.
+ *    500:
+ *     description: something went wrong.
+ */
 router.delete('/logout',loginController.validateToken,loginController.removeToken);
 
 //Forgot password routes
 
 /**
  * @swagger
- * /trainee2021/forgot-password:
+ * /trainee2021/Login-User/forgot-password:
  *  post:
  *   summary: forgot Password
  *   description: Enter email
@@ -198,7 +225,7 @@ router.delete('/logout',loginController.validateToken,loginController.removeToke
 router.post('/forgot-password', celebrate(addReset),resetPassController.forgotPassword);
 /**
  * @swagger
- * /trainee2021/reset-password:
+ * /trainee2021/Login-User/reset-password:
  *  post:
  *   summary: Reset Password
  *   description: Enter new password

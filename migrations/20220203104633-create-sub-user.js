@@ -9,7 +9,9 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       Email: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true,
+        allowNull: false,
       },
       IsConfirmedSub: {
         type: Sequelize.BOOLEAN,

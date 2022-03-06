@@ -143,6 +143,11 @@ const { zipcode, userAddress, createService} = BookServiceSchema;
  *  post:
  *   summary: Check helper availibility
  *   description: Enter zip code
+ *   parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
  *   requestBody:
  *    content:
  *     application/json:
@@ -167,12 +172,11 @@ router.post('/postalcode-check',celebrate(zipcode),loginController.validateToken
  *  post:
  *   summary: Create Service Request
  *   description: service setup
- *   securityDefinitions:
- *    JWT: 
- *     schema:
- *     type: apiKey
- *     name: authorization
- *     in: header
+ *   parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
  *   requestBody:
  *    content:
  *     application/json:
@@ -200,6 +204,11 @@ router.post('/CreateRequest', celebrate(createService),loginController.validateT
  *  post:
  *   summary: Create Address
  *   description: Enter address
+ *   parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
  *   requestBody:
  *    content:
  *     application/json:
@@ -223,6 +232,11 @@ router.post('/UserAddress', celebrate(userAddress),loginController.validateToken
  *  get:
  *   summary: Get user addresses
  *   description: get address
+ *   parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
  *   responses:
  *    200:
  *     description: address found
@@ -243,6 +257,11 @@ router.post('/createfb', loginController.validateToken,controller.createFavorite
  *  get:
  *   summary: Get favorite and blocked 
  *   description: favorite and blocked user
+ *   parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
  *   responses:
  *    200:
  *     description: user found

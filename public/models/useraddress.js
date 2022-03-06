@@ -64,31 +64,23 @@ exports.UserAddressModelAttributes = {
         primaryKey: true,
         type: sequelize_1.DataTypes.INTEGER
     },
-    // UserId: {
-    //   allowNull: false,
-    //   references: {
-    //       model: 'User',
-    //       key: 'UserId'
-    //   },
-    //   type: DataTypes.INTEGER
-    // },
     Addressline1: {
         allowNull: false,
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(200)
     },
     Addressline2: {
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(200)
     },
     City: {
         allowNull: false,
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(50)
     },
     State: {
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(50)
     },
     PostalCode: {
         allowNull: false,
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(20)
     },
     IsDefault: {
         allowNull: false,
@@ -99,7 +91,7 @@ exports.UserAddressModelAttributes = {
         type: sequelize_1.DataTypes.BOOLEAN
     },
     Mobile: {
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(20)
     },
     Email: {
         type: sequelize_1.DataTypes.STRING

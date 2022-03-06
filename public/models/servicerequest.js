@@ -85,7 +85,7 @@ exports.ServiceRequestModelAttributes = {
     },
     ServiceStartDate: {
         allowNull: false,
-        type: sequelize_1.DataTypes.DATE
+        type: sequelize_1.DataTypes.DATEONLY
     },
     ServiceStartTime: {
         allowNull: false,
@@ -93,10 +93,10 @@ exports.ServiceRequestModelAttributes = {
     },
     ZipCode: {
         allowNull: false,
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(10)
     },
     ServiceHourlyRate: {
-        type: sequelize_1.DataTypes.DECIMAL
+        type: sequelize_1.DataTypes.DECIMAL(8, 2)
     },
     ServiceHours: {
         allowNull: false,
@@ -107,20 +107,20 @@ exports.ServiceRequestModelAttributes = {
     },
     SubTotal: {
         allowNull: false,
-        type: sequelize_1.DataTypes.DECIMAL
+        type: sequelize_1.DataTypes.DECIMAL(8, 2)
     },
     Discount: {
-        type: sequelize_1.DataTypes.DECIMAL
+        type: sequelize_1.DataTypes.DECIMAL(8, 2)
     },
     TotalCost: {
         allowNull: false,
-        type: sequelize_1.DataTypes.DECIMAL
+        type: sequelize_1.DataTypes.DECIMAL(8, 2)
     },
     Comments: {
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(500)
     },
     PaymentTransactionRefNo: {
-        type: sequelize_1.DataTypes.STRING
+        type: sequelize_1.DataTypes.STRING(50)
     },
     PaymentDue: {
         allowNull: false,
@@ -147,10 +147,10 @@ exports.ServiceRequestModelAttributes = {
         type: sequelize_1.DataTypes.INTEGER
     },
     RefundedAmount: {
-        type: sequelize_1.DataTypes.DECIMAL
+        type: sequelize_1.DataTypes.DECIMAL(8, 2)
     },
     Distance: {
-        type: sequelize_1.DataTypes.DECIMAL
+        type: sequelize_1.DataTypes.DECIMAL(18, 2)
     },
     HasIssue: {
         type: sequelize_1.DataTypes.BOOLEAN

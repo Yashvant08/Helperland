@@ -46,7 +46,6 @@
 //   return User;
 // };
 
-import { Mode } from 'fs';
 import { Model, DataTypes, ModelAttributes } from 'sequelize';
 import { UserAddress } from './useraddress';
 
@@ -83,7 +82,7 @@ export class User extends Model {
 
   NationalityId!: number;
 
-  ModifiedBy!: number;
+  ModifiedBy?: number;
 
   IsApproved!: boolean;
 
@@ -113,47 +112,47 @@ export const UserModelAttributes:ModelAttributes = {
       },
       FirstName: {
         allowNull: false,
-        type: DataTypes.STRING
+        type: DataTypes.STRING(100)
       },
       LastName: {
         allowNull: false,
-        type: DataTypes.STRING
+        type: DataTypes.STRING(100)
       },
       Email: {
         allowNull: false,
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(100),
         unique:true
       },
       Password: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING(100)
       },
       Mobile: {
         allowNull: false,
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(20),
         unique:true
       },
       UserTypeId: {
-        // allowNull: false,
+        allowNull: false,
         type: DataTypes.INTEGER
       },
       Gender: {
         type: DataTypes.INTEGER
       },
       DateOfBirth: {
-        type: DataTypes.DATEONLY
+        type: DataTypes.DATE
       },
       UserProfilePicture: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING(200)
       },
       IsRegisteredUser: {
-        // allowNull: false,
+        allowNull: false,
         type: DataTypes.BOOLEAN
       },
       PaymentGatewayUserRef: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING(200)
       },
       ZipCode: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING(20)
       },
       WorksWithPets: {
         type: DataTypes.BOOLEAN
@@ -165,7 +164,6 @@ export const UserModelAttributes:ModelAttributes = {
         type: DataTypes.INTEGER
       },
       ModifiedBy: {
-        // allowNull: false,
         type: DataTypes.INTEGER
       },
       IsApproved: {
