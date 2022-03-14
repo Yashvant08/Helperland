@@ -50,7 +50,7 @@ exports.BookServiceSchema = {
                 .required()
                 .example(1)
                 .description('ServiceId'),
-            ServiceStartDate: celebrate_1.Joi.date()
+            ServiceStartDate: celebrate_1.Joi.string()
                 .required()
                 .example('10-02-2022')
                 .description('Date'),

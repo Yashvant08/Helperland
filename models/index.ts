@@ -333,6 +333,7 @@ const  sequelize = config.url
     name: "ServiceRequestId",
     allowNull: false,
   },
+  as:'RatingServiceRequest',
   constraints: true,
   onDelete: "CASCADE",});
 

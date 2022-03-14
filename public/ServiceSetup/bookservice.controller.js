@@ -228,46 +228,58 @@ var BookServiceController = /** @class */ (function () {
             });
         }); };
         this.decodeToken = function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var token;
+            var token, isFutureDate;
             var _this = this;
             return __generator(this, function (_a) {
-                token = req.headers.authorization || req.header('auth');
-                if (token) {
-                    jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY, function (err, user) {
-                        if (err) {
-                            return res.status(401).json({ message: "invalid or expired token" });
-                        }
-                        else {
-                            req.body.ZipCode = user.postalCode;
-                            req.body.Email = user.userEmail;
-                            return _this.bookService
-                                .getUserByEmail(user.userEmail)
-                                .then(function (user) {
-                                if ((user === null || user === void 0 ? void 0 : user.UserTypeId) === 4) {
-                                    if (req.body.ServiceHours < 3) {
-                                        return res.status(400).json({ message: 'service hours must be minimum 3 hours' });
+                switch (_a.label) {
+                    case 0:
+                        token = req.headers.authorization || req.header('auth');
+                        return [4 /*yield*/, this.bookService.compareDateWithCurrentDate(req.body.ServiceStartDate)];
+                    case 1:
+                        isFutureDate = _a.sent();
+                        if (isFutureDate) {
+                            req.body.ServiceStartDate = new Date(req.body.ServiceStartDate.toString().split('-').reverse().join('-'));
+                            if (token) {
+                                jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY, function (err, user) {
+                                    if (err) {
+                                        return res.status(401).json({ message: "invalid or expired token" });
                                     }
                                     else {
-                                        next();
+                                        req.body.ZipCode = user.postalCode;
+                                        req.body.Email = user.userEmail;
+                                        return _this.bookService
+                                            .getUserByEmail(user.userEmail)
+                                            .then(function (user) {
+                                            if ((user === null || user === void 0 ? void 0 : user.UserTypeId) === 4) {
+                                                if (req.body.ServiceHours < 3) {
+                                                    return res.status(400).json({ message: 'service hours must be minimum 3 hours' });
+                                                }
+                                                else {
+                                                    next();
+                                                }
+                                            }
+                                            else {
+                                                return res.status(401).json({ message: "unauthorised user" });
+                                            }
+                                        })
+                                            .catch(function (error) {
+                                            console.log(error);
+                                            return res.status(500).json({
+                                                error: error,
+                                            });
+                                        });
                                     }
-                                }
-                                else {
-                                    return res.status(401).json({ message: "unauthorised user" });
-                                }
-                            })
-                                .catch(function (error) {
-                                console.log(error);
-                                return res.status(500).json({
-                                    error: error,
                                 });
-                            });
+                            }
+                            else {
+                                return [2 /*return*/, res.status(401).json("invalid or expired token")];
+                            }
                         }
-                    });
+                        else {
+                            return [2 /*return*/, res.status(401).json({ message: 'enter future date for book service' })];
+                        }
+                        return [2 /*return*/];
                 }
-                else {
-                    return [2 /*return*/, res.status(401).json("invalid or expired token")];
-                }
-                return [2 /*return*/];
             });
         }); };
         this.CreateServiceRequest = function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
@@ -275,7 +287,12 @@ var BookServiceController = /** @class */ (function () {
             var _this = this;
             return __generator(this, function (_a) {
                 token = req.headers.authorization;
-                req.body.Status = 1;
+                if (req.body.ServiceProviderId) {
+                    req.body.Status = 2;
+                }
+                else {
+                    req.body.Status = 1;
+                }
                 req.body.ServiceHourlyRate = 18;
                 req.body.ExtraHours = req.body.ExtraService.length * 0.5;
                 req.body.SubTotal = this.bookService.getSubTotal(req.body.ServiceHourlyRate, req.body.ServiceHours);
@@ -332,61 +349,66 @@ var BookServiceController = /** @class */ (function () {
                                 else {
                                     return _this.bookService
                                         .getHelpersByZipCode(request.ZipCode)
-                                        .then(function (user) { return __awaiter(_this, void 0, void 0, function () {
+                                        .then(function (helper) { return __awaiter(_this, void 0, void 0, function () {
+                                        var hp_1;
                                         var _this = this;
                                         return __generator(this, function (_a) {
-                                            if (user.length > 0) {
-                                                return [2 /*return*/, this.bookService.getBlockedHelper(parseInt(req.body.userId), user)
-                                                        .then(function (blockedHelper) { return __awaiter(_this, void 0, void 0, function () {
-                                                        var users, _a, _b, _i, e, data;
-                                                        return __generator(this, function (_c) {
-                                                            switch (_c.label) {
-                                                                case 0:
-                                                                    if (!blockedHelper) return [3 /*break*/, 5];
-                                                                    users = this.bookService.removeBlockedHelper(user, blockedHelper);
-                                                                    console.log(users);
-                                                                    email = this.bookService.getEmailAddressForSendEmail(users, req.body);
-                                                                    console.log(email);
-                                                                    _a = [];
-                                                                    for (_b in email)
-                                                                        _a.push(_b);
-                                                                    _i = 0;
-                                                                    _c.label = 1;
-                                                                case 1:
-                                                                    if (!(_i < _a.length)) return [3 /*break*/, 5];
-                                                                    e = _a[_i];
-                                                                    console.log(email[e]);
-                                                                    return [4 /*yield*/, this.bookService.createDataForAll(email[e])];
-                                                                case 2:
-                                                                    data = _c.sent();
-                                                                    return [4 /*yield*/, mg.messages().send(data, function (error, body) {
-                                                                            if (error) {
-                                                                                return res.json({
-                                                                                    error: error.message,
-                                                                                });
-                                                                            }
-                                                                        })];
-                                                                case 3:
-                                                                    _c.sent();
-                                                                    _c.label = 4;
-                                                                case 4:
-                                                                    _i++;
-                                                                    return [3 /*break*/, 1];
-                                                                case 5: return [2 /*return*/, res
-                                                                        .status(200)
-                                                                        .json({ message: "service booked successfully" })];
-                                                            }
-                                                        });
-                                                    }); })
-                                                        .catch(function (error) {
-                                                        console.log(error);
-                                                        return res.status(500).json({ error: error });
-                                                    })];
+                                            switch (_a.label) {
+                                                case 0:
+                                                    if (!(helper.length > 0)) return [3 /*break*/, 2];
+                                                    return [4 /*yield*/, this.bookService.removeHelperBlockedLoginCustomer(parseInt(req.body.userId), helper)];
+                                                case 1:
+                                                    hp_1 = _a.sent();
+                                                    return [2 /*return*/, this.bookService.getBlockedHelper(parseInt(req.body.userId), hp_1)
+                                                            .then(function (blockedHelper) { return __awaiter(_this, void 0, void 0, function () {
+                                                            var users, _a, _b, _i, e, data;
+                                                            return __generator(this, function (_c) {
+                                                                switch (_c.label) {
+                                                                    case 0:
+                                                                        if (!blockedHelper) return [3 /*break*/, 6];
+                                                                        console.log(blockedHelper);
+                                                                        return [4 /*yield*/, this.bookService.removeBlockedHelper(hp_1, blockedHelper)];
+                                                                    case 1:
+                                                                        users = _c.sent();
+                                                                        email = this.bookService.getEmailAddressForSendEmail(users, req.body);
+                                                                        console.log(email);
+                                                                        _a = [];
+                                                                        for (_b in email)
+                                                                            _a.push(_b);
+                                                                        _i = 0;
+                                                                        _c.label = 2;
+                                                                    case 2:
+                                                                        if (!(_i < _a.length)) return [3 /*break*/, 6];
+                                                                        e = _a[_i];
+                                                                        console.log(email[e]);
+                                                                        return [4 /*yield*/, this.bookService.createDataForAll(email[e])];
+                                                                    case 3:
+                                                                        data = _c.sent();
+                                                                        return [4 /*yield*/, mg.messages().send(data, function (error, body) {
+                                                                                if (error) {
+                                                                                    return res.json({
+                                                                                        error: error.message,
+                                                                                    });
+                                                                                }
+                                                                            })];
+                                                                    case 4:
+                                                                        _c.sent();
+                                                                        _c.label = 5;
+                                                                    case 5:
+                                                                        _i++;
+                                                                        return [3 /*break*/, 2];
+                                                                    case 6: return [2 /*return*/, res
+                                                                            .status(200)
+                                                                            .json({ message: "service booked successfully" })];
+                                                                }
+                                                            });
+                                                        }); })
+                                                            .catch(function (error) {
+                                                            console.log(error);
+                                                            return res.status(500).json({ error: error });
+                                                        })];
+                                                case 2: return [2 /*return*/, res.status(404).json({ message: "user not found" })];
                                             }
-                                            else {
-                                                return [2 /*return*/, res.status(404).json({ message: "user not found" })];
-                                            }
-                                            return [2 /*return*/];
                                         });
                                     }); })
                                         .catch(function (error) {
@@ -434,78 +456,47 @@ var BookServiceController = /** @class */ (function () {
             var _this = this;
             return __generator(this, function (_a) {
                 token = req.headers.authorization || req.header('auth');
-                if (token) {
-                    jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY, function (error, userToken) {
-                        if (error) {
-                            return res
-                                .status(401)
-                                .json({ message: "invalid or expired token" });
-                        }
-                        else {
+                jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY, function (error, userToken) {
+                    if (error) {
+                        return res.status(401).json({ message: "invalid or expired token" });
+                    }
+                    else {
+                        if (req.body.userTypeId === 4 && req.body.userId) {
                             return _this.bookService
-                                .getUserByEmail(userToken.userEmail)
-                                .then(function (user) {
-                                if (user === null) {
-                                    return res.status(404).json({ message: "user not found" });
-                                }
-                                else {
-                                    return _this.bookService
-                                        .getFavoriteAndBlocked(user.UserId)
-                                        .then(function (user) { return __awaiter(_this, void 0, void 0, function () {
-                                        var favoriteSP;
-                                        return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0:
-                                                    if (!(user === null)) return [3 /*break*/, 1];
-                                                    return [2 /*return*/, res
-                                                            .status(404)
-                                                            .json({ message: "user not found" })];
-                                                case 1: return [4 /*yield*/, this.bookService.getTargetUser(user)];
-                                                case 2:
-                                                    favoriteSP = _a.sent();
-                                                    if (favoriteSP.length > 0) {
-                                                        return [2 /*return*/, this.bookService
-                                                                .getUserById(favoriteSP, userToken.postalCode)
-                                                                .then(function (helper) {
-                                                                return res.status(200).json(helper);
-                                                            })
-                                                                .catch(function (error) {
-                                                                console.log(error);
-                                                                return res.status(500).json({
-                                                                    error: error,
-                                                                });
-                                                            })];
-                                                    }
-                                                    else {
-                                                        return [2 /*return*/, res
-                                                                .status(404)
-                                                                .json({ message: "favorite helper not found" })];
-                                                    }
-                                                    _a.label = 3;
-                                                case 3: return [2 /*return*/];
+                                .getFavoriteAndBlocked(req.body.userId)
+                                .then(function (user) { return __awaiter(_this, void 0, void 0, function () {
+                                var favoriteSP;
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            if (!(user === null)) return [3 /*break*/, 1];
+                                            return [2 /*return*/, res.status(404).json({ message: "no helper in favorite list" })];
+                                        case 1: return [4 /*yield*/, this.bookService.getTargetUser(user, userToken.postalCode)];
+                                        case 2:
+                                            favoriteSP = _a.sent();
+                                            if (favoriteSP.length > 0) {
+                                                return [2 /*return*/, res.status(200).send(favoriteSP)];
                                             }
-                                        });
-                                    }); })
-                                        .catch(function (error) {
-                                        console.log(error);
-                                        return res.status(500).json({
-                                            error: error,
-                                        });
-                                    });
-                                }
-                            })
+                                            else {
+                                                return [2 /*return*/, res
+                                                        .status(404)
+                                                        .json({ message: "favorite helper not found" })];
+                                            }
+                                            _a.label = 3;
+                                        case 3: return [2 /*return*/];
+                                    }
+                                });
+                            }); })
                                 .catch(function (error) {
                                 console.log(error);
-                                return res.status(500).json({
-                                    error: error,
-                                });
+                                return res.status(500).json({ error: error });
                             });
                         }
-                    });
-                }
-                else {
-                    return [2 /*return*/, res.status(401).json({ message: "invalid or expired token" })];
-                }
+                        else {
+                            return res.status(401).json({ message: 'unauthorised user' });
+                        }
+                    }
+                });
                 return [2 /*return*/];
             });
         }); };

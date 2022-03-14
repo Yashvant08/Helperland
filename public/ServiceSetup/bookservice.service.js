@@ -41,6 +41,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookService = void 0;
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+var moment_1 = __importDefault(require("moment"));
 var BookService = /** @class */ (function () {
     function BookService(bookServiceRepository) {
         this.bookServiceRepository = bookServiceRepository;
@@ -162,14 +163,47 @@ var BookService = /** @class */ (function () {
         });
         return token;
     };
-    BookService.prototype.getTargetUser = function (user) {
-        var favoriteSP = [];
-        for (var us in user) {
-            if (user[us].IsFavorite === true && user[us].IsBlocked === false) {
-                favoriteSP.push(user[us].TargetUserId);
-            }
-        }
-        return favoriteSP;
+    BookService.prototype.getTargetUser = function (user, zipCode) {
+        return __awaiter(this, void 0, void 0, function () {
+            var helperId, favoriteSpDetail, us, helperblock, favoriteSP, _a, _b, _i, sp, spDetail;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        helperId = [];
+                        favoriteSpDetail = [];
+                        for (us in user) {
+                            helperId.push(user[us].TargetUserId);
+                        }
+                        return [4 /*yield*/, this.bookServiceRepository.getAllBlockedCustomerOfHelper(helperId)];
+                    case 1:
+                        helperblock = _c.sent();
+                        favoriteSP = user.filter(function (ar) { return !helperblock.find(function (rm) { return (rm.UserId === ar.TargetUserId && ar.UserId === rm.TargetUserId); }); });
+                        _a = [];
+                        for (_b in favoriteSP)
+                            _a.push(_b);
+                        _i = 0;
+                        _c.label = 2;
+                    case 2:
+                        if (!(_i < _a.length)) return [3 /*break*/, 5];
+                        sp = _a[_i];
+                        return [4 /*yield*/, this.bookServiceRepository.getHelperById(favoriteSP[sp].TargetUserId)];
+                    case 3:
+                        spDetail = _c.sent();
+                        if (spDetail && spDetail.ZipCode === zipCode) {
+                            favoriteSpDetail.push({
+                                ServiceProviderId: spDetail.UserId,
+                                ServiceProviderName: spDetail.FirstName + " " + spDetail.LastName,
+                                ProfilePicture: spDetail.UserProfilePicture
+                            });
+                        }
+                        _c.label = 4;
+                    case 4:
+                        _i++;
+                        return [3 /*break*/, 2];
+                    case 5: return [2 /*return*/, favoriteSpDetail];
+                }
+            });
+        });
     };
     BookService.prototype.getEmailAddressForSendEmail = function (user, body) {
         var Email = [];
@@ -195,6 +229,48 @@ var BookService = /** @class */ (function () {
             });
         });
         return users;
+    };
+    BookService.prototype.compareDateWithCurrentDate = function (date) {
+        return __awaiter(this, void 0, void 0, function () {
+            var formatedDate1, formatedDate2;
+            return __generator(this, function (_a) {
+                formatedDate1 = new Date(date.split("-").reverse().join("-"));
+                formatedDate2 = new Date((0, moment_1.default)(new Date()).format("YYYY-MM-DD"));
+                if (formatedDate1 > formatedDate2) {
+                    return [2 /*return*/, true];
+                }
+                else {
+                    return [2 /*return*/, false];
+                }
+                return [2 /*return*/];
+            });
+        });
+    };
+    ;
+    BookService.prototype.removeHelperBlockedLoginCustomer = function (userId, helpers) {
+        return __awaiter(this, void 0, void 0, function () {
+            var helperIds, hp, blockedCustomer, filteredHelper;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        helperIds = [];
+                        // console.log(helpers);
+                        for (hp in helpers) {
+                            helperIds.push(helpers[hp].UserId);
+                        }
+                        return [4 /*yield*/, this.bookServiceRepository.getHelpersBlockedCustomer(userId, helperIds)];
+                    case 1:
+                        blockedCustomer = _a.sent();
+                        filteredHelper = helpers.filter(function (sr) {
+                            return !blockedCustomer.find(function (rm) {
+                                return (rm.UserId === sr.UserId);
+                            });
+                        });
+                        // console.log(filteredHelper);
+                        return [2 /*return*/, filteredHelper];
+                }
+            });
+        });
     };
     return BookService;
 }());

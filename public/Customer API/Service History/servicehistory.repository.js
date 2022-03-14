@@ -78,6 +78,14 @@ var ServiceHistoryRepository = /** @class */ (function () {
             });
         });
     };
+    ServiceHistoryRepository.prototype.getUserDetailById = function (userId) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, index_1.db.User.findOne({ where: { UserId: userId } })];
+            });
+        });
+    };
+    ;
     return ServiceHistoryRepository;
 }());
 exports.ServiceHistoryRepository = ServiceHistoryRepository;

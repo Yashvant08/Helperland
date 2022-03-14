@@ -4,6 +4,7 @@ import { BookServiceRepository } from "./bookservice.repository";
 import jwt from "jsonwebtoken";
 import { ServiceRequest } from "../models/servicerequest";
 import { FavoriteAndBlocked } from "../models/favoriteandblocked";
+import moment from "moment";
 
 export class BookService {
   public constructor(
@@ -109,14 +110,26 @@ export class BookService {
     return token;
   }
 
-  public getTargetUser(user:FavoriteAndBlocked[]):number[]{
-    let favoriteSP = [];
+  public async getTargetUser(user:FavoriteAndBlocked[], zipCode:string):Promise<Object[]>{
+    let helperId:number[] = [];
+    let favoriteSpDetail = [];
     for(let us in user){
-      if(user[us].IsFavorite===true && user[us].IsBlocked===false){
-        favoriteSP.push(user[us].TargetUserId);
+      helperId.push(user[us].TargetUserId);
+    }
+    const helperblock = await this.bookServiceRepository.getAllBlockedCustomerOfHelper(helperId);
+
+    const favoriteSP = user.filter(ar => !helperblock.find(rm => (rm.UserId === ar.TargetUserId && ar.UserId === rm.TargetUserId) ));
+    for(let sp in favoriteSP){
+      const spDetail = await this.bookServiceRepository.getHelperById(favoriteSP[sp].TargetUserId);
+      if(spDetail && spDetail.ZipCode === zipCode ){
+        favoriteSpDetail.push({
+          ServiceProviderId:spDetail.UserId,
+          ServiceProviderName: spDetail.FirstName!+" "+spDetail.LastName,
+          ProfilePicture: spDetail.UserProfilePicture
+        })
       }
     }
-    return favoriteSP;
+    return favoriteSpDetail;
   }
   
   public getEmailAddressForSendEmail(user:User[], body:any){
@@ -145,6 +158,36 @@ export class BookService {
       });
     });
     return users;
+
+  }
+
+  public async compareDateWithCurrentDate(date: string):Promise<boolean> {
+    const formatedDate1 = new Date(date.split("-").reverse().join("-"));
+    const formatedDate2 = new Date(moment(new Date()).format("YYYY-MM-DD"));
+    if (formatedDate1 > formatedDate2) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  public async removeHelperBlockedLoginCustomer(userId:number, helpers:User[]):Promise<User[]>
+  {
+    const helperIds:number[] = [];
+    // console.log(helpers);
+    for(let hp in helpers){
+      helperIds.push(helpers[hp].UserId);
+    }
+    const blockedCustomer  = await this.bookServiceRepository.getHelpersBlockedCustomer(userId, helperIds);
+    // console.log(blockedCustomer);
+    let filteredHelper = helpers.filter((sr) =>{
+          return !blockedCustomer.find((rm) => {
+            return (rm.UserId === sr.UserId)
+          }
+        )} 
+      );
+    // console.log(filteredHelper);
+    return filteredHelper;
 
   }
 

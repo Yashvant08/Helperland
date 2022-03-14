@@ -11,7 +11,22 @@ export class DashboardService {
 
   public async getAllServiceRequestByUserId(userId: number): Promise<ServiceRequest[] | null> 
   {
-    return this.dashboardRepository.getAllServiceRequestByUserId(userId);
+    return this.dashboardRepository.getAllServiceRequestByUserId(userId)
+    .then(serviceRequests => {
+      const sRequest:ServiceRequest[] = [];
+      const currentDate = new Date(moment(new Date()).format("YYYY-MM-DD"));
+      if(serviceRequests){
+        for(let sr in serviceRequests){
+          let serviceRequestDate = new Date(serviceRequests[sr].ServiceStartDate);
+          if(currentDate >= serviceRequestDate ){
+            console.log('hi');
+            continue;
+          }
+          sRequest.push(serviceRequests[sr]);
+        }
+      }
+      return sRequest;
+    });;
   };
 
   public async getServiceRequestDetailById(srId: number): Promise<ServiceRequest | null> 
@@ -24,18 +39,18 @@ export class DashboardService {
     return this.dashboardRepository.getAllServiceRequestOfHelper(helperId);
   };
 
-  public async rescheduleServiceRequest(date:Date, time:string, serviceId:number): Promise<[number, ServiceRequest[]]> 
+  public async rescheduleServiceRequest(date:Date, time:string, serviceId:number, userId:string): Promise<[number, ServiceRequest[]]> 
   {
-    return this.dashboardRepository.rescheduleServiceRequest(date, time, serviceId);
+    return this.dashboardRepository.rescheduleServiceRequest(date, time, serviceId, parseInt(userId));
   };
 
   public async getHelperById(helperId:number):Promise<User | null>{
     return this.dashboardRepository.getHelperById(helperId);
   };
 
-  public async updateServiceRequestStatus(serviceId:number): Promise<[number, ServiceRequest[]]> 
+  public async updateServiceRequestStatus(serviceId:number, userId:number): Promise<[number, ServiceRequest[]]> 
   {
-    return this.dashboardRepository.updateServiceRequestStatus(serviceId);
+    return this.dashboardRepository.updateServiceRequestStatus(serviceId,userId);
   };
 
   public compareDateWithCurrentDate(date: string) {

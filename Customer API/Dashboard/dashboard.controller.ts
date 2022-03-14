@@ -155,7 +155,7 @@ export class DashboardController {
     const { spId } = req.body;
     if (req.params.serviceId) {
       return this.dashboardService
-        .rescheduleServiceRequest(new Date(date),req.body.time,parseInt(req.params.serviceId))
+        .rescheduleServiceRequest(new Date(date),req.body.time,parseInt(req.params.serviceId),req.body.userId)
         .then((serviceRequest) => {
           if (serviceRequest.length > 0) {
             if (spId) {
@@ -222,7 +222,7 @@ export class DashboardController {
             } else {
               if (serviceRequest.UserId === req.body.userId) {
                 return this.dashboardService
-                  .updateServiceRequestStatus(parseInt(srId))
+                  .updateServiceRequestStatus(parseInt(srId),parseInt(req.body.userId))
                   .then((servicerequest) => {
                     if (servicerequest.length > 0) {
                       if (serviceRequest.ServiceProviderId) {

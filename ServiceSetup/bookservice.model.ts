@@ -51,7 +51,7 @@ export const BookServiceSchema = {
                         .required()
                         .example(1)
                         .description('ServiceId'),
-                ServiceStartDate: Joi.date()
+                ServiceStartDate: Joi.string()
                         .required()
                         .example('10-02-2022')
                         .description('Date'),

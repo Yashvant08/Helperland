@@ -2,8 +2,6 @@ import {db} from "../models/index";
 import {User} from "../models/user";
 import {UserAddress} from "../models/useraddress";
 import { ServiceRequest } from "../models/servicerequest";
-import { SRAddress } from "../models/servicerequestaddress";
-import { SRExtra } from "../models/servicerequestextra";
 import { FavoriteAndBlocked } from "../models/favoriteandblocked";
 import { Op } from "sequelize";
 
@@ -22,7 +20,11 @@ export class BookServiceRepository{
     }
 
     public async getFavoriteAndBlocked(userId:number): Promise<FavoriteAndBlocked[]>{
-        return db.FavoriteAndBlocked.findAll({where:{UserId:userId}});
+        return db.FavoriteAndBlocked.findAll({where:{UserId:userId, IsFavorite:true, IsBlocked:false}});
+    }
+
+    public async getAllBlockedCustomerOfHelper(userId:number[]): Promise<FavoriteAndBlocked[]>{
+        return db.FavoriteAndBlocked.findAll({where:{UserId:{[Op.or]:userId}, IsBlocked:true}});
     }
 
     public async getUserById(userId: number[], zipCode:string): Promise<User[]> {
@@ -45,6 +47,10 @@ export class BookServiceRepository{
         return db.User.findAll({where:{UserTypeId:3}});
     }
 
+    public async getHelpersBlockedCustomer(userId:number, helprId:number[]): Promise<FavoriteAndBlocked[]>{
+        return db.FavoriteAndBlocked.findAll({where:{UserId:{[Op.or]:helprId}, TargetUserId:userId, IsBlocked:true}});
+    }
+
 
     //Service Request methods
     public async createServiceRequest(ServiceRequest:{[key: number|string]:ServiceRequest}): Promise<ServiceRequest>{
@@ -58,22 +64,5 @@ export class BookServiceRepository{
     public async getBlockedHelper(userId:number, helperIds:number[]):Promise<FavoriteAndBlocked[]|null>{
         return db.FavoriteAndBlocked.findAll({where:{UserId:userId, TargetUserId:{[Op.or]: helperIds}, IsBlocked:true}});
     }
-
-    // public async getUserAddress(): Promise<UserAddress[]> {
-    //     return db.UserAddress.findAll({include: db.User});
-    // }
-
-    // public async getUsers(): Promise<User[]> {
-    //     return db.User.findAll({include: db.UserAddress});
-    // }
-
-    // public async getUserWithRequest(): Promise<User[]> {
-    //     return db.User.findAll({include: 'UserRequest'});
-    // }
-
-    // public async getRequestWithUser(): Promise<ServiceRequest[]> {
-    //     return db.ServiceRequest.findAll({include: 'UserRequest'});
-    // }
-
 
 }

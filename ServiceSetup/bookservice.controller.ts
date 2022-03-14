@@ -190,42 +190,53 @@ export class BookServiceController {
 
   public decodeToken: RequestHandler = async (req,res,next):Promise<Response|undefined> => {
     const token = req.headers.authorization || req.header('auth');
-    if (token) {
-      jwt.verify(token, process.env.SECRET_KEY!, (err, user: any) => {
-        if (err) {
-          return res.status(401).json({ message: "invalid or expired token" });
-        } else {
-          req.body.ZipCode = user.postalCode;
-          req.body.Email = user.userEmail;
-          return this.bookService
-            .getUserByEmail(user.userEmail)
-            .then((user) => {
-              if (user?.UserTypeId === 4) {
-                if(req.body.ServiceHours <3){
-                  return res.status(400).json({message:'service hours must be minimum 3 hours'});
-                }else{
-                  next();
+    const isFutureDate = await this.bookService.compareDateWithCurrentDate(req.body.ServiceStartDate);
+    if(isFutureDate){
+      req.body.ServiceStartDate = new Date(req.body.ServiceStartDate.toString().split('-').reverse().join('-'));
+      if (token) {
+        jwt.verify(token, process.env.SECRET_KEY!, (err, user: any) => {
+          if (err) {
+            return res.status(401).json({ message: "invalid or expired token" });
+          } else {
+            req.body.ZipCode = user.postalCode;
+            req.body.Email = user.userEmail;
+            return this.bookService
+              .getUserByEmail(user.userEmail)
+              .then((user) => {
+                if (user?.UserTypeId === 4) {
+                  if(req.body.ServiceHours <3){
+                    return res.status(400).json({message:'service hours must be minimum 3 hours'});
+                  }else{
+                    next();
+                  }
+                } else {
+                  return res.status(401).json({ message: "unauthorised user" });
                 }
-              } else {
-                return res.status(401).json({ message: "unauthorised user" });
-              }
-            })
-            .catch((error: Error) => {
-              console.log(error);
-              return res.status(500).json({
-                error: error,
+              })
+              .catch((error: Error) => {
+                console.log(error);
+                return res.status(500).json({
+                  error: error,
+                });
               });
-            });
-        }
-      });
-    } else {
-      return res.status(401).json("invalid or expired token");
-    }
+          }
+        });
+      } else {
+        return res.status(401).json("invalid or expired token");
+      }
+
+    }else{
+      return res.status(401).json({message:'enter future date for book service'});
+    } 
   };
 
   public CreateServiceRequest: RequestHandler = async (req, res, next):Promise<Response> => {
     const token = req.headers.authorization;
-    req.body.Status = 1;
+    if(req.body.ServiceProviderId){
+      req.body.Status = 2;
+    }else{
+      req.body.Status = 1;
+    }
     req.body.ServiceHourlyRate = 18;
     req.body.ExtraHours = req.body.ExtraService.length * 0.5;
     req.body.SubTotal = this.bookService.getSubTotal(
@@ -284,13 +295,16 @@ export class BookServiceController {
               }else{
                 return this.bookService
                 .getHelpersByZipCode(request.ZipCode)
-                .then(async (user) => {
-                  if (user.length > 0) {
-                    return this.bookService.getBlockedHelper(parseInt(req.body.userId), user)
+                .then(async (helper) => {
+                  if (helper.length > 0) {
+                    const hp = await this.bookService.removeHelperBlockedLoginCustomer(
+                      parseInt(req.body.userId), helper
+                    );
+                    return this.bookService.getBlockedHelper(parseInt(req.body.userId), hp)
                     .then(async blockedHelper => {
                       if(blockedHelper){
-                        const users = this.bookService.removeBlockedHelper(user,blockedHelper);
-                        console.log(users);
+                        console.log(blockedHelper);
+                        const users = await this.bookService.removeBlockedHelper(hp,blockedHelper);
                       email = this.bookService.getEmailAddressForSendEmail(users, req.body);
                       console.log(email);
                       for (let e in email) {
@@ -360,44 +374,22 @@ export class BookServiceController {
       });
   };
 
-  public getFavoriteAndBlocked: RequestHandler = async (req,res):Promise<Response | undefined> => {
+  public getFavoriteAndBlocked: RequestHandler = async (req,res):Promise<Response|void> => {
     const token = req.headers.authorization! || req.header('auth')!;
-    if (token) {
       jwt.verify(token,process.env.SECRET_KEY!,(error, userToken: any) => {
           if (error) {
-            return res
-              .status(401)
-              .json({ message: "invalid or expired token" });
+            return res.status(401).json({ message: "invalid or expired token" });
           } else {
-            return this.bookService
-              .getUserByEmail(userToken.userEmail)
-              .then((user) => {
-                if (user === null) {
-                  return res.status(404).json({ message: "user not found" });
-                } else {
-                  return this.bookService
-                    .getFavoriteAndBlocked(user.UserId)
+            if(req.body.userTypeId === 4 && req.body.userId){
+              return this.bookService
+                    .getFavoriteAndBlocked(req.body.userId)
                     .then(async (user) => {
                       if (user === null) {
-                        return res
-                          .status(404)
-                          .json({ message: "user not found" });
+                        return res.status(404).json({ message: "no helper in favorite list" });
                       } else {
-                        let favoriteSP = await this.bookService.getTargetUser(
-                          user
-                        );
+                        let favoriteSP = await this.bookService.getTargetUser(user, userToken.postalCode);
                         if (favoriteSP.length > 0) {
-                          return this.bookService
-                            .getUserById(favoriteSP, userToken.postalCode)
-                            .then((helper) => {
-                              return res.status(200).json(helper);
-                            })
-                            .catch((error) => {
-                              console.log(error);
-                              return res.status(500).json({
-                                error: error,
-                              });
-                            });
+                          return res.status(200).send(favoriteSP);
                         } else {
                           return res
                             .status(404)
@@ -407,23 +399,13 @@ export class BookServiceController {
                     })
                     .catch((error) => {
                       console.log(error);
-                      return res.status(500).json({
-                        error: error,
-                      });
+                      return res.status(500).json({ error: error });
                     });
-                }
-              })
-              .catch((error) => {
-                console.log(error);
-                return res.status(500).json({
-                  error: error,
-                });
-              });
+            }else{
+              return res.status(401).json({message:'unauthorised user'});
+            }
           }
         }
       );
-    } else {
-      return res.status(401).json({ message: "invalid or expired token" });
-    }
   };
 }

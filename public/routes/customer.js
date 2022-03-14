@@ -53,6 +53,7 @@ router.post("/CancelServiceRequest/:srId", (0, celebrate_1.celebrate)(CancelSR),
 //Service history routes
 router.get("/service-history", loginController.validateToken, serviceHistoryController.getCancelledOrCompletedSR);
 router.get("/service-history/:id", loginController.validateToken, serviceHistoryController.getServiceRequestDetailById);
+router.get("/history/download", loginController.validateToken, serviceHistoryController.exportDataInExcelFormat);
 router.post("/rating/:serviceId", (0, celebrate_1.celebrate)(Ratings), loginController.validateToken, serviceHistoryController.rateServiceProvider);
 //Favorite And Blocked routes
 router.get("/favorite-pros", loginController.validateToken, favoriteProsController.getAllHelperWorkedWithCustomer);

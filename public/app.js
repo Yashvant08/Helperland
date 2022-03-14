@@ -48,6 +48,7 @@ var bookservice_1 = __importDefault(require("./routes/bookservice"));
 var contactus_1 = __importDefault(require("./routes/contactus"));
 var login_1 = __importDefault(require("./routes/login"));
 var customer_1 = __importDefault(require("./routes/customer"));
+var serviceprovider_1 = __importDefault(require("./routes/serviceprovider"));
 // import Yaml from "yamljs"
 require('dotenv').config();
 var app = (0, express_1.default)();
@@ -70,7 +71,7 @@ var swaggerOption = {
             ]
         }
     },
-    apis: ["./routes/contactus.ts", "./routes/login.ts", "./routes/bookservice.ts", "./routes/customer.ts"]
+    apis: ["./routes/contactus.ts", "./routes/login.ts", "./routes/bookservice.ts", "./routes/customer.ts", "./routes/serviceprovider.ts"]
 };
 var swaggerDocs = (0, swagger_jsdoc_1.default)(swaggerOption);
 app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocs));
@@ -81,6 +82,7 @@ app.use('/trainee2021/contact-us', contactus_1.default);
 app.use('/trainee2021/Login-User', login_1.default);
 app.use('/trainee2021/bookservice', bookservice_1.default);
 app.use('/trainee2021/customer', customer_1.default);
+app.use('/trainee2021/serviceprovider', serviceprovider_1.default);
 app.listen(process.env.PORT, function () {
     console.log("Server starting at ".concat(process.env.PORT));
     models_1.sequelize.authenticate().then(function () { return __awaiter(void 0, void 0, void 0, function () {

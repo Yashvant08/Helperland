@@ -113,6 +113,12 @@ router.get(
   serviceHistoryController.getServiceRequestDetailById
 );
 
+router.get(
+  "/history/download",
+  loginController.validateToken,
+  serviceHistoryController.exportDataInExcelFormat
+);
+
 router.post(
   "/rating/:serviceId",
   celebrate(Ratings),
@@ -324,6 +330,8 @@ router.put(
  *  get:
  *   summary: Get requests of user
  *   description: User dashboard
+ *   tags: 
+ *    - Customer’s pages
  *   parameters:
  *    - in: header
  *      name: auth
@@ -346,6 +354,8 @@ router.put(
  *  get:
  *   summary: Get request detail
  *   description: Request detail by id
+ *   tags: 
+ *    - Customer’s pages
  *   parameters:
  *    - in: header
  *      name: auth
@@ -373,6 +383,8 @@ router.put(
  *  post:
  *   summary: Reschedule Service request
  *   description: Enter date and time
+ *   tags: 
+ *    - Customer’s pages
  *   parameters:
  *    - in: header
  *      name: auth
@@ -409,6 +421,8 @@ router.put(
  *  post:
  *   summary: Cancel Service request
  *   description: feedback
+ *   tags: 
+ *    - Customer’s pages
  *   parameters:
  *    - in: header
  *      name: auth
@@ -447,6 +461,8 @@ router.put(
  *  get:
  *   summary: User history
  *   description: history of users service request
+ *   tags: 
+ *    - Customer’s pages
  *   parameters:
  *    - in: header
  *      name: auth
@@ -469,6 +485,8 @@ router.put(
  *  get:
  *   summary: history request detail
  *   description: users completed or cancelled service request detail
+ *   tags: 
+ *    - Customer’s pages
  *   parameters:
  *    - in: header
  *      name: auth
@@ -495,6 +513,8 @@ router.put(
  *  post:
  *   summary: Ratings
  *   description: rete service provider
+ *   tags: 
+ *    - Customer’s pages
  *   parameters:
  *    - in: header
  *      name: auth
@@ -533,6 +553,8 @@ router.put(
  *  get:
  *   summary: Favorite helper
  *   description: helper worked with customer in past
+ *   tags: 
+ *    - Customer’s pages
  *   parameters:
  *    - in: header
  *      name: auth
@@ -555,6 +577,8 @@ router.put(
  *  post:
  *   summary: Favorite Service Provider
  *   description: Add or remove favorite service provider
+ *   tags: 
+ *    - Customer’s pages
  *   parameters:
  *    - in: header
  *      name: auth
@@ -593,6 +617,8 @@ router.put(
  *  post:
  *   summary: Block Service Provider
  *   description: Add or remove block service provider
+ *   tags: 
+ *    - Customer’s pages
  *   parameters:
  *    - in: header
  *      name: auth
@@ -635,6 +661,8 @@ router.put(
  *  get:
  *   summary: User detail
  *   description: Display user details.
+ *   tags: 
+ *    - Customer’s pages
  *   parameters:
  *    - in: header
  *      name: auth
@@ -659,6 +687,8 @@ router.put(
  *  put:
  *   summary: Update User detail
  *   description: edit user details to update.
+ *   tags: 
+ *    - Customer’s pages
  *   parameters:
  *    - in: header
  *      name: auth
@@ -690,6 +720,8 @@ router.put(
  *  get:
  *   summary: User addresses
  *   description: Display user addresses.
+ *   tags: 
+ *    - Customer’s pages
  *   parameters:
  *    - in: header
  *      name: auth
@@ -714,6 +746,8 @@ router.put(
  *  get:
  *   summary: User addresses
  *   description: Display user addresses.
+ *   tags: 
+ *    - Customer’s pages
  *   parameters:
  *    - in: header
  *      name: auth
@@ -742,6 +776,8 @@ router.put(
  *  put:
  *   summary: Update address
  *   description: Change detail to update address.
+ *   tags: 
+ *    - Customer’s pages
  *   parameters:
  *    - in: header
  *      name: auth
@@ -778,6 +814,8 @@ router.put(
  *  post:
  *   summary: Create address
  *   description: add new address
+ *   tags: 
+ *    - Customer’s pages
  *   parameters:
  *    - in: header
  *      name: auth
@@ -808,6 +846,8 @@ router.put(
  *  put:
  *   summary: Delete address
  *   description: remove address.
+ *   tags: 
+ *    - Customer’s pages
  *   parameters:
  *    - in: header
  *      name: auth
@@ -839,6 +879,8 @@ router.put(
  *  put:
  *   summary: Change password
  *   description: enter old password and new password.
+ *   tags: 
+ *    - Customer’s pages
  *   parameters:
  *    - in: header
  *      name: auth

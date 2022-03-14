@@ -78,6 +78,8 @@ const subUserController:SubUserController = new SubUserController(subUserService
  *  post:
  *   summary: create user
  *   description: create user for contact
+ *   tags: 
+ *    - Home Screen and public pages
  *   parameters:
  *    - in: header
  *      name: auth
@@ -102,6 +104,8 @@ router.post('/createContact',controller.authenticate,controller.createUsers);
  *  get:
  *   summary: get all users
  *   description: get all users
+ *   tags: 
+ *    - Home Screen and public pages
  *   responses:
  *    200:
  *     description: success
@@ -116,6 +120,8 @@ router.get('/getContact',controller.getUsers);
  *   get:
  *    summary: get user by id
  *    description: get user by id
+ *    tags: 
+ *     - Home Screen and public pages
  *    parameters:
  *     - in: path
  *       name: id
@@ -146,6 +152,8 @@ router.get('/getContact/:id',controller.getUserById);
  *  post:
  *   summary: Subscribe to NewsLetter
  *   description: Enter email
+ *   tags: 
+ *    - Home Screen and public pages
  *   requestBody:
  *    content:
  *     multipart/form-data:

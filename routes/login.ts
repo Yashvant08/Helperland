@@ -49,6 +49,27 @@ const resetPassRepo:ResetRepository = new ResetRepository();
 const resetPassService:ResetService = new ResetService(resetPassRepo);
 const resetPassController:ResetController = new ResetController(resetPassService);
 
+
+
+// user sign-up routes
+router.post('/userRegistration', celebrate(add), userController.createUsers);
+router.get('/activate/user/:token',userController.activateAccount);
+
+
+// service provider sign-up routes
+router.post('/sp-sign-up', celebrate(validate),helperController.createHelper);
+router.get('/activate/helper/:token', helperController.activateAccount);
+
+//Login routes
+router.post('/login',celebrate(addLogin),loginController.checkLogin);
+router.delete('/logout',loginController.validateToken,loginController.removeToken);
+
+//Forgot password routes
+router.post('/forgot-password', celebrate(addReset),resetPassController.forgotPassword);
+router.post('/reset-password',celebrate(addPassword),resetPassController.resetPassword);
+
+
+
 /**
  *@swagger
  * definitions:
@@ -107,14 +128,15 @@ const resetPassController:ResetController = new ResetController(resetPassService
  *     description: new password
  */
 
-// user sign-up routes
-
+//Customer signup
 /**
  * @swagger
  * /trainee2021/Login-User/userRegistration:
  *  post:
  *   summary: Customer Sign-up
  *   description: user registration
+ *   tags: 
+ *    - Customer Signup/Login
  *   requestBody:
  *    content:
  *     application/json:
@@ -128,18 +150,16 @@ const resetPassController:ResetController = new ResetController(resetPassService
  *    500:
  *     description: failure in registration.
  */
-router.post('/userRegistration', celebrate(add), userController.createUsers);
-router.get('/activate/user/:token',userController.activateAccount);
 
-
-// service provider sign-up routes
-
+//Service provider signup
 /**
  * @swagger
  * /trainee2021/Login-User/sp-sign-up:
  *  post:
  *   summary: Become Helper
  *   description: Helper registration
+ *   tags: 
+ *    - Customer Signup/Login
  *   requestBody:
  *    content:
  *     application/json:
@@ -153,17 +173,16 @@ router.get('/activate/user/:token',userController.activateAccount);
  *    500:
  *     description: failure in registration.
  */
-router.post('/sp-sign-up', celebrate(validate),helperController.createHelper);
-router.get('/activate/helper/:token', helperController.activateAccount);
 
-//Login routes
-
+//Login
 /**
  * @swagger
  * /trainee2021/Login-User/login:
  *  post:
  *   summary: User Login
  *   description: Login
+ *   tags: 
+ *    - Customer Signup/Login
  *   requestBody:
  *    content:
  *     application/json:
@@ -181,13 +200,16 @@ router.get('/activate/helper/:token', helperController.activateAccount);
  *    500:
  *     description: something went wrong.
  */
-router.post('/login',celebrate(addLogin),loginController.checkLogin);
+
+//Logout
 /**
  * @swagger
  * /trainee2021/Login-User/logout:
  *  delete:
  *   summary: User Logout
  *   description: Logout
+ *   tags: 
+ *    - Customer Signup/Login
  *   parameters:
  *    - in: header
  *      name: auth
@@ -199,16 +221,16 @@ router.post('/login',celebrate(addLogin),loginController.checkLogin);
  *    500:
  *     description: something went wrong.
  */
-router.delete('/logout',loginController.validateToken,loginController.removeToken);
 
-//Forgot password routes
-
+//Forgot-password
 /**
  * @swagger
  * /trainee2021/Login-User/forgot-password:
  *  post:
  *   summary: forgot Password
  *   description: Enter email
+ *   tags: 
+ *    - Customer Signup/Login
  *   requestBody:
  *    content:
  *     application/json:
@@ -222,13 +244,16 @@ router.delete('/logout',loginController.validateToken,loginController.removeToke
  *    500:
  *     description: something went wrong.
  */
-router.post('/forgot-password', celebrate(addReset),resetPassController.forgotPassword);
+
+//Reset-password
 /**
  * @swagger
  * /trainee2021/Login-User/reset-password:
  *  post:
  *   summary: Reset Password
  *   description: Enter new password
+ *   tags: 
+ *    - Customer Signup/Login
  *   requestBody:
  *    content:
  *     application/json:
@@ -244,6 +269,5 @@ router.post('/forgot-password', celebrate(addReset),resetPassController.forgotPa
  *    500:
  *     description: something went wrong.
  */
-router.post('/reset-password',celebrate(addPassword),resetPassController.resetPassword);
 
 export = router;

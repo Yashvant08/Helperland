@@ -50,7 +50,22 @@ var DashboardService = /** @class */ (function () {
     DashboardService.prototype.getAllServiceRequestByUserId = function (userId) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, this.dashboardRepository.getAllServiceRequestByUserId(userId)];
+                return [2 /*return*/, this.dashboardRepository.getAllServiceRequestByUserId(userId)
+                        .then(function (serviceRequests) {
+                        var sRequest = [];
+                        var currentDate = new Date((0, moment_1.default)(new Date()).format("YYYY-MM-DD"));
+                        if (serviceRequests) {
+                            for (var sr in serviceRequests) {
+                                var serviceRequestDate = new Date(serviceRequests[sr].ServiceStartDate);
+                                if (currentDate >= serviceRequestDate) {
+                                    console.log('hi');
+                                    continue;
+                                }
+                                sRequest.push(serviceRequests[sr]);
+                            }
+                        }
+                        return sRequest;
+                    })];
             });
         });
     };
@@ -71,10 +86,10 @@ var DashboardService = /** @class */ (function () {
         });
     };
     ;
-    DashboardService.prototype.rescheduleServiceRequest = function (date, time, serviceId) {
+    DashboardService.prototype.rescheduleServiceRequest = function (date, time, serviceId, userId) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, this.dashboardRepository.rescheduleServiceRequest(date, time, serviceId)];
+                return [2 /*return*/, this.dashboardRepository.rescheduleServiceRequest(date, time, serviceId, parseInt(userId))];
             });
         });
     };
@@ -87,10 +102,10 @@ var DashboardService = /** @class */ (function () {
         });
     };
     ;
-    DashboardService.prototype.updateServiceRequestStatus = function (serviceId) {
+    DashboardService.prototype.updateServiceRequestStatus = function (serviceId, userId) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, this.dashboardRepository.updateServiceRequestStatus(serviceId)];
+                return [2 /*return*/, this.dashboardRepository.updateServiceRequestStatus(serviceId, userId)];
             });
         });
     };

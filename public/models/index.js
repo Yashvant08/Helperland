@@ -208,6 +208,7 @@ exports.db.Rating.belongsTo(exports.db.ServiceRequest, {
         name: "ServiceRequestId",
         allowNull: false,
     },
+    as: 'RatingServiceRequest',
     constraints: true,
     onDelete: "CASCADE",
 });

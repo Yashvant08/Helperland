@@ -210,7 +210,7 @@ var DashboardController = /** @class */ (function () {
                 spId = req.body.spId;
                 if (req.params.serviceId) {
                     return [2 /*return*/, this.dashboardService
-                            .rescheduleServiceRequest(new Date(date), req.body.time, parseInt(req.params.serviceId))
+                            .rescheduleServiceRequest(new Date(date), req.body.time, parseInt(req.params.serviceId), req.body.userId)
                             .then(function (serviceRequest) {
                             if (serviceRequest.length > 0) {
                                 if (spId) {
@@ -281,7 +281,7 @@ var DashboardController = /** @class */ (function () {
                                 else {
                                     if (serviceRequest.UserId === req.body.userId) {
                                         return _this.dashboardService
-                                            .updateServiceRequestStatus(parseInt(srId))
+                                            .updateServiceRequestStatus(parseInt(srId), parseInt(req.body.userId))
                                             .then(function (servicerequest) {
                                             if (servicerequest.length > 0) {
                                                 if (serviceRequest.ServiceProviderId) {

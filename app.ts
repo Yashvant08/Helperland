@@ -7,6 +7,7 @@ import bookservice from "./routes/bookservice";
 import contactUs from "./routes/contactus";
 import login from "./routes/login";
 import customer from "./routes/customer";
+import serviceProvider from "./routes/serviceprovider";
 // import Yaml from "yamljs"
 
 
@@ -32,7 +33,7 @@ const swaggerOption={
             ]
         }
     },
-    apis:["./routes/contactus.ts","./routes/login.ts","./routes/bookservice.ts", "./routes/customer.ts"]
+    apis:["./routes/contactus.ts","./routes/login.ts","./routes/bookservice.ts", "./routes/customer.ts","./routes/serviceprovider.ts"]
 }
 const swaggerDocs = swaggerJSDoc(swaggerOption);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
@@ -45,6 +46,7 @@ app.use('/trainee2021/contact-us',contactUs);
 app.use('/trainee2021/Login-User',login);
 app.use('/trainee2021/bookservice',bookservice);
 app.use('/trainee2021/customer',customer);
+app.use('/trainee2021/serviceprovider',serviceProvider);
 
 app.listen(process.env.PORT, () => {
     console.log(`Server starting at ${process.env.PORT}`)

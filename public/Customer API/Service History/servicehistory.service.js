@@ -100,6 +100,74 @@ var ServiceHistoryService = /** @class */ (function () {
         var Ratings = (body.OnTimeArrival + body.Friendly + body.QualityOfService) / 3;
         return Ratings;
     };
+    ServiceHistoryService.prototype.getDatForExport = function (serviceRequest) {
+        return __awaiter(this, void 0, void 0, function () {
+            var exportHistory, status, _a, _b, _i, history_1, user, time;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        exportHistory = [];
+                        _a = [];
+                        for (_b in serviceRequest)
+                            _a.push(_b);
+                        _i = 0;
+                        _c.label = 1;
+                    case 1:
+                        if (!(_i < _a.length)) return [3 /*break*/, 5];
+                        history_1 = _a[_i];
+                        return [4 /*yield*/, this.serviceHistoryRepository.getUserDetailById(serviceRequest[history_1].ServiceProviderId)];
+                    case 2:
+                        user = _c.sent();
+                        return [4 /*yield*/, this.convertTimeToStartEndTime(serviceRequest[history_1])];
+                    case 3:
+                        time = _c.sent();
+                        if (serviceRequest[history_1].Status === 4) {
+                            status = "Cancelled";
+                        }
+                        else {
+                            status = "Completed";
+                        }
+                        exportHistory.push({
+                            ServiceId: serviceRequest[history_1].ServiceRequestId,
+                            StartDate: serviceRequest[history_1].ServiceStartDate.toString().split('-').reverse().join('/') + " " + time,
+                            ServiceProvider: (user === null || user === void 0 ? void 0 : user.FirstName) + " " + (user === null || user === void 0 ? void 0 : user.LastName),
+                            Payment: serviceRequest[history_1].TotalCost,
+                            Status: status
+                        });
+                        _c.label = 4;
+                    case 4:
+                        _i++;
+                        return [3 /*break*/, 1];
+                    case 5: return [2 /*return*/, exportHistory];
+                }
+            });
+        });
+    };
+    ServiceHistoryService.prototype.convertTimeToStartEndTime = function (serviceRequest) {
+        return __awaiter(this, void 0, void 0, function () {
+            var startTimeArray, startTime, endTimeInt, endTimeArray, time;
+            return __generator(this, function (_a) {
+                startTimeArray = serviceRequest.ServiceStartTime.toString().split(':');
+                startTime = startTimeArray[0] + ":" + startTimeArray[1];
+                if (startTimeArray[1] === "30") {
+                    startTimeArray[1] = "0.5";
+                }
+                else {
+                    startTimeArray[1] = "0";
+                }
+                endTimeInt = parseFloat(startTimeArray[0]) + parseFloat(startTimeArray[1]) + serviceRequest.ServiceHours + serviceRequest.ExtraHours;
+                endTimeArray = endTimeInt.toString().split('.');
+                if (endTimeArray[1] === '5') {
+                    endTimeArray[1] = '30';
+                }
+                else {
+                    endTimeArray[1] = '00';
+                }
+                time = startTime + " - " + endTimeArray[0] + ":" + endTimeArray[1];
+                return [2 /*return*/, time];
+            });
+        });
+    };
     return ServiceHistoryService;
 }());
 exports.ServiceHistoryService = ServiceHistoryService;

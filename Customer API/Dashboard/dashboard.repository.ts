@@ -29,15 +29,15 @@ export class DashboardRepository {
     });
   }
 
-  public async rescheduleServiceRequest(date: Date,time: string,srviceId: number): Promise<[number, ServiceRequest[]]> {
+  public async rescheduleServiceRequest(date: Date,time: string,srviceId: number, userId:number): Promise<[number, ServiceRequest[]]> {
     return db.ServiceRequest.update(
-      { ServiceStartDate: date, ServiceStartTime: time },
+      { ServiceStartDate: date, ServiceStartTime: time, ModifiedBy:userId },
       { where: { ServiceRequestId: srviceId } }
     );
   }
 
-  public async updateServiceRequestStatus(srviceId: number): Promise<[number, ServiceRequest[]]> {
-    return db.ServiceRequest.update({Status:4},{where:{ServiceRequestId: srviceId }});
+  public async updateServiceRequestStatus(srviceId: number, userId:number): Promise<[number, ServiceRequest[]]> {
+    return db.ServiceRequest.update({Status:4, ModifiedBy:userId},{where:{ServiceRequestId: srviceId }});
   }
 
   public async getHelperById(helperId:number):Promise<User | null>{

@@ -66,7 +66,15 @@ var BookServiceRepository = /** @class */ (function () {
     BookServiceRepository.prototype.getFavoriteAndBlocked = function (userId) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, index_1.db.FavoriteAndBlocked.findAll({ where: { UserId: userId } })];
+                return [2 /*return*/, index_1.db.FavoriteAndBlocked.findAll({ where: { UserId: userId, IsFavorite: true, IsBlocked: false } })];
+            });
+        });
+    };
+    BookServiceRepository.prototype.getAllBlockedCustomerOfHelper = function (userId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a;
+            return __generator(this, function (_b) {
+                return [2 /*return*/, index_1.db.FavoriteAndBlocked.findAll({ where: { UserId: (_a = {}, _a[sequelize_1.Op.or] = userId, _a), IsBlocked: true } })];
             });
         });
     };
@@ -102,6 +110,14 @@ var BookServiceRepository = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, index_1.db.User.findAll({ where: { UserTypeId: 3 } })];
+            });
+        });
+    };
+    BookServiceRepository.prototype.getHelpersBlockedCustomer = function (userId, helprId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a;
+            return __generator(this, function (_b) {
+                return [2 /*return*/, index_1.db.FavoriteAndBlocked.findAll({ where: { UserId: (_a = {}, _a[sequelize_1.Op.or] = helprId, _a), TargetUserId: userId, IsBlocked: true } })];
             });
         });
     };

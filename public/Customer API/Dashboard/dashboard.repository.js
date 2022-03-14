@@ -75,17 +75,17 @@ var DashboardRepository = /** @class */ (function () {
             });
         });
     };
-    DashboardRepository.prototype.rescheduleServiceRequest = function (date, time, srviceId) {
+    DashboardRepository.prototype.rescheduleServiceRequest = function (date, time, srviceId, userId) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, index_1.db.ServiceRequest.update({ ServiceStartDate: date, ServiceStartTime: time }, { where: { ServiceRequestId: srviceId } })];
+                return [2 /*return*/, index_1.db.ServiceRequest.update({ ServiceStartDate: date, ServiceStartTime: time, ModifiedBy: userId }, { where: { ServiceRequestId: srviceId } })];
             });
         });
     };
-    DashboardRepository.prototype.updateServiceRequestStatus = function (srviceId) {
+    DashboardRepository.prototype.updateServiceRequestStatus = function (srviceId, userId) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, index_1.db.ServiceRequest.update({ Status: 4 }, { where: { ServiceRequestId: srviceId } })];
+                return [2 /*return*/, index_1.db.ServiceRequest.update({ Status: 4, ModifiedBy: userId }, { where: { ServiceRequestId: srviceId } })];
             });
         });
     };

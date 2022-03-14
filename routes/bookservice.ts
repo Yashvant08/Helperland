@@ -24,6 +24,33 @@ const loginController:LoginController = new LoginController(loginService);
 const { zipcode, userAddress, createService} = BookServiceSchema;
 
 
+
+
+
+
+
+
+
+//Service Request routes
+
+router.post('/postalcode-check',celebrate(zipcode),loginController.validateToken,controller.checkAvailibility);
+
+router.post('/CreateRequest', celebrate(createService),loginController.validateToken,controller.decodeToken, controller.CreateServiceRequest);
+
+
+
+//User routes
+
+router.post('/UserAddress', celebrate(userAddress),loginController.validateToken,controller.createUserAddress);
+
+router.get('/UserAddresses', loginController.validateToken,controller.getUserAddresses);
+
+router.post('/createfb', loginController.validateToken,controller.createFavoriteAndBlocked);
+
+router.get('/createfb', loginController.validateToken,controller.getFavoriteAndBlocked);
+
+
+
 /**
  *@swagger
  * definitions:
@@ -131,18 +158,15 @@ const { zipcode, userAddress, createService} = BookServiceSchema;
  */
 
 
-
-
-
-
-//Service Request routes
-
-/**
+ //Postal code check
+ /**
  * @swagger
  * /trainee2021/bookservice/postalcode-check:
  *  post:
  *   summary: Check helper availibility
  *   description: Enter zip code
+ *   tags: 
+ *    - Book Service
  *   parameters:
  *    - in: header
  *      name: auth
@@ -164,14 +188,16 @@ const { zipcode, userAddress, createService} = BookServiceSchema;
  *     description: failure in finding service provider.
  * 
  */
-router.post('/postalcode-check',celebrate(zipcode),loginController.validateToken,controller.checkAvailibility);
 
+//Create service request
 /**
  * @swagger
  * /trainee2021/bookservice/CreateRequest:
  *  post:
  *   summary: Create Service Request
  *   description: service setup
+ *   tags: 
+ *    - Book Service
  *   parameters:
  *    - in: header
  *      name: auth
@@ -192,18 +218,16 @@ router.post('/postalcode-check',celebrate(zipcode),loginController.validateToken
  *    500:
  *     description: failure in service booking.
  */
-router.post('/CreateRequest', celebrate(createService),loginController.validateToken,controller.decodeToken, controller.CreateServiceRequest);
 
-
-
-//User routes
-
+//Create address
 /**
  * @swagger
  * /trainee2021/bookservice/UserAddress:
  *  post:
  *   summary: Create Address
  *   description: Enter address
+ *   tags: 
+ *    - Book Service
  *   parameters:
  *    - in: header
  *      name: auth
@@ -224,14 +248,16 @@ router.post('/CreateRequest', celebrate(createService),loginController.validateT
  *    500:
  *     description: failure in creating address.
  */
-router.post('/UserAddress', celebrate(userAddress),loginController.validateToken,controller.createUserAddress);
 
+//Display user addresses
 /**
  * @swagger
  * /trainee2021/bookservice/UserAddresses:
  *  get:
  *   summary: Get user addresses
  *   description: get address
+ *   tags: 
+ *    - Book Service
  *   parameters:
  *    - in: header
  *      name: auth
@@ -247,16 +273,16 @@ router.post('/UserAddress', celebrate(userAddress),loginController.validateToken
  *    500:
  *     description: failure in finding address
  */
-router.get('/UserAddresses', loginController.validateToken,controller.getUserAddresses);
 
-router.post('/createfb', loginController.validateToken,controller.createFavoriteAndBlocked);
-
+//Get favorite and blocked
 /**
  * @swagger
  * /trainee2021/bookservice/createfb:
  *  get:
  *   summary: Get favorite and blocked 
  *   description: favorite and blocked user
+ *   tags: 
+ *    - Book Service
  *   parameters:
  *    - in: header
  *      name: auth
@@ -272,9 +298,5 @@ router.post('/createfb', loginController.validateToken,controller.createFavorite
  *    500:
  *     description: failure in finding user
  */
-router.get('/createfb', loginController.validateToken,controller.getFavoriteAndBlocked);
-
-
-
 
 export = router;

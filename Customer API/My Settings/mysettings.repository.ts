@@ -52,7 +52,7 @@ export class MySettingsRepository {
   }
 
   public async changePassword(userId:number, password:string):Promise<[number,User[]]>{
-    return db.User.update({Password:password},{where:{UserId:userId}});
+    return db.User.update({Password:password, ModifiedBy:userId},{where:{UserId:userId}});
   }
 
 }

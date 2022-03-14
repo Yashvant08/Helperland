@@ -113,7 +113,7 @@ var MySettingsRepository = /** @class */ (function () {
     MySettingsRepository.prototype.changePassword = function (userId, password) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, index_1.db.User.update({ Password: password }, { where: { UserId: userId } })];
+                return [2 /*return*/, index_1.db.User.update({ Password: password, ModifiedBy: userId }, { where: { UserId: userId } })];
             });
         });
     };

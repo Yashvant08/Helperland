@@ -41,6 +41,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ServiceHistoryController = void 0;
 var mailgun_js_1 = __importDefault(require("mailgun-js"));
+var exceljs_1 = __importDefault(require("exceljs"));
 require("dotenv").config();
 var DOMAIN = process.env.MAILGUN_DOMAIN;
 var mg = (0, mailgun_js_1.default)({
@@ -111,6 +112,61 @@ var ServiceHistoryController = /** @class */ (function () {
                     return [2 /*return*/, res.status(401).json({ message: "Unauthorised User" })];
                 }
                 return [2 /*return*/];
+            });
+        }); };
+        this.exportDataInExcelFormat = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+            var exportHistory;
+            var _this = this;
+            return __generator(this, function (_a) {
+                exportHistory = [];
+                return [2 /*return*/, this.serviceHistoryService.getServiceRequestHistoryOfUser(parseInt(req.body.userId))
+                        .then(function (requestHistory) { return __awaiter(_this, void 0, void 0, function () {
+                        var pastDateHistory, workbook, worksheet, data;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    if (!requestHistory) return [3 /*break*/, 7];
+                                    if (!(requestHistory.length > 0)) return [3 /*break*/, 5];
+                                    pastDateHistory = this.serviceHistoryService.compareDateWithCurrentDate(requestHistory);
+                                    if (!(requestHistory.length > 0)) return [3 /*break*/, 3];
+                                    return [4 /*yield*/, this.serviceHistoryService.getDatForExport(pastDateHistory)];
+                                case 1:
+                                    exportHistory = _a.sent();
+                                    workbook = new exceljs_1.default.Workbook();
+                                    worksheet = workbook.addWorksheet("history");
+                                    worksheet.columns = [
+                                        { header: "ServiceId", key: "ServiceId", width: 10 },
+                                        { header: "StartDate", key: "StartDate", width: 25 },
+                                        { header: "ServiceProvider", key: "ServiceProvider", width: 25 },
+                                        { header: "Payment", key: "Payment", width: 10 },
+                                        { header: "Status", key: "Status", width: 15 }
+                                    ];
+                                    worksheet.addRows(exportHistory);
+                                    res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                                    res.setHeader("Content-Disposition", "attachment; filename=" + "history.xlsx");
+                                    return [4 /*yield*/, workbook.xlsx.writeFile("../history.xlsx")
+                                            .then(function () {
+                                            res.send({
+                                                status: "success",
+                                                message: "file successfully downloaded"
+                                            });
+                                        })];
+                                case 2:
+                                    data = _a.sent();
+                                    return [3 /*break*/, 4];
+                                case 3: return [2 /*return*/, res.status(404).json({ message: 'No data to export 1' })];
+                                case 4: return [3 /*break*/, 6];
+                                case 5: return [2 /*return*/, res.status(404).json({ message: 'No data to export 2' })];
+                                case 6: return [3 /*break*/, 8];
+                                case 7: return [2 /*return*/, res.status(404).json({ message: 'No data to export 3' })];
+                                case 8: return [2 /*return*/];
+                            }
+                        });
+                    }); })
+                        .catch(function (error) {
+                        console.log(error);
+                        return res.status(500).json({ error: error });
+                    })];
             });
         }); };
         this.rateServiceProvider = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
