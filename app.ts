@@ -8,6 +8,7 @@ import contactUs from "./routes/contactus";
 import login from "./routes/login";
 import customer from "./routes/customer";
 import serviceProvider from "./routes/serviceprovider";
+import admin from './routes/admin'
 // import Yaml from "yamljs"
 
 
@@ -47,6 +48,7 @@ app.use('/trainee2021/Login-User',login);
 app.use('/trainee2021/bookservice',bookservice);
 app.use('/trainee2021/customer',customer);
 app.use('/trainee2021/serviceprovider',serviceProvider);
+app.use('/trainee2021/admin',admin);
 
 app.listen(process.env.PORT, () => {
     console.log(`Server starting at ${process.env.PORT}`)

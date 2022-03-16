@@ -38,6 +38,7 @@ export class BlockCustomerService {
         }
       }
     }
+    //Reomve duplicate object from array
     const userIds =customer.map(o => o.UserId)
     const filterArray =customer.filter(({UserId}, index) => !userIds.includes(UserId,index+1)) 
     return filterArray;

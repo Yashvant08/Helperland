@@ -507,6 +507,31 @@ router.put(
  *     description: internal server error.
  */
 
+  /**
+ * @swagger
+ * /trainee2021/customer/history/download:
+ *  get:
+ *   summary: History download
+ *   description: download history
+ *   tags: 
+ *    - Customer’s pages 
+ *   parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
+ *   responses:
+ *    200:
+ *     description: sevice request detail.
+ *    401:
+ *     description: invalid login credential or Unauthorised user or invalid or expired token
+ *    404:
+ *     description: no data to export.
+ *    500:
+ *     description: internal server error.
+ * 
+ */
+
  /**
  * @swagger
  * /trainee2021/customer/rating/{serviceId}:
