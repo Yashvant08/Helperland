@@ -36,42 +36,42 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UsersRepository = void 0;
+exports.UserManagementRepository = void 0;
 var index_1 = require("../../models/index");
-var UsersRepository = /** @class */ (function () {
-    function UsersRepository() {
+var sequelize_1 = require("sequelize");
+var UserManagementRepository = /** @class */ (function () {
+    function UserManagementRepository() {
     }
-    UsersRepository.prototype.createUsers = function (users) {
+    UserManagementRepository.prototype.getAllUsers = function () {
         return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, index_1.db.User.create(users)];
+            var _a;
+            return __generator(this, function (_b) {
+                return [2 /*return*/, index_1.db.User.findAll({ where: { UserTypeId: (_a = {}, _a[sequelize_1.Op.or] = [3, 4], _a) } })];
             });
         });
     };
-    UsersRepository.prototype.getUserByEmail = function (userEmail) {
+    UserManagementRepository.prototype.getUserDetailById = function (userId) {
         return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, index_1.db.User.findOne({ where: { Email: userEmail } })];
+            var _a;
+            return __generator(this, function (_b) {
+                return [2 /*return*/, index_1.db.User.findOne({ where: { UserId: userId, UserTypeId: (_a = {}, _a[sequelize_1.Op.or] = [3, 4], _a) } })];
             });
         });
     };
-    UsersRepository.prototype.getUserByMobile = function (userMobile) {
+    UserManagementRepository.prototype.activeUser = function (userId) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, index_1.db.User.findOne({ where: { Mobile: userMobile } })];
+                return [2 /*return*/, index_1.db.User.update({ IsActive: true }, { where: { UserId: userId } })];
             });
         });
     };
-    UsersRepository.prototype.updateUser = function (userIsRegistered, userEmail) {
+    UserManagementRepository.prototype.inActiveUser = function (userId) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, index_1.db.User.update({
-                        IsRegisteredUser: userIsRegistered,
-                        IsActive: true
-                    }, { where: { Email: userEmail } })];
+                return [2 /*return*/, index_1.db.User.update({ IsActive: false }, { where: { UserId: userId } })];
             });
         });
     };
-    return UsersRepository;
+    return UserManagementRepository;
 }());
-exports.UsersRepository = UsersRepository;
+exports.UserManagementRepository = UserManagementRepository;

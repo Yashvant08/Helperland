@@ -61,6 +61,7 @@ var HelpersController = /** @class */ (function () {
             return __generator(this, function (_a) {
                 req.body.UserTypeId = UserTypeId;
                 req.body.IsRegisteredUser = false;
+                req.body.IsActive = false;
                 same = req.body.Password === req.body.ConfirmPassword;
                 if (!same) {
                     return [2 /*return*/, res.status(400).json({ message: "Password does not match " })];

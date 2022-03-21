@@ -15,7 +15,7 @@ export class LoginController {
     return this.loginService
       .getUserByEmail(req.body.Email)
       .then(async (user: User | null) => {
-        if (user) {
+        if (user && user.IsActive) {
           const register = this.loginService.isRegister(user);
           if (register) {
             const isSame = await bcrypt.compare(
@@ -86,7 +86,11 @@ export class LoginController {
             req.body.userId = user.UserId;
             req.body.userTypeId = user.UserTypeId;
             if(user.IsRegisteredUser === true){
-              next();
+              if(user.IsActive){
+                next();
+              }else{
+                return res.status(401).json({message:'your account is inactive'});
+              }
             }else{
               return res.status(401).json({message:'Activate your account'});
             }

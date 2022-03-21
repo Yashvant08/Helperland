@@ -1,9 +1,9 @@
 import { db } from "../../models/index";
 import { User } from "../../models/user";
 import { ServiceRequest } from "../../models/servicerequest";
-import { FavoriteAndBlocked } from "../../models/favoriteandblocked";
 import { SRAddress } from "../../models/servicerequestaddress";
 import { Rating } from "../../models/rating";
+import { updateServiceRequestBody } from "./types";
 
 
 export class ServiceRequestRepository {
@@ -18,6 +18,22 @@ export class ServiceRequestRepository {
 
   public async updateServiceRequest(requestId:number, userId:number):Promise<[number, ServiceRequest[]]>{
     return db.ServiceRequest.update({Status:4, ModifiedBy:userId},{where:{ServiceRequestId:requestId}});
+  }
+
+  public async updateServiceRequestAddress(body:updateServiceRequestBody):Promise<[number, SRAddress[]]>{
+    return db.SRAddress.update({
+      Addressline1:body.Addressline1,
+      Addressline2:body.Addressline2,
+      City:body.City,
+      PostalCode: body.PostalCode
+    },{where:{ServiceRequestId:body.ServiceRequestId}});
+  }
+
+  public async rescheduleServiceRequest(date:Date,body: updateServiceRequestBody, userId:number): Promise<[number, ServiceRequest[]]> {
+    return db.ServiceRequest.update(
+      { ServiceStartDate: date, ServiceStartTime: body.ServiceTime, ModifiedBy:userId },
+      { where: { ServiceRequestId: body.ServiceRequestId } }
+    );
   }
 
   public async getUserByEmail(email:string): Promise<User| null>{
@@ -39,38 +55,4 @@ export class ServiceRequestRepository {
       ServiceRequestId:requestId
     }});
   }
-
-  // public async getRequestAddress(requestId:number): Promise<SRAddress | null>{
-  //   return db.SRAddress.findOne({where:{ServiceRequestId:requestId}});
-  // }
-
-  // public async getServiceRequestDetailById(requestId:number): Promise<ServiceRequest | null>{
-  //   return db.ServiceRequest.findOne({where:{ServiceRequestId:requestId,Status:1 }});
-  // }
-
-  
-
-  // public async getAllPendingServiceRequestByZipcode(zipCode:string):Promise<ServiceRequest[] | null>{
-  //   return db.ServiceRequest.findAll({where:{ZipCode:zipCode, Status:1}});
-  // }
-
-  // public async getHelpersByZipCode(zipCode:string):Promise<User[]|null>{
-  //   return db.User.findAll({where:{ZipCode:zipCode, UserTypeId:3}})
-  // }
-
-  // public async getBlockedCustomerOfhelper(helperId:number):Promise<FavoriteAndBlocked[]|null>{
-  //   return db.FavoriteAndBlocked.findAll({where:{UserId:helperId, IsBlocked:true}});
-  // }
-
-  // public async acceptNewServiceRequest(srviceId: number, helperId:number): Promise<[number, ServiceRequest[]]> {
-  //   return db.ServiceRequest.update(
-  //     { 
-  //       ServiceProviderId: helperId, 
-  //       Status:2, 
-  //       ModifiedBy:helperId, 
-  //       SPAcceptedDate: new Date() 
-  //     },
-  //     { where: { ServiceRequestId: srviceId } }
-  //   );
-  // }
 }

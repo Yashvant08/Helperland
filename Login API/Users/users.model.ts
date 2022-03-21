@@ -38,10 +38,10 @@ export const UserSchema = {
                 .required()
                 .example('6756443451')
                 .description('Phone Number of user'),
-            ZipCode: Joi.string()
-                .required()
-                .example('395006')
-                .description('Zip code'),
+            // ZipCode: Joi.string()
+            //     .required()
+            //     .example('395006')
+            //     .description('Zip code'),
             
         })
     },

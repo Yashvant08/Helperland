@@ -140,7 +140,7 @@ exports.UserModelAttributes = {
         type: sequelize_1.DataTypes.BOOLEAN
     },
     IsActive: {
-        // allowNull: false,
+        allowNull: false,
         type: sequelize_1.DataTypes.BOOLEAN
     },
     IsDeleted: {

@@ -68,7 +68,7 @@ module.exports = {
         type: Sequelize.BOOLEAN
       },
       IsActive: {
-        // allowNull: false,
+        allowNull: false,
         type: Sequelize.BOOLEAN
       },
       IsDeleted: {

@@ -34,7 +34,7 @@ const swaggerOption={
             ]
         }
     },
-    apis:["./routes/contactus.ts","./routes/login.ts","./routes/bookservice.ts", "./routes/customer.ts","./routes/serviceprovider.ts"]
+    apis:["./routes/contactus.ts","./routes/login.ts","./routes/bookservice.ts", "./routes/customer.ts","./routes/serviceprovider.ts","./routes/admin.ts"]
 }
 const swaggerDocs = swaggerJSDoc(swaggerOption);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));

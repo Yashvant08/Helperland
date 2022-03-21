@@ -57,7 +57,7 @@ var LoginController = /** @class */ (function () {
                         return __generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0:
-                                    if (!user) return [3 /*break*/, 3];
+                                    if (!(user && user.IsActive)) return [3 /*break*/, 3];
                                     register = this.loginService.isRegister(user);
                                     if (!register) return [3 /*break*/, 2];
                                     return [4 /*yield*/, bcrypt_1.default.compare(req.body.Password, user.Password)];
@@ -131,7 +131,12 @@ var LoginController = /** @class */ (function () {
                                 req.body.userId = user.UserId;
                                 req.body.userTypeId = user.UserTypeId;
                                 if (user.IsRegisteredUser === true) {
-                                    next();
+                                    if (user.IsActive) {
+                                        next();
+                                    }
+                                    else {
+                                        return res.status(401).json({ message: 'your account is inactive' });
+                                    }
                                 }
                                 else {
                                     return res.status(401).json({ message: 'Activate your account' });

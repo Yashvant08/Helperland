@@ -25,6 +25,7 @@ export class UsersController {
   public createUsers: RequestHandler = async (req, res): Promise<Response> => {
     req.body.UserTypeId = UserTypeId;
     req.body.IsRegisteredUser = false;
+    req.body.IsActive = false;
     const same = req.body.Password === req.body.ConfirmPassword;
     if (!same) {
       return res.status(400).json({ message: "Password does not match " });

@@ -96,6 +96,8 @@ export class User extends Model {
 
   Taxno!: string;
 
+  createdAt!: Date;
+
   // static associate(models:any) {
   //   User.belongsToMany(models.UserAddress, {
   //     through:'UserCombine'
@@ -171,7 +173,7 @@ export const UserModelAttributes:ModelAttributes = {
         type: DataTypes.BOOLEAN
       },
       IsActive: {
-        // allowNull: false,
+        allowNull: false,
         type: DataTypes.BOOLEAN
       },
       IsDeleted: {

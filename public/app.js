@@ -72,7 +72,7 @@ var swaggerOption = {
             ]
         }
     },
-    apis: ["./routes/contactus.ts", "./routes/login.ts", "./routes/bookservice.ts", "./routes/customer.ts", "./routes/serviceprovider.ts"]
+    apis: ["./routes/contactus.ts", "./routes/login.ts", "./routes/bookservice.ts", "./routes/customer.ts", "./routes/serviceprovider.ts", "./routes/admin.ts"]
 };
 var swaggerDocs = (0, swagger_jsdoc_1.default)(swaggerOption);
 app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocs));

@@ -15,7 +15,10 @@ export class UsersRepository{
     }
 
     public async updateUser(userIsRegistered:boolean, userEmail: string): Promise<[number, User[]]>{
-        return db.User.update({IsRegisteredUser:userIsRegistered}, {where: {Email: userEmail}});
+        return db.User.update({
+            IsRegisteredUser:userIsRegistered,
+            IsActive:true
+        }, {where: {Email: userEmail}});
     }
 
 

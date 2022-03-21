@@ -62,6 +62,25 @@ var ServiceRequestRepository = /** @class */ (function () {
             });
         });
     };
+    ServiceRequestRepository.prototype.updateServiceRequestAddress = function (body) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, index_1.db.SRAddress.update({
+                        Addressline1: body.Addressline1,
+                        Addressline2: body.Addressline2,
+                        City: body.City,
+                        PostalCode: body.PostalCode
+                    }, { where: { ServiceRequestId: body.ServiceRequestId } })];
+            });
+        });
+    };
+    ServiceRequestRepository.prototype.rescheduleServiceRequest = function (date, body, userId) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, index_1.db.ServiceRequest.update({ ServiceStartDate: date, ServiceStartTime: body.ServiceTime, ModifiedBy: userId }, { where: { ServiceRequestId: body.ServiceRequestId } })];
+            });
+        });
+    };
     ServiceRequestRepository.prototype.getUserByEmail = function (email) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {

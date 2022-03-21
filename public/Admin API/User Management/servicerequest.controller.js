@@ -337,7 +337,7 @@ var ServiceRequestController = /** @class */ (function () {
                             });
                         }
                         return [2 /*return*/, res.status(200).json({ message: 'service request address updated successfully.' })];
-                    case 4: return [2 /*return*/, res.status(201).json({ message: 'no change in service request.' })];
+                    case 4: return [2 /*return*/, res.status(200).json({ message: 'no change in service request.' })];
                     case 5: return [2 /*return*/];
                 }
             });

@@ -30,15 +30,15 @@ export const DashboardSchema = {
                                 .description('time')
                         
                 })
-    },
+        },
 
-    CancelSR: {
-        body: Joi.object({
-                comment:Joi.string()
-                        .example('about helperland')
-                        .description('comment')
-                
-        })
-    },
+        CancelSR: {
+                body: Joi.object({
+                        comment:Joi.string()
+                                .example('about helperland')
+                                .description('comment')
+                        
+                })
+        },
 }
 
