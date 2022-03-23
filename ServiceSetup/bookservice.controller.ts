@@ -52,7 +52,8 @@ export class BookServiceController {
                     );
                     return res
                       .status(200)
-                      .cookie("token", token, { httpOnly: true });
+                      .setHeader("token", token);
+                      // .cookie("token", token, { httpOnly: true });
                   }
                 }
               );
