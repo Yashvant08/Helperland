@@ -272,6 +272,68 @@ var BookService = /** @class */ (function () {
             });
         });
     };
+    BookService.prototype.saveServiceRequestDetail = function (requestDetail, email) {
+        return __awaiter(this, void 0, void 0, function () {
+            var user;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.bookServiceRepository.getUserByEmail(email)];
+                    case 1:
+                        user = _a.sent();
+                        if (user) {
+                            requestDetail.Email = email;
+                            requestDetail.UserId = user.UserId;
+                            requestDetail.Status = 1;
+                            requestDetail.ModifiedBy = user.UserId;
+                            requestDetail.ServiceHourlyRate = 18;
+                            requestDetail.ExtraHours = requestDetail.ExtraService.length * 0.5;
+                            requestDetail.SubTotal = requestDetail.ServiceHourlyRate * requestDetail.ServiceHours;
+                            requestDetail.TotalCost = requestDetail.ExtraService.length * 9 + requestDetail.SubTotal;
+                            return [2 /*return*/, this.bookServiceRepository.saveServiceRequestDetail(requestDetail)];
+                        }
+                        else {
+                            return [2 /*return*/, null];
+                        }
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    BookService.prototype.createServiceRequestAddress = function (requestId, addressId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var alreadyAvailAddress, address, srAddress;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.bookServiceRepository.getServiceRequestAddress(requestId)];
+                    case 1:
+                        alreadyAvailAddress = _a.sent();
+                        console.log(alreadyAvailAddress);
+                        if (!alreadyAvailAddress) return [3 /*break*/, 2];
+                        return [2 /*return*/, null];
+                    case 2: return [4 /*yield*/, this.bookServiceRepository.getUserAddressById(addressId)];
+                    case 3:
+                        address = _a.sent();
+                        if (address) {
+                            srAddress = JSON.parse(JSON.stringify(address));
+                            srAddress.ServiceRequestId = requestId;
+                            return [2 /*return*/, this.bookServiceRepository.createSRAddress(srAddress)];
+                        }
+                        else {
+                            return [2 /*return*/, null];
+                        }
+                        _a.label = 4;
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    BookService.prototype.completeServiceRequest = function (spId, srId) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this.bookServiceRepository.completeServiceRequest(spId, srId)];
+            });
+        });
+    };
     return BookService;
 }());
 exports.BookService = BookService;

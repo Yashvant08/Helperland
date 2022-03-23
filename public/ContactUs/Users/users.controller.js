@@ -41,7 +41,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersController = void 0;
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+var mailgun_js_1 = __importDefault(require("mailgun-js"));
 require("dotenv").config();
+var DOMAIN = process.env.MAILGUN_DOMAIN;
+var mg = (0, mailgun_js_1.default)({
+    apiKey: process.env.MAILGUN_API,
+    domain: DOMAIN,
+});
 var UsersController = /** @class */ (function () {
     function UsersController(usersService) {
         var _this = this;
@@ -62,6 +68,7 @@ var UsersController = /** @class */ (function () {
         }); };
         this.createUsers = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
             var firstName, lastName, Name;
+            var _this = this;
             var _a, _b;
             return __generator(this, function (_c) {
                 firstName = req.body.FirstName;
@@ -72,9 +79,38 @@ var UsersController = /** @class */ (function () {
                 req.body.FilePath = (_b = req.file) === null || _b === void 0 ? void 0 : _b.path;
                 return [2 /*return*/, this.usersService
                         .createUsers(req.body)
-                        .then(function (user) {
-                        return res.status(200).json({ user: user });
-                    })
+                        .then(function (user) { return __awaiter(_this, void 0, void 0, function () {
+                        var adminEmails, _a, _b, _i, e, data;
+                        return __generator(this, function (_c) {
+                            switch (_c.label) {
+                                case 0: return [4 /*yield*/, this.usersService.getAllAdminEmails()];
+                                case 1:
+                                    adminEmails = _c.sent();
+                                    if (!(adminEmails.length > 0)) return [3 /*break*/, 5];
+                                    _a = [];
+                                    for (_b in adminEmails)
+                                        _a.push(_b);
+                                    _i = 0;
+                                    _c.label = 2;
+                                case 2:
+                                    if (!(_i < _a.length)) return [3 /*break*/, 5];
+                                    e = _a[_i];
+                                    data = this.usersService.createData(adminEmails[e], Name, req.body.Email, req.body.Subject, req.body.PhoneNumber, req.body.Message);
+                                    return [4 /*yield*/, mg.messages().send(data, function (error, body) {
+                                            if (error) {
+                                                return res.json({ error: error.message });
+                                            }
+                                        })];
+                                case 3:
+                                    _c.sent();
+                                    _c.label = 4;
+                                case 4:
+                                    _i++;
+                                    return [3 /*break*/, 2];
+                                case 5: return [2 /*return*/, res.status(200).json({ user: user })];
+                            }
+                        });
+                    }); })
                         .catch(function (error) {
                         console.log(error);
                         return res.status(500).json({

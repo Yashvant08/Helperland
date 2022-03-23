@@ -83,6 +83,13 @@ var UsersRepository = /** @class */ (function () {
             });
         });
     };
+    UsersRepository.prototype.getAdminUser = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, index_1.db.User.findAll({ where: { UserTypeId: 2 } })];
+            });
+        });
+    };
     return UsersRepository;
 }());
 exports.UsersRepository = UsersRepository;

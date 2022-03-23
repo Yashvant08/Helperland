@@ -230,135 +230,238 @@ export class BookServiceController {
     } 
   };
 
-  public CreateServiceRequest: RequestHandler = async (req, res, next):Promise<Response> => {
-    const token = req.headers.authorization;
-    if(req.body.ServiceProviderId){
-      req.body.Status = 2;
-    }else{
-      req.body.Status = 1;
-    }
-    req.body.ServiceHourlyRate = 18;
-    req.body.ExtraHours = req.body.ExtraService.length * 0.5;
-    req.body.SubTotal = this.bookService.getSubTotal(
-      req.body.ServiceHourlyRate,
-      req.body.ServiceHours
-    );
-    req.body.TotalCost = this.bookService.getTotalCost(
-      req.body.ExtraService,
-      req.body.SubTotal
-    );
-    req.body.ServiceRequestAddress.Email = req.body.Email;
-    return this.bookService
-      .getUserByEmail(req.body.Email)
-      .then((user) => {
-        if (user) {
-          if (user.UserTypeId === 4) {
-            req.body.UserId = user.UserId;
-            req.body.ModifiedBy = user.UserId;
-          } else {
-            return res.status(401).json({ message: "unauthorised user" });
-          }
-        } else {
-          return res.status(404).json("User not found");
-        }
-        return this.bookService
-          .createServiceRequestWithAddress(req.body)
-          .then((request) => {
-            if (request) {
-              if(request.ServiceProviderId){
-                return this.bookService.getHelperById(request.ServiceProviderId)
-                .then(helper => {
-                  if(helper){
-                    const data = this.bookService.createData(helper.Email!, request.ServiceRequestId);
-                    mg.messages().send(data, (error, user) => {
-                      if(error){
-                        return res.json({
-                          error: error.message,
-                        });
-                      }
-                    })
-                  }else{
-                    return res
-                      .status(404)
-                      .json({ message: "helper not found"});
-                  }
-                  return res
-                      .status(200)
-                      .json({ message: "service booked successfully" });
-                })
-                .catch((error: Error) => {
-                  console.log(error);
-                  return res.status(500).json({
-                    error: error,
-                  });
-                });
-              }else{
-                return this.bookService
-                .getHelpersByZipCode(request.ZipCode)
-                .then(async (helper) => {
-                  if (helper.length > 0) {
-                    const hp = await this.bookService.removeHelperBlockedLoginCustomer(
-                      parseInt(req.body.userId), helper
-                    );
-                    return this.bookService.getBlockedHelper(parseInt(req.body.userId), hp)
-                    .then(async blockedHelper => {
-                      if(blockedHelper){
-                        console.log(blockedHelper);
-                        const users = await this.bookService.removeBlockedHelper(hp,blockedHelper);
-                      email = this.bookService.getEmailAddressForSendEmail(users, req.body);
-                      console.log(email);
-                      for (let e in email) {
-                        console.log(email[e]);
-                        const data = await this.bookService.createDataForAll(
-                          email[e]
-                        );
-                        await mg.messages().send(data, function (error, body) {
-                          if (error) {
-                            return res.json({
-                              error: error.message,
-                            });
-                          }
-                        });
-                      }
-                      }
-                        return res
-                        .status(200)
-                        .json({ message: "service booked successfully" });
+  // public CreateServiceRequest: RequestHandler = async (req, res, next):Promise<Response> => {
+  //   const token = req.headers.authorization;
+  //   req.body.Status = 1;
+  //   req.body.ServiceHourlyRate = 18;
+  //   req.body.ExtraHours = req.body.ExtraService.length * 0.5;
+  //   req.body.SubTotal = this.bookService.getSubTotal(
+  //     req.body.ServiceHourlyRate,
+  //     req.body.ServiceHours
+  //   );
+  //   req.body.TotalCost = this.bookService.getTotalCost(
+  //     req.body.ExtraService,
+  //     req.body.SubTotal
+  //   );
+  //   req.body.ServiceRequestAddress.Email = req.body.Email;
+  //   return this.bookService
+  //     .getUserByEmail(req.body.Email)
+  //     .then((user) => {
+  //       if (user) {
+  //         if (user.UserTypeId === 4) {
+  //           req.body.UserId = user.UserId;
+  //           req.body.ModifiedBy = user.UserId;
+  //         } else {
+  //           return res.status(401).json({ message: "unauthorised user" });
+  //         }
+  //       } else {
+  //         return res.status(404).json("User not found");
+  //       }
+  //       return this.bookService
+  //         .createServiceRequestWithAddress(req.body)
+  //         .then((request) => {
+  //           if (request) {
+  //             if(request.ServiceProviderId){
+  //               return this.bookService.getHelperById(request.ServiceProviderId)
+  //               .then(helper => {
+  //                 if(helper){
+  //                   const data = this.bookService.createData(helper.Email!, request.ServiceRequestId);
+  //                   mg.messages().send(data, (error, user) => {
+  //                     if(error){
+  //                       return res.json({
+  //                         error: error.message,
+  //                       });
+  //                     }
+  //                   })
+  //                 }else{
+  //                   return res
+  //                     .status(404)
+  //                     .json({ message: "helper not found"});
+  //                 }
+  //                 return res
+  //                     .status(200)
+  //                     .json({ message: "service booked successfully" });
+  //               })
+  //               .catch((error: Error) => {
+  //                 console.log(error);
+  //                 return res.status(500).json({
+  //                   error: error,
+  //                 });
+  //               });
+  //             }else{
+  //               return this.bookService
+  //               .getHelpersByZipCode(request.ZipCode)
+  //               .then(async (helper) => {
+  //                 if (helper.length > 0) {
+  //                   const hp = await this.bookService.removeHelperBlockedLoginCustomer(
+  //                     parseInt(req.body.userId), helper
+  //                   );
+  //                   return this.bookService.getBlockedHelper(parseInt(req.body.userId), hp)
+  //                   .then(async blockedHelper => {
+  //                     if(blockedHelper){
+  //                       console.log(blockedHelper);
+  //                       const users = await this.bookService.removeBlockedHelper(hp,blockedHelper);
+  //                     email = this.bookService.getEmailAddressForSendEmail(users, req.body);
+  //                     console.log(email);
+  //                     for (let e in email) {
+  //                       console.log(email[e]);
+  //                       const data = await this.bookService.createDataForAll(
+  //                         email[e]
+  //                       );
+  //                       await mg.messages().send(data, function (error, body) {
+  //                         if (error) {
+  //                           return res.json({
+  //                             error: error.message,
+  //                           });
+  //                         }
+  //                       });
+  //                     }
+  //                     }
+  //                       return res
+  //                       .status(200)
+  //                       .json({ message: "service booked successfully" });
                       
                       
-                      })
-                    .catch((error: Error) => {
-                      console.log(error);
-                      return res.status(500).json({error: error});
-                    });
-                  } else {
-                    return res.status(404).json({ message: "user not found" });
-                  }
-                })
-                .catch((error: Error) => {
-                  console.log(error);
-                  return res.status(500).json({error: error});
-                });
-              }
+  //                     })
+  //                   .catch((error: Error) => {
+  //                     console.log(error);
+  //                     return res.status(500).json({error: error});
+  //                   });
+  //                 } else {
+  //                   return res.status(404).json({ message: "user not found" });
+  //                 }
+  //               })
+  //               .catch((error: Error) => {
+  //                 console.log(error);
+  //                 return res.status(500).json({error: error});
+  //               });
+  //             }
               
-            } else {
-              return res.status(500).json({ message: "error" });
+  //           } else {
+  //             return res.status(500).json({ message: "error" });
+  //           }
+  //         })
+  //         .catch((error: Error) => {
+  //           console.log(error);
+  //           return res.status(500).json({
+  //             error: error,
+  //           });
+  //         });
+  //     })
+  //     .catch((error: Error) => {
+  //       console.log(error);
+  //       return res.status(500).json({
+  //         error: error,
+  //       });
+  //     });
+  // };
+
+  public saveServiceRequestDetail: RequestHandler = async (req, res, next):Promise<Response> => {
+    return this.bookService.saveServiceRequestDetail(req.body, req.body.email)
+    .then(serviceRequest => {
+      if(serviceRequest){
+        return res.status(200).json(serviceRequest);
+      }else{
+        return res.status(422).json({message:'error in sving service request detail'});
+      }
+    })
+    .catch((error: Error) => {
+      console.log(error);
+      return res.status(500).json({error: error});
+    });     
+};
+
+public saveCleaningServiceDetail:RequestHandler = async (req, res):Promise<Response> => {
+  if(req.body.userId && req.body.userTypeId === 4){
+    if(req.body.ServiceRequestId && req.body.AddressId){
+      return this.bookService.createServiceRequestAddress(req.body.ServiceRequestId,req.body.AddressId)
+      .then(srAddress => {
+        if(srAddress){
+          if(req.body.ServiceProviderId){
+              return this.bookService.getHelperById(req.body.ServiceProviderId)
+              .then(helper => {
+                return this.bookService.completeServiceRequest(+req.body.ServiceProviderId, req.body.ServiceRequestId)
+                  .then(completeSR => {
+                    if(completeSR[0] ===1){
+                      const data = this.bookService.createData(helper?.Email!, req.body.ServiceRequestId);
+                      mg.messages().send(data, (error, user) => {
+                        if(error){
+                          return res.json({error: error.message});
+                        }
+                      })
+                      return res.status(200).json({ message: "service booked successfully"});
+                    }else{
+                      return res.status(422).json({message:'error in completing service request'})
+                    }
+                  })
+                  .catch((error: Error) => {
+                    console.log(error);
+                    return res.status(500).json({error: error});
+                  });
+              })
+              .catch((error: Error) => {
+                console.log(error);
+                return res.status(500).json({
+                  error: error,
+                });
+              });
+            }else{
+              return this.bookService
+              .getHelpersByZipCode(srAddress.PostalCode)
+              .then(async (helper) => {
+                if (helper.length > 0) {
+                  const hp = await this.bookService.removeHelperBlockedLoginCustomer(
+                    parseInt(req.body.userId), helper);
+                  return this.bookService.getBlockedHelper(parseInt(req.body.userId), hp)
+                  .then(async blockedHelper => {
+                    if(blockedHelper){
+                      console.log(blockedHelper);
+                      const users = await this.bookService.removeBlockedHelper(hp,blockedHelper);
+                    email = this.bookService.getEmailAddressForSendEmail(users, req.body);
+                    console.log(email);
+                    for (let e in email) {
+                      console.log(email[e]);
+                      const data = await this.bookService.createDataForAll(
+                        email[e]
+                      );
+                      await mg.messages().send(data, function (error, body) {
+                        if (error) {
+                          return res.json({error: error.message});
+                        }
+                      });
+                    }
+                    }
+                      return res.status(200)
+                      .json({ message: "service booked successfully" });
+                    })
+                  .catch((error: Error) => {
+                    console.log(error);
+                    return res.status(500).json({error: error});
+                  });
+                } else {
+                  return res.status(404).json({ message: "user not found" });
+                }
+              })
+              .catch((error: Error) => {
+                console.log(error);
+                return res.status(500).json({error: error});
+              });
             }
-          })
-          .catch((error: Error) => {
-            console.log(error);
-            return res.status(500).json({
-              error: error,
-            });
-          });
+        }else{
+          return res.status(401).json({message:'address already available or error in creating address'});
+        }
       })
-      .catch((error: Error) => {
+      .catch((error) => {
         console.log(error);
-        return res.status(500).json({
-          error: error,
-        });
+        return res.status(500).json({ error: error });
       });
-  };
+    }else{
+      return res.status(404).json({message:'service request id or address id not found'});
+    }
+  }else{
+    return res.status(401).json({message:'unauthorised user'});
+  }
+}
 
   public createFavoriteAndBlocked: RequestHandler = async (req,res): Promise<Response> => {
     return this.bookService

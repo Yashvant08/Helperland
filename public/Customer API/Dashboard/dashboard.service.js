@@ -70,6 +70,13 @@ var DashboardService = /** @class */ (function () {
         });
     };
     ;
+    DashboardService.prototype.displayServiceRequestDetail = function (serviceRequests) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/];
+            });
+        });
+    };
     DashboardService.prototype.getServiceRequestDetailById = function (srId) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {

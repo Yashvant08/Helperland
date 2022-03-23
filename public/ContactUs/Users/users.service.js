@@ -84,6 +84,36 @@ var UsersService = /** @class */ (function () {
             });
         });
     };
+    UsersService.prototype.createData = function (adminEmail, Name, email, subject, mobile, message) {
+        var data = {
+            from: 'yashvantdesai7@gmail.com',
+            to: adminEmail,
+            subject: 'ContactUs',
+            html: "\n                <h1>\u201CBelow user want's to reach us\u201D.</h1>\n                <p>Name    : ".concat(Name, "</p>\n                <p>Email   : ").concat(email, "</p>\n                <p>Subject : ").concat(subject, "</p>\n                <p>Mobile  : ").concat(mobile, "</p>\n                <p>Message : ").concat(message, "</p>\n                ")
+        };
+        return data;
+    };
+    ;
+    UsersService.prototype.getAllAdminEmails = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var adminEmails, admins, ad;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        adminEmails = [];
+                        return [4 /*yield*/, this.usersRepository.getAdminUser()];
+                    case 1:
+                        admins = _a.sent();
+                        if (admins && admins.length > 0) {
+                            for (ad in admins) {
+                                adminEmails.push(admins[ad].Email);
+                            }
+                        }
+                        return [2 /*return*/, adminEmails];
+                }
+            });
+        });
+    };
     return UsersService;
 }());
 exports.UsersService = UsersService;

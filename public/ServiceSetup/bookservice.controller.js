@@ -282,158 +282,268 @@ var BookServiceController = /** @class */ (function () {
                 }
             });
         }); };
-        this.CreateServiceRequest = function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var token;
-            var _this = this;
+        // public CreateServiceRequest: RequestHandler = async (req, res, next):Promise<Response> => {
+        //   const token = req.headers.authorization;
+        //   req.body.Status = 1;
+        //   req.body.ServiceHourlyRate = 18;
+        //   req.body.ExtraHours = req.body.ExtraService.length * 0.5;
+        //   req.body.SubTotal = this.bookService.getSubTotal(
+        //     req.body.ServiceHourlyRate,
+        //     req.body.ServiceHours
+        //   );
+        //   req.body.TotalCost = this.bookService.getTotalCost(
+        //     req.body.ExtraService,
+        //     req.body.SubTotal
+        //   );
+        //   req.body.ServiceRequestAddress.Email = req.body.Email;
+        //   return this.bookService
+        //     .getUserByEmail(req.body.Email)
+        //     .then((user) => {
+        //       if (user) {
+        //         if (user.UserTypeId === 4) {
+        //           req.body.UserId = user.UserId;
+        //           req.body.ModifiedBy = user.UserId;
+        //         } else {
+        //           return res.status(401).json({ message: "unauthorised user" });
+        //         }
+        //       } else {
+        //         return res.status(404).json("User not found");
+        //       }
+        //       return this.bookService
+        //         .createServiceRequestWithAddress(req.body)
+        //         .then((request) => {
+        //           if (request) {
+        //             if(request.ServiceProviderId){
+        //               return this.bookService.getHelperById(request.ServiceProviderId)
+        //               .then(helper => {
+        //                 if(helper){
+        //                   const data = this.bookService.createData(helper.Email!, request.ServiceRequestId);
+        //                   mg.messages().send(data, (error, user) => {
+        //                     if(error){
+        //                       return res.json({
+        //                         error: error.message,
+        //                       });
+        //                     }
+        //                   })
+        //                 }else{
+        //                   return res
+        //                     .status(404)
+        //                     .json({ message: "helper not found"});
+        //                 }
+        //                 return res
+        //                     .status(200)
+        //                     .json({ message: "service booked successfully" });
+        //               })
+        //               .catch((error: Error) => {
+        //                 console.log(error);
+        //                 return res.status(500).json({
+        //                   error: error,
+        //                 });
+        //               });
+        //             }else{
+        //               return this.bookService
+        //               .getHelpersByZipCode(request.ZipCode)
+        //               .then(async (helper) => {
+        //                 if (helper.length > 0) {
+        //                   const hp = await this.bookService.removeHelperBlockedLoginCustomer(
+        //                     parseInt(req.body.userId), helper
+        //                   );
+        //                   return this.bookService.getBlockedHelper(parseInt(req.body.userId), hp)
+        //                   .then(async blockedHelper => {
+        //                     if(blockedHelper){
+        //                       console.log(blockedHelper);
+        //                       const users = await this.bookService.removeBlockedHelper(hp,blockedHelper);
+        //                     email = this.bookService.getEmailAddressForSendEmail(users, req.body);
+        //                     console.log(email);
+        //                     for (let e in email) {
+        //                       console.log(email[e]);
+        //                       const data = await this.bookService.createDataForAll(
+        //                         email[e]
+        //                       );
+        //                       await mg.messages().send(data, function (error, body) {
+        //                         if (error) {
+        //                           return res.json({
+        //                             error: error.message,
+        //                           });
+        //                         }
+        //                       });
+        //                     }
+        //                     }
+        //                       return res
+        //                       .status(200)
+        //                       .json({ message: "service booked successfully" });
+        //                     })
+        //                   .catch((error: Error) => {
+        //                     console.log(error);
+        //                     return res.status(500).json({error: error});
+        //                   });
+        //                 } else {
+        //                   return res.status(404).json({ message: "user not found" });
+        //                 }
+        //               })
+        //               .catch((error: Error) => {
+        //                 console.log(error);
+        //                 return res.status(500).json({error: error});
+        //               });
+        //             }
+        //           } else {
+        //             return res.status(500).json({ message: "error" });
+        //           }
+        //         })
+        //         .catch((error: Error) => {
+        //           console.log(error);
+        //           return res.status(500).json({
+        //             error: error,
+        //           });
+        //         });
+        //     })
+        //     .catch((error: Error) => {
+        //       console.log(error);
+        //       return res.status(500).json({
+        //         error: error,
+        //       });
+        //     });
+        // };
+        this.saveServiceRequestDetail = function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                token = req.headers.authorization;
-                if (req.body.ServiceProviderId) {
-                    req.body.Status = 2;
-                }
-                else {
-                    req.body.Status = 1;
-                }
-                req.body.ServiceHourlyRate = 18;
-                req.body.ExtraHours = req.body.ExtraService.length * 0.5;
-                req.body.SubTotal = this.bookService.getSubTotal(req.body.ServiceHourlyRate, req.body.ServiceHours);
-                req.body.TotalCost = this.bookService.getTotalCost(req.body.ExtraService, req.body.SubTotal);
-                req.body.ServiceRequestAddress.Email = req.body.Email;
-                return [2 /*return*/, this.bookService
-                        .getUserByEmail(req.body.Email)
-                        .then(function (user) {
-                        if (user) {
-                            if (user.UserTypeId === 4) {
-                                req.body.UserId = user.UserId;
-                                req.body.ModifiedBy = user.UserId;
-                            }
-                            else {
-                                return res.status(401).json({ message: "unauthorised user" });
-                            }
+                return [2 /*return*/, this.bookService.saveServiceRequestDetail(req.body, req.body.email)
+                        .then(function (serviceRequest) {
+                        if (serviceRequest) {
+                            return res.status(200).json(serviceRequest);
                         }
                         else {
-                            return res.status(404).json("User not found");
+                            return res.status(422).json({ message: 'error in sving service request detail' });
                         }
-                        return _this.bookService
-                            .createServiceRequestWithAddress(req.body)
-                            .then(function (request) {
-                            if (request) {
-                                if (request.ServiceProviderId) {
-                                    return _this.bookService.getHelperById(request.ServiceProviderId)
-                                        .then(function (helper) {
-                                        if (helper) {
-                                            var data = _this.bookService.createData(helper.Email, request.ServiceRequestId);
-                                            mg.messages().send(data, function (error, user) {
-                                                if (error) {
-                                                    return res.json({
-                                                        error: error.message,
-                                                    });
-                                                }
-                                            });
-                                        }
-                                        else {
-                                            return res
-                                                .status(404)
-                                                .json({ message: "helper not found" });
-                                        }
-                                        return res
-                                            .status(200)
-                                            .json({ message: "service booked successfully" });
-                                    })
-                                        .catch(function (error) {
-                                        console.log(error);
-                                        return res.status(500).json({
-                                            error: error,
-                                        });
-                                    });
-                                }
-                                else {
-                                    return _this.bookService
-                                        .getHelpersByZipCode(request.ZipCode)
-                                        .then(function (helper) { return __awaiter(_this, void 0, void 0, function () {
-                                        var hp_1;
-                                        var _this = this;
-                                        return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0:
-                                                    if (!(helper.length > 0)) return [3 /*break*/, 2];
-                                                    return [4 /*yield*/, this.bookService.removeHelperBlockedLoginCustomer(parseInt(req.body.userId), helper)];
-                                                case 1:
-                                                    hp_1 = _a.sent();
-                                                    return [2 /*return*/, this.bookService.getBlockedHelper(parseInt(req.body.userId), hp_1)
-                                                            .then(function (blockedHelper) { return __awaiter(_this, void 0, void 0, function () {
-                                                            var users, _a, _b, _i, e, data;
-                                                            return __generator(this, function (_c) {
-                                                                switch (_c.label) {
-                                                                    case 0:
-                                                                        if (!blockedHelper) return [3 /*break*/, 6];
-                                                                        console.log(blockedHelper);
-                                                                        return [4 /*yield*/, this.bookService.removeBlockedHelper(hp_1, blockedHelper)];
-                                                                    case 1:
-                                                                        users = _c.sent();
-                                                                        email = this.bookService.getEmailAddressForSendEmail(users, req.body);
-                                                                        console.log(email);
-                                                                        _a = [];
-                                                                        for (_b in email)
-                                                                            _a.push(_b);
-                                                                        _i = 0;
-                                                                        _c.label = 2;
-                                                                    case 2:
-                                                                        if (!(_i < _a.length)) return [3 /*break*/, 6];
-                                                                        e = _a[_i];
-                                                                        console.log(email[e]);
-                                                                        return [4 /*yield*/, this.bookService.createDataForAll(email[e])];
-                                                                    case 3:
-                                                                        data = _c.sent();
-                                                                        return [4 /*yield*/, mg.messages().send(data, function (error, body) {
-                                                                                if (error) {
-                                                                                    return res.json({
-                                                                                        error: error.message,
-                                                                                    });
-                                                                                }
-                                                                            })];
-                                                                    case 4:
-                                                                        _c.sent();
-                                                                        _c.label = 5;
-                                                                    case 5:
-                                                                        _i++;
-                                                                        return [3 /*break*/, 2];
-                                                                    case 6: return [2 /*return*/, res
-                                                                            .status(200)
-                                                                            .json({ message: "service booked successfully" })];
-                                                                }
-                                                            });
-                                                        }); })
-                                                            .catch(function (error) {
-                                                            console.log(error);
-                                                            return res.status(500).json({ error: error });
-                                                        })];
-                                                case 2: return [2 /*return*/, res.status(404).json({ message: "user not found" })];
-                                            }
-                                        });
-                                    }); })
-                                        .catch(function (error) {
-                                        console.log(error);
-                                        return res.status(500).json({ error: error });
-                                    });
-                                }
-                            }
-                            else {
-                                return res.status(500).json({ message: "error" });
-                            }
-                        })
-                            .catch(function (error) {
-                            console.log(error);
-                            return res.status(500).json({
-                                error: error,
-                            });
-                        });
                     })
                         .catch(function (error) {
                         console.log(error);
-                        return res.status(500).json({
-                            error: error,
-                        });
+                        return res.status(500).json({ error: error });
                     })];
+            });
+        }); };
+        this.saveCleaningServiceDetail = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                if (req.body.userId && req.body.userTypeId === 4) {
+                    if (req.body.ServiceRequestId && req.body.AddressId) {
+                        return [2 /*return*/, this.bookService.createServiceRequestAddress(req.body.ServiceRequestId, req.body.AddressId)
+                                .then(function (srAddress) {
+                                if (srAddress) {
+                                    if (req.body.ServiceProviderId) {
+                                        return _this.bookService.getHelperById(req.body.ServiceProviderId)
+                                            .then(function (helper) {
+                                            return _this.bookService.completeServiceRequest(+req.body.ServiceProviderId, req.body.ServiceRequestId)
+                                                .then(function (completeSR) {
+                                                if (completeSR[0] === 1) {
+                                                    var data = _this.bookService.createData(helper === null || helper === void 0 ? void 0 : helper.Email, req.body.ServiceRequestId);
+                                                    mg.messages().send(data, function (error, user) {
+                                                        if (error) {
+                                                            return res.json({ error: error.message });
+                                                        }
+                                                    });
+                                                    return res.status(200).json({ message: "service booked successfully" });
+                                                }
+                                                else {
+                                                    return res.status(422).json({ message: 'error in completing service request' });
+                                                }
+                                            })
+                                                .catch(function (error) {
+                                                console.log(error);
+                                                return res.status(500).json({ error: error });
+                                            });
+                                        })
+                                            .catch(function (error) {
+                                            console.log(error);
+                                            return res.status(500).json({
+                                                error: error,
+                                            });
+                                        });
+                                    }
+                                    else {
+                                        return _this.bookService
+                                            .getHelpersByZipCode(srAddress.PostalCode)
+                                            .then(function (helper) { return __awaiter(_this, void 0, void 0, function () {
+                                            var hp_1;
+                                            var _this = this;
+                                            return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0:
+                                                        if (!(helper.length > 0)) return [3 /*break*/, 2];
+                                                        return [4 /*yield*/, this.bookService.removeHelperBlockedLoginCustomer(parseInt(req.body.userId), helper)];
+                                                    case 1:
+                                                        hp_1 = _a.sent();
+                                                        return [2 /*return*/, this.bookService.getBlockedHelper(parseInt(req.body.userId), hp_1)
+                                                                .then(function (blockedHelper) { return __awaiter(_this, void 0, void 0, function () {
+                                                                var users, _a, _b, _i, e, data;
+                                                                return __generator(this, function (_c) {
+                                                                    switch (_c.label) {
+                                                                        case 0:
+                                                                            if (!blockedHelper) return [3 /*break*/, 6];
+                                                                            console.log(blockedHelper);
+                                                                            return [4 /*yield*/, this.bookService.removeBlockedHelper(hp_1, blockedHelper)];
+                                                                        case 1:
+                                                                            users = _c.sent();
+                                                                            email = this.bookService.getEmailAddressForSendEmail(users, req.body);
+                                                                            console.log(email);
+                                                                            _a = [];
+                                                                            for (_b in email)
+                                                                                _a.push(_b);
+                                                                            _i = 0;
+                                                                            _c.label = 2;
+                                                                        case 2:
+                                                                            if (!(_i < _a.length)) return [3 /*break*/, 6];
+                                                                            e = _a[_i];
+                                                                            console.log(email[e]);
+                                                                            return [4 /*yield*/, this.bookService.createDataForAll(email[e])];
+                                                                        case 3:
+                                                                            data = _c.sent();
+                                                                            return [4 /*yield*/, mg.messages().send(data, function (error, body) {
+                                                                                    if (error) {
+                                                                                        return res.json({ error: error.message });
+                                                                                    }
+                                                                                })];
+                                                                        case 4:
+                                                                            _c.sent();
+                                                                            _c.label = 5;
+                                                                        case 5:
+                                                                            _i++;
+                                                                            return [3 /*break*/, 2];
+                                                                        case 6: return [2 /*return*/, res.status(200)
+                                                                                .json({ message: "service booked successfully" })];
+                                                                    }
+                                                                });
+                                                            }); })
+                                                                .catch(function (error) {
+                                                                console.log(error);
+                                                                return res.status(500).json({ error: error });
+                                                            })];
+                                                    case 2: return [2 /*return*/, res.status(404).json({ message: "user not found" })];
+                                                }
+                                            });
+                                        }); })
+                                            .catch(function (error) {
+                                            console.log(error);
+                                            return res.status(500).json({ error: error });
+                                        });
+                                    }
+                                }
+                                else {
+                                    return res.status(401).json({ message: 'address already available or error in creating address' });
+                                }
+                            })
+                                .catch(function (error) {
+                                console.log(error);
+                                return res.status(500).json({ error: error });
+                            })];
+                    }
+                    else {
+                        return [2 /*return*/, res.status(404).json({ message: 'service request id or address id not found' })];
+                    }
+                }
+                else {
+                    return [2 /*return*/, res.status(401).json({ message: 'unauthorised user' })];
+                }
+                return [2 /*return*/];
             });
         }); };
         this.createFavoriteAndBlocked = function (req, res) { return __awaiter(_this, void 0, void 0, function () {

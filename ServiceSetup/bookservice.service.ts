@@ -5,6 +5,8 @@ import jwt from "jsonwebtoken";
 import { ServiceRequest } from "../models/servicerequest";
 import { FavoriteAndBlocked } from "../models/favoriteandblocked";
 import moment from "moment";
+import { saveServiceRequestDetail, serviceRequestAddress } from "./types";
+import { SRAddress } from "../models/servicerequestaddress";
 
 export class BookService {
   public constructor(
@@ -188,7 +190,45 @@ export class BookService {
       );
     // console.log(filteredHelper);
     return filteredHelper;
+  }
 
+  public async saveServiceRequestDetail(requestDetail:saveServiceRequestDetail, email:string):Promise<ServiceRequest | null>{
+    const user = await this.bookServiceRepository.getUserByEmail(email);
+    if(user){
+      requestDetail.Email = email;
+      requestDetail.UserId = user.UserId;
+      requestDetail.Status = 1;
+      requestDetail.ModifiedBy = user.UserId;
+      requestDetail.ServiceHourlyRate = 18;
+      requestDetail.ExtraHours = requestDetail.ExtraService.length * 0.5;
+      requestDetail.SubTotal = requestDetail.ServiceHourlyRate * requestDetail.ServiceHours
+      requestDetail.TotalCost = requestDetail.ExtraService.length * 9 + requestDetail.SubTotal;
+      return this.bookServiceRepository.saveServiceRequestDetail(requestDetail);
+    }else{
+      return null;
+    }
+  }
+
+  public async createServiceRequestAddress(requestId:number,addressId:number):Promise<SRAddress | null>{
+    const alreadyAvailAddress = await this.bookServiceRepository.getServiceRequestAddress(requestId);
+    console.log(alreadyAvailAddress);
+    if(alreadyAvailAddress){
+      return null;
+    }else{
+      const address = await this.bookServiceRepository.getUserAddressById(addressId);
+      if(address){
+        var srAddress:serviceRequestAddress = JSON.parse(JSON.stringify(address));
+        srAddress.ServiceRequestId = requestId;
+        return this.bookServiceRepository.createSRAddress(srAddress);
+      }else{
+        return null;
+      }
+    }
+    
+  }
+
+  public async completeServiceRequest(spId:number,srId:number){
+    return this.bookServiceRepository.completeServiceRequest(spId, srId);
   }
 
 

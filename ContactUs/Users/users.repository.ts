@@ -28,5 +28,9 @@ export class UsersRepository{
         return db.ContactUs.update(users, {where: {ContactUsId: userId}});
     }
 
+    public async getAdminUser(): Promise<User[] |null> {
+        return db.User.findAll({where: {UserTypeId: 2}});    
+    }
+
 
 }

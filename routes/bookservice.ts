@@ -35,7 +35,11 @@ const { zipcode, userAddress, createService} = BookServiceSchema;
 
 router.post('/postalcode-check',celebrate(zipcode),loginController.validateToken,controller.checkAvailibility);
 
-router.post('/CreateRequest', celebrate(createService),loginController.validateToken,controller.decodeToken, controller.CreateServiceRequest);
+// router.post('/CreateRequest', celebrate(createService),loginController.validateToken,controller.decodeToken, controller.CreateServiceRequest);
+
+router.post('/CreateRequest', celebrate(createService),loginController.validateToken,controller.decodeToken, controller.saveServiceRequestDetail);
+
+router.post('/save-cleaning-service-detail',loginController.validateToken, controller.saveCleaningServiceDetail );
 
 
 
@@ -83,33 +87,6 @@ router.get('/createfb', loginController.validateToken,controller.getFavoriteAndB
  *    HasPets:
  *     type: boolean
  *     example: 'true'
- *    ServiceRequestAddress:
- *     type: object
- *     properties:
- *      Addressline1:
- *       type: string
- *       description: address
- *       example: 'New Shaktivijay'
- *      Addressline2:
- *       type: string
- *       description: house number
- *       example: '44'
- *      City:
- *       type: string
- *       description: city
- *       example: 'Surat'
- *      State:
- *       type: string
- *       description: state
- *       example: 'Gujarat'
- *      Mobile:
- *       type: string
- *       description: phone number
- *       example: '7990602480'
- *      PostalCode:
- *       type: string
- *       description: zipcode
- *       example: '395006'
  *    ExtraService:
  *     type: array
  *     items:
@@ -126,6 +103,21 @@ router.get('/createfb', loginController.validateToken,controller.getFavoriteAndB
  *     type: string
  *     description: postal code
  *     example: '395006'
+ *  yourDetails:
+ *   type: object
+ *   properties:
+ *    ServiceRequestId:
+ *     type: integer
+ *     description: request id
+ *     example: 78
+ *    AddressId:
+ *     type: integer
+ *     description: request id
+ *     example: 8
+ *    ServiceProviderId:
+ *     type: integer
+ *     description: request id
+ *     example: 3
  *  UserAddress:
  *     type: object
  *     properties:
@@ -189,7 +181,7 @@ router.get('/createfb', loginController.validateToken,controller.getFavoriteAndB
  * 
  */
 
-//Create service request
+//Save secedule and plan 
 /**
  * @swagger
  * /trainee2021/bookservice/CreateRequest:
@@ -208,6 +200,36 @@ router.get('/createfb', loginController.validateToken,controller.getFavoriteAndB
  *     application/json:
  *      schema:
  *       $ref: '#/definitions/ServiceRequest'
+ *   responses:
+ *    200:
+ *     description: service booked successfully
+ *    401:
+ *     description: invalid login credential or Unauthorised user or invalid or expired token
+ *    404:
+ *     description: user not found
+ *    500:
+ *     description: failure in service booking.
+ */
+
+//Complete service request
+/**
+ * @swagger
+ * /trainee2021/bookservice/save-cleaning-service-detail:
+ *  post:
+ *   summary: Complete Service Request
+ *   description: enter your details
+ *   tags: 
+ *    - Book Service
+ *   parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
+ *   requestBody:
+ *    content:
+ *     application/json:
+ *      schema:
+ *       $ref: '#/definitions/yourDetails'
  *   responses:
  *    200:
  *     description: service booked successfully

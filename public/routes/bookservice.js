@@ -21,7 +21,9 @@ var loginController = new login_controller_1.LoginController(loginService);
 var zipcode = bookservice_model_1.BookServiceSchema.zipcode, userAddress = bookservice_model_1.BookServiceSchema.userAddress, createService = bookservice_model_1.BookServiceSchema.createService;
 //Service Request routes
 router.post('/postalcode-check', (0, celebrate_1.celebrate)(zipcode), loginController.validateToken, controller.checkAvailibility);
-router.post('/CreateRequest', (0, celebrate_1.celebrate)(createService), loginController.validateToken, controller.decodeToken, controller.CreateServiceRequest);
+// router.post('/CreateRequest', celebrate(createService),loginController.validateToken,controller.decodeToken, controller.CreateServiceRequest);
+router.post('/CreateRequest', (0, celebrate_1.celebrate)(createService), loginController.validateToken, controller.decodeToken, controller.saveServiceRequestDetail);
+router.post('/save-cleaning-service-detail', loginController.validateToken, controller.saveCleaningServiceDetail);
 //User routes
 router.post('/UserAddress', (0, celebrate_1.celebrate)(userAddress), loginController.validateToken, controller.createUserAddress);
 router.get('/UserAddresses', loginController.validateToken, controller.getUserAddresses);

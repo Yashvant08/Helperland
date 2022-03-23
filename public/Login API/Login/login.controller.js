@@ -74,19 +74,22 @@ var LoginController = /** @class */ (function () {
                                         else if (user.UserTypeId === 2) {
                                             return [2 /*return*/, res
                                                     .status(200)
-                                                    .cookie("token", token, { httpOnly: true, expires: new Date(Date.now() + 600000) })
+                                                    .setHeader("token", token)
+                                                    // .cookie("token", token, { httpOnly: true, expires:new Date(Date.now()+600000) })
                                                     .json({ message: "login successful admin" })];
                                         }
                                         else if (user.UserTypeId === 3) {
                                             return [2 /*return*/, res
                                                     .status(200)
-                                                    .cookie("token", token, { httpOnly: true, expires: new Date(Date.now() + 600000) })
+                                                    .setHeader("token", token)
+                                                    // .cookie("token", token, { httpOnly: true, expires:new Date(Date.now()+600000) })
                                                     .json({ message: "login successful helper" })];
                                         }
                                         else {
                                             return [2 /*return*/, res
                                                     .status(200)
-                                                    .cookie("token", token, { httpOnly: true, expires: new Date(Date.now() + 600000) })
+                                                    .setHeader("token", token)
+                                                    // .cookie("token", token, { httpOnly: true, expires:new Date(Date.now()+600000) })
                                                     .json({ message: "login successful user" })];
                                         }
                                     }

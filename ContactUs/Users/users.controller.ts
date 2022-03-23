@@ -2,8 +2,15 @@ import { Request, Response, RequestHandler } from "express";
 import { ContactUs } from "../../models/contactus";
 import { UsersService } from "./users.service";
 import jwt from "jsonwebtoken";
+import mailgun from "mailgun-js";
 
 require("dotenv").config();
+
+const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
+const mg = mailgun({
+  apiKey: process.env.MAILGUN_API!,
+  domain: DOMAIN,
+});
 
 export class UsersController {
   public constructor(private readonly usersService: UsersService) {
@@ -33,7 +40,18 @@ export class UsersController {
     req.body.FilePath = req.file?.path;
     return this.usersService
       .createUsers(req.body)
-      .then((user: ContactUs) => {
+      .then(async(user: ContactUs) => {
+        const adminEmails = await this.usersService.getAllAdminEmails();
+        if(adminEmails.length>0){
+          for(let e in adminEmails){
+            const data = this.usersService.createData(adminEmails[e],Name, req.body.Email,req.body.Subject, req.body.PhoneNumber, req.body.Message);
+            await mg.messages().send(data, (error, body) => {
+              if (error) {
+                return res.json({error: error.message});
+              }
+            });
+          }
+        }
         return res.status(200).json({ user });
       })
       .catch((error: Error) => {

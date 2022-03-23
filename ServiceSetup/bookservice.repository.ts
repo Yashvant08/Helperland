@@ -4,6 +4,8 @@ import {UserAddress} from "../models/useraddress";
 import { ServiceRequest } from "../models/servicerequest";
 import { FavoriteAndBlocked } from "../models/favoriteandblocked";
 import { Op } from "sequelize";
+import { saveServiceRequestDetail, serviceRequestAddress } from "./types";
+import { SRAddress } from "../models/servicerequestaddress";
 
 export class BookServiceRepository{
 
@@ -49,6 +51,30 @@ export class BookServiceRepository{
 
     public async getHelpersBlockedCustomer(userId:number, helprId:number[]): Promise<FavoriteAndBlocked[]>{
         return db.FavoriteAndBlocked.findAll({where:{UserId:{[Op.or]:helprId}, TargetUserId:userId, IsBlocked:true}});
+    }
+
+    public async saveServiceRequestDetail(requestDetail:saveServiceRequestDetail):Promise<ServiceRequest|null>{
+        return db.ServiceRequest.create(requestDetail,{include:['ExtraService']});
+    }
+
+    public async getUserAddressById(addressId:number):Promise<UserAddress | null>{
+        return db.UserAddress.findOne({where:{AddressId:addressId}});
+    }
+
+    public async createSRAddress(srAddress:serviceRequestAddress):Promise<SRAddress | null>{
+        return db.SRAddress.create(srAddress)
+    }
+
+    public async getServiceRequestAddress(srId:number):Promise<SRAddress | null>{
+        return db.SRAddress.findOne({where:{ServiceRequestId:srId}});
+    }
+
+    public async completeServiceRequest(spId:number, srId:number):Promise<[number, ServiceRequest[]]>{
+        return db.ServiceRequest.update({
+            ServiceProviderId:spId,
+            Status:2,
+            SPAcceptedDate:new Date()
+        },{where:{ServiceRequestId:srId}});
     }
 
 

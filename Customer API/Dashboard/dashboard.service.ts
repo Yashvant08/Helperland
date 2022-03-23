@@ -29,6 +29,10 @@ export class DashboardService {
     });;
   };
 
+  public async displayServiceRequestDetail(serviceRequests:ServiceRequest[]){
+
+  }
+
   public async getServiceRequestDetailById(srId: number): Promise<ServiceRequest | null> 
   {
     return this.dashboardRepository.getServiceRequestDetailById(srId);

@@ -121,6 +121,45 @@ var BookServiceRepository = /** @class */ (function () {
             });
         });
     };
+    BookServiceRepository.prototype.saveServiceRequestDetail = function (requestDetail) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, index_1.db.ServiceRequest.create(requestDetail, { include: ['ExtraService'] })];
+            });
+        });
+    };
+    BookServiceRepository.prototype.getUserAddressById = function (addressId) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, index_1.db.UserAddress.findOne({ where: { AddressId: addressId } })];
+            });
+        });
+    };
+    BookServiceRepository.prototype.createSRAddress = function (srAddress) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, index_1.db.SRAddress.create(srAddress)];
+            });
+        });
+    };
+    BookServiceRepository.prototype.getServiceRequestAddress = function (srId) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, index_1.db.SRAddress.findOne({ where: { ServiceRequestId: srId } })];
+            });
+        });
+    };
+    BookServiceRepository.prototype.completeServiceRequest = function (spId, srId) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, index_1.db.ServiceRequest.update({
+                        ServiceProviderId: spId,
+                        Status: 2,
+                        SPAcceptedDate: new Date()
+                    }, { where: { ServiceRequestId: srId } })];
+            });
+        });
+    };
     //Service Request methods
     BookServiceRepository.prototype.createServiceRequest = function (ServiceRequest) {
         return __awaiter(this, void 0, void 0, function () {
