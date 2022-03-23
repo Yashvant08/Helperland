@@ -100,7 +100,7 @@ router.post('/createContact',controller.authenticate,controller.createUsers);
 
 /**
  * @swagger
- * /trainee2021/contact-us/contactus:
+ * /trainee2021/contact-us/getContact:
  *  get:
  *   summary: get all users
  *   description: get all users
@@ -116,7 +116,7 @@ router.get('/getContact',controller.getUsers);
 
 /**
  * @swagger
- *  /trainee2021/contact-us/contactus/{id}:
+ *  /trainee2021/contact-us/getContact/{id}:
  *   get:
  *    summary: get user by id
  *    description: get user by id
