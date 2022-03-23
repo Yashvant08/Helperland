@@ -68,7 +68,7 @@ router.get('/createfb', loginController.validateToken,controller.getFavoriteAndB
  *    ServiceStartDate:
  *     type: date
  *     description: date
- *     example: '12-02-22'
+ *     example: '12-02-2022'
  *    ServiceStartTime:
  *     type: string
  *     description: time
