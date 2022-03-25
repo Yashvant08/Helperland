@@ -1,14 +1,9 @@
 import { Request, Response, RequestHandler } from "express";
 import { BlockCustomerService } from "./blockcustomer.service";
-import mailgun from "mailgun-js";
 
 require("dotenv").config();
 
-const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
-const mg = mailgun({
-  apiKey: process.env.MAILGUN_API!,
-  domain: DOMAIN,
-});
+
 
 export class BlockCustomerController {
   public constructor(private readonly blockCustomerService: BlockCustomerService) {

@@ -58,6 +58,8 @@ export class UserAddress extends Model{
 
     Mobile!: string;
 
+    UserId!: number;
+
     // static associate(models:any) {
     //   UserAddress.belongsToMany(models.User, {
     //     through:'UserCombine'

@@ -40,14 +40,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ServiceHistoryController = void 0;
-var mailgun_js_1 = __importDefault(require("mailgun-js"));
 var exceljs_1 = __importDefault(require("exceljs"));
 require("dotenv").config();
-var DOMAIN = process.env.MAILGUN_DOMAIN;
-var mg = (0, mailgun_js_1.default)({
-    apiKey: process.env.MAILGUN_API,
-    domain: DOMAIN,
-});
 var ServiceHistoryController = /** @class */ (function () {
     function ServiceHistoryController(serviceHistoryService) {
         var _this = this;

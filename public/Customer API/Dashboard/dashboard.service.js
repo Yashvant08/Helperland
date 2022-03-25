@@ -58,7 +58,6 @@ var DashboardService = /** @class */ (function () {
                             for (var sr in serviceRequests) {
                                 var serviceRequestDate = new Date(serviceRequests[sr].ServiceStartDate);
                                 if (currentDate >= serviceRequestDate) {
-                                    console.log('hi');
                                     continue;
                                 }
                                 sRequest.push(serviceRequests[sr]);
@@ -70,10 +69,58 @@ var DashboardService = /** @class */ (function () {
         });
     };
     ;
-    DashboardService.prototype.displayServiceRequestDetail = function (serviceRequests) {
+    DashboardService.prototype.displayRequestDetail = function (srequest) {
         return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/];
+            var requestDetail, _a, _b, _i, sr, user, requestAddress, startTimeArray, endTimeInt, sp;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        requestDetail = [];
+                        _a = [];
+                        for (_b in srequest)
+                            _a.push(_b);
+                        _i = 0;
+                        _c.label = 1;
+                    case 1:
+                        if (!(_i < _a.length)) return [3 /*break*/, 5];
+                        sr = _a[_i];
+                        return [4 /*yield*/, this.dashboardRepository.getUserDetailById(srequest[sr].ServiceProviderId)];
+                    case 2:
+                        user = _c.sent();
+                        return [4 /*yield*/, this.dashboardRepository.getRequestAddress(srequest[sr].ServiceRequestId)];
+                    case 3:
+                        requestAddress = _c.sent();
+                        startTimeArray = srequest[sr].ServiceStartTime.toString().split(":");
+                        endTimeInt = (parseFloat(startTimeArray[0]) + parseFloat(startTimeArray[1]) / 60 +
+                            srequest[sr].ServiceHours + srequest[sr].ExtraHours).toString().split(".");
+                        if (endTimeInt[1]) {
+                            endTimeInt[1] = (parseInt(endTimeInt[1]) * 6).toString();
+                        }
+                        else {
+                            endTimeInt[1] = "00";
+                        }
+                        if (requestAddress) {
+                            sp = void 0;
+                            if (user) {
+                                sp = user.FirstName + " " + user.LastName;
+                            }
+                            else {
+                                sp = null;
+                            }
+                            requestDetail.push({
+                                ServiceId: srequest[sr].ServiceRequestId,
+                                ServiceDate: srequest[sr].ServiceStartDate.toString().split("-").reverse().join("-"),
+                                Time: startTimeArray[0] + ":" + startTimeArray[1] + "-" + endTimeInt[0] + ":" + endTimeInt[1],
+                                ServiceProvider: sp,
+                                Payment: srequest[sr].TotalCost + " €"
+                            });
+                        }
+                        _c.label = 4;
+                    case 4:
+                        _i++;
+                        return [3 /*break*/, 1];
+                    case 5: return [2 /*return*/, requestDetail];
+                }
             });
         });
     };
@@ -128,7 +175,7 @@ var DashboardService = /** @class */ (function () {
         }
     };
     ;
-    DashboardService.prototype.helperHasFutureSameDateAndTime = function (date, serviceRequest, totalHour, time) {
+    DashboardService.prototype.helperHasFutureSameDateAndTime = function (date, serviceRequest, totalHour, time, serviceId) {
         var srDate;
         var startTime;
         var endTime;
@@ -140,47 +187,52 @@ var DashboardService = /** @class */ (function () {
         var enteredDate = new Date(date.split("-").reverse().join("-"));
         var matched;
         for (var count in serviceRequest) {
-            if (new Date(serviceRequest[count].ServiceStartDate) > enteredDate) {
-                matched = false;
-            }
-            else if (new Date(serviceRequest[count].ServiceStartDate) < enteredDate) {
-                matched = false;
+            if (serviceRequest[count].ServiceRequestId === serviceId) {
+                continue;
             }
             else {
-                var sTime = serviceRequest[count].ServiceStartTime.toString().split(":");
-                if (sTime[1] === '30') {
-                    sTime[1] = '0.5';
+                if (new Date(serviceRequest[count].ServiceStartDate) > enteredDate) {
+                    matched = false;
                 }
-                var availStartTime = parseFloat(sTime[0]) + parseFloat(sTime[1]);
-                var availTotalHour = serviceRequest[count].ServiceHours + serviceRequest[count].ExtraHours;
-                console.log(updatedTime);
-                console.log(totalHour);
-                console.log(availStartTime);
-                console.log(availTotalHour);
-                if (updatedTime + totalHour < availStartTime ||
-                    availStartTime + availTotalHour < updatedTime) {
+                else if (new Date(serviceRequest[count].ServiceStartDate) < enteredDate) {
                     matched = false;
                 }
                 else {
-                    srDate = serviceRequest[count].ServiceStartDate.toString().split("-").reverse().join("-");
-                    var srTime = availStartTime.toString().split('.');
-                    if (srTime[1] === '5') {
-                        srTime[1] = '30';
+                    var sTime = serviceRequest[count].ServiceStartTime.toString().split(":");
+                    if (sTime[1] === '30') {
+                        sTime[1] = '0.5';
+                    }
+                    var availStartTime = parseFloat(sTime[0]) + parseFloat(sTime[1]);
+                    var availTotalHour = serviceRequest[count].ServiceHours + serviceRequest[count].ExtraHours;
+                    console.log(updatedTime);
+                    console.log(totalHour);
+                    console.log(availStartTime);
+                    console.log(availTotalHour);
+                    if (updatedTime + totalHour < availStartTime ||
+                        availStartTime + availTotalHour < updatedTime) {
+                        matched = false;
                     }
                     else {
-                        srTime[1] = '00';
+                        srDate = serviceRequest[count].ServiceStartDate.toString().split("-").reverse().join("-");
+                        var srTime = availStartTime.toString().split('.');
+                        if (srTime[1] === '5') {
+                            srTime[1] = '30';
+                        }
+                        else {
+                            srTime[1] = '00';
+                        }
+                        startTime = srTime.join(':');
+                        var eTime = (availStartTime + availTotalHour).toString().split('.');
+                        if (parseInt(eTime[1]) === 5) {
+                            eTime[1] = '30';
+                        }
+                        else {
+                            eTime[1] = '00';
+                        }
+                        endTime = eTime.join(':');
+                        matched = true;
+                        break;
                     }
-                    startTime = srTime.join(':');
-                    var eTime = (availStartTime + availTotalHour).toString().split('.');
-                    if (parseInt(eTime[1]) === 5) {
-                        eTime[1] = '30';
-                    }
-                    else {
-                        eTime[1] = '00';
-                    }
-                    endTime = eTime.join(':');
-                    matched = true;
-                    break;
                 }
             }
         }

@@ -1,16 +1,9 @@
 import { Request, Response, RequestHandler } from "express";
 import { ServiceHistoryService } from "./servicehistory.service";
-import mailgun from "mailgun-js";
 import exceljs from "exceljs";
 
 
 require("dotenv").config();
-
-const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
-const mg = mailgun({
-  apiKey: process.env.MAILGUN_API!,
-  domain: DOMAIN,
-});
 
 export class ServiceHistoryController {
   public constructor(private readonly serviceHistoryService: ServiceHistoryService) {
@@ -19,12 +12,13 @@ export class ServiceHistoryController {
 
   public getCancelledOrCompletedSR:RequestHandler = async(req, res):Promise<Response> => {
     return this.serviceHistoryService.getServiceRequestHistoryOfUser(parseInt(req.body.userId))
-    .then(requestHistory => {
+    .then(async (requestHistory) => {
       if(requestHistory){
         if(requestHistory.length>0){
           const pastDateHistory = this.serviceHistoryService.compareDateWithCurrentDate(requestHistory);
-          if(requestHistory.length>0){
-            return res.status(200).json(pastDateHistory);
+          if(pastDateHistory.length>0){
+            const displayHistory = await this.serviceHistoryService.gethistoryForDisplay(pastDateHistory);
+            return res.status(200).json(displayHistory);
           }else{
             return res.status(404).json({message:'Service request history not found in past'});
           }

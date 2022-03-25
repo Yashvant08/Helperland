@@ -87,7 +87,7 @@ var SubUserService = /** @class */ (function () {
         var data = {
             from: 'yashvantdesai7@gmail.com',
             to: userEmail,
-            subject: 'Newsletter confirmation, entry in our mailing list',
+            subject: 'Message from helperland',
             html: "\n                <h1>Hello,</h1>\n                "
         };
         return data;

@@ -2,16 +2,27 @@ import { Request, Response, RequestHandler } from "express";
 import { UserAddress } from "../models/useraddress";
 import { BookService } from "./bookservice.service";
 import jwt from "jsonwebtoken";
-import mailgun from "mailgun-js";
+import nodemailer from "nodemailer"
+// import mailgun from "mailgun-js";
 
 let email: string[] = [];
 require("dotenv").config();
 
-const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
-const mg = mailgun({
-  apiKey: process.env.MAILGUN_API!,
-  domain: DOMAIN,
+// const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
+// const mg = mailgun({
+//   apiKey: process.env.MAILGUN_API!,
+//   domain: DOMAIN,
+// });
+
+const transporter = nodemailer.createTransport({
+  service: process.env.SERVICE,
+  auth: {
+      user: process.env.USER,
+      pass: process.env.PASS,
+  },
 });
+
+
 
 export class BookServiceController {
   public constructor(private readonly bookService: BookService) {
@@ -267,7 +278,7 @@ export class BookServiceController {
   //               .then(helper => {
   //                 if(helper){
   //                   const data = this.bookService.createData(helper.Email!, request.ServiceRequestId);
-  //                   mg.messages().send(data, (error, user) => {
+  //                   transporter.sendMail(data, (error, user) => {
   //                     if(error){
   //                       return res.json({
   //                         error: error.message,
@@ -309,7 +320,7 @@ export class BookServiceController {
   //                       const data = await this.bookService.createDataForAll(
   //                         email[e]
   //                       );
-  //                       await mg.messages().send(data, function (error, body) {
+  //                       transporter.sendMail(data, function (error, body) {
   //                         if (error) {
   //                           return res.json({
   //                             error: error.message,
@@ -375,7 +386,7 @@ export class BookServiceController {
 public saveCleaningServiceDetail:RequestHandler = async (req, res):Promise<Response> => {
   if(req.body.userId && req.body.userTypeId === 4){
     if(req.body.ServiceRequestId && req.body.AddressId){
-      return this.bookService.createServiceRequestAddress(req.body.ServiceRequestId,req.body.AddressId)
+      return this.bookService.createServiceRequestAddress(req.body.ServiceRequestId,req.body.AddressId,req.body.userId)
       .then(srAddress => {
         if(srAddress){
           if(req.body.ServiceProviderId){
@@ -385,7 +396,7 @@ public saveCleaningServiceDetail:RequestHandler = async (req, res):Promise<Respo
                   .then(completeSR => {
                     if(completeSR[0] ===1){
                       const data = this.bookService.createData(helper?.Email!, req.body.ServiceRequestId);
-                      mg.messages().send(data, (error, user) => {
+                      transporter.sendMail(data, (error, user) => {
                         if(error){
                           return res.json({error: error.message});
                         }
@@ -425,7 +436,7 @@ public saveCleaningServiceDetail:RequestHandler = async (req, res):Promise<Respo
                       const data = await this.bookService.createDataForAll(
                         email[e]
                       );
-                      await mg.messages().send(data, function (error, body) {
+                      transporter.sendMail(data, function (error, body) {
                         if (error) {
                           return res.json({error: error.message});
                         }
@@ -449,7 +460,7 @@ public saveCleaningServiceDetail:RequestHandler = async (req, res):Promise<Respo
               });
             }
         }else{
-          return res.status(401).json({message:'address already available or error in creating address'});
+          return res.status(401).json({message:'address already available or error in creating address or this addess id is not belongs to you'});
         }
       })
       .catch((error) => {

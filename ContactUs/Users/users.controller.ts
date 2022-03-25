@@ -2,14 +2,23 @@ import { Request, Response, RequestHandler } from "express";
 import { ContactUs } from "../../models/contactus";
 import { UsersService } from "./users.service";
 import jwt from "jsonwebtoken";
-import mailgun from "mailgun-js";
+import nodemailer from "nodemailer";
+// import mailgun from "mailgun-js";
 
 require("dotenv").config();
 
-const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
-const mg = mailgun({
-  apiKey: process.env.MAILGUN_API!,
-  domain: DOMAIN,
+// const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
+// const mg = mailgun({
+//   apiKey: process.env.MAILGUN_API!,
+//   domain: DOMAIN,
+// });
+
+const transporter = nodemailer.createTransport({
+  service: process.env.SERVICE,
+  auth: {
+      user: process.env.USER,
+      pass: process.env.PASS,
+  },
 });
 
 export class UsersController {
@@ -45,7 +54,7 @@ export class UsersController {
         if(adminEmails.length>0){
           for(let e in adminEmails){
             const data = this.usersService.createData(adminEmails[e],Name, req.body.Email,req.body.Subject, req.body.PhoneNumber, req.body.Message);
-            await mg.messages().send(data, (error, body) => {
+            transporter.sendMail(data, (error, body) => {
               if (error) {
                 return res.json({error: error.message});
               }

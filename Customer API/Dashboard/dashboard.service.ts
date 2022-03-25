@@ -19,7 +19,6 @@ export class DashboardService {
         for(let sr in serviceRequests){
           let serviceRequestDate = new Date(serviceRequests[sr].ServiceStartDate);
           if(currentDate >= serviceRequestDate ){
-            console.log('hi');
             continue;
           }
           sRequest.push(serviceRequests[sr]);
@@ -29,8 +28,43 @@ export class DashboardService {
     });;
   };
 
-  public async displayServiceRequestDetail(serviceRequests:ServiceRequest[]){
+  public async displayRequestDetail(srequest:ServiceRequest[]):Promise<Object[]>{
+    let requestDetail:Object[] = [];
+    for(let sr in srequest){
+      const user = await this.dashboardRepository.getUserDetailById(srequest[sr].ServiceProviderId);
+      const requestAddress = await this.dashboardRepository.getRequestAddress(srequest[sr].ServiceRequestId);
 
+      const startTimeArray =
+        srequest[sr].ServiceStartTime.toString().split(":")!;
+
+      const endTimeInt = (
+        parseFloat(startTimeArray[0]) + parseFloat(startTimeArray[1]) / 60 +
+        srequest[sr].ServiceHours! + srequest[sr].ExtraHours!
+      ).toString().split(".");
+
+      if (endTimeInt[1]) {
+        endTimeInt[1] = (parseInt(endTimeInt[1]) * 6).toString();
+      } else {
+        endTimeInt[1] = "00";
+      }
+        if(requestAddress){
+          let sp:string|null;
+          if(user){
+            sp =  user.FirstName + " " + user.LastName;
+          }else{
+            sp = null;
+          }
+          requestDetail.push({
+            ServiceId:srequest[sr].ServiceRequestId,
+            ServiceDate:srequest[sr].ServiceStartDate.toString().split("-").reverse().join("-"),
+            Time:startTimeArray[0]+":"+startTimeArray[1]+"-"+endTimeInt[0]+":"+endTimeInt[1],
+            ServiceProvider: sp,
+            Payment:srequest[sr].TotalCost+" €"
+
+          })
+        }
+    }
+    return requestDetail;
   }
 
   public async getServiceRequestDetailById(srId: number): Promise<ServiceRequest | null> 
@@ -71,7 +105,8 @@ export class DashboardService {
     date: string,
     serviceRequest: ServiceRequest[],
     totalHour: number,
-    time: string ) 
+    time: string,
+    serviceId:number) 
   {
       let srDate;
       let startTime;
@@ -86,63 +121,66 @@ export class DashboardService {
       let matched;
       for (let count in serviceRequest) 
       {
-        if (new Date(serviceRequest[count].ServiceStartDate) > enteredDate) 
-        {
-          matched = false;
-        } 
-        else if (
-          new Date(serviceRequest[count].ServiceStartDate) < enteredDate
-        ) 
-        {
-          matched = false;
-        } 
-        else 
-        {
-
-          const sTime =serviceRequest[count].ServiceStartTime.toString().split(":");
-          if(sTime[1] === '30')
+        if(serviceRequest[count].ServiceRequestId === serviceId){
+          continue;
+        }else{
+          if (new Date(serviceRequest[count].ServiceStartDate) > enteredDate) 
           {
-            sTime[1] = '0.5';
-          }
-          const availStartTime = parseFloat(sTime[0]) + parseFloat(sTime[1]);
-          const availTotalHour =
-            serviceRequest[count].ServiceHours + serviceRequest[count].ExtraHours;
-          console.log(updatedTime);
-          console.log(totalHour)
-          console.log(availStartTime);
-          console.log(availTotalHour);
-          if (
-            updatedTime + totalHour < availStartTime ||
-            availStartTime + availTotalHour < updatedTime
+            matched = false;
+          } 
+          else if (
+            new Date(serviceRequest[count].ServiceStartDate) < enteredDate
           ) 
           {
             matched = false;
-          }
-          else
+          } 
+          else 
           {
-            srDate = serviceRequest[count].ServiceStartDate.toString().split("-").reverse().join("-");
-
-            const srTime = availStartTime.toString().split('.');
-            if(srTime[1] === '5'){
-              srTime[1] = '30'
-            }else{
-              srTime[1] = '00'
-            }
-            startTime = srTime.join(':');
-
-            const eTime = (availStartTime + availTotalHour).toString().split('.');
-            if(parseInt(eTime[1]) === 5)
+  
+            const sTime =serviceRequest[count].ServiceStartTime.toString().split(":");
+            if(sTime[1] === '30')
             {
-              eTime[1] = '30';
-            }else
-            {
-              eTime[1] = '00';
+              sTime[1] = '0.5';
             }
-            endTime = eTime.join(':');
-            matched = true;
-            break;
+            const availStartTime = parseFloat(sTime[0]) + parseFloat(sTime[1]);
+            const availTotalHour =
+              serviceRequest[count].ServiceHours + serviceRequest[count].ExtraHours;
+            console.log(updatedTime);
+            console.log(totalHour)
+            console.log(availStartTime);
+            console.log(availTotalHour);
+            if (
+              updatedTime + totalHour < availStartTime ||
+              availStartTime + availTotalHour < updatedTime
+            ) 
+            {
+              matched = false;
+            }
+            else
+            {
+              srDate = serviceRequest[count].ServiceStartDate.toString().split("-").reverse().join("-");
+  
+              const srTime = availStartTime.toString().split('.');
+              if(srTime[1] === '5'){
+                srTime[1] = '30'
+              }else{
+                srTime[1] = '00'
+              }
+              startTime = srTime.join(':');
+  
+              const eTime = (availStartTime + availTotalHour).toString().split('.');
+              if(parseInt(eTime[1]) === 5)
+              {
+                eTime[1] = '30';
+              }else
+              {
+                eTime[1] = '00';
+              }
+              endTime = eTime.join(':');
+              matched = true;
+              break;
+            }
           }
-          
         }
       }
       return {matched, srDate, startTime, endTime};

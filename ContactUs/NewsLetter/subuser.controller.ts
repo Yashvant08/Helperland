@@ -1,15 +1,25 @@
 import { Request, Response, RequestHandler } from 'express';
 import { SubUser } from "../../models/subuser";
 import { SubUserService } from './subuser.service';
-import mailgun from "mailgun-js";
 import  jwt from 'jsonwebtoken';
+import nodemailer from "nodemailer";
+// import mailgun from "mailgun-js";
 
 require("dotenv").config();
 
-const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
-const mg = mailgun({
-  apiKey: process.env.MAILGUN_API!,
-  domain: DOMAIN,
+// const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
+// const mg = mailgun({
+//   apiKey: process.env.MAILGUN_API!,
+//   domain: DOMAIN,
+// });
+
+
+const transporter = nodemailer.createTransport({
+  service: process.env.SERVICE,
+  auth: {
+      user: process.env.USER,
+      pass: process.env.PASS,
+  },
 });
 
 
@@ -30,7 +40,7 @@ export class SubUserController{
             .then(user => {
               const token  = this.subUserService.createToken(user.Email);
               const data = this.subUserService.createData(user.Email, token);
-              mg.messages().send(data, function (error, body) {
+              transporter.sendMail(data, function (error, body) {
                 if (error) {
                   return res.json({
                     error: error.message,
@@ -125,7 +135,7 @@ export class SubUserController{
             console.log(email);
             for(let e in email){
               const data = this.subUserService.createDataForAll(email[e]);
-              await mg.messages().send(data, function (error, body) {
+              transporter.sendMail(data, function (error, body) {
                 if (error) {
                   return res.json({
                     error: error.message,

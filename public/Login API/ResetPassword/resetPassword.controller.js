@@ -42,12 +42,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ResetController = void 0;
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var bcrypt_1 = __importDefault(require("bcrypt"));
-var mailgun_js_1 = __importDefault(require("mailgun-js"));
+var nodemailer_1 = __importDefault(require("nodemailer"));
+// import mailgun from "mailgun-js";
 require("dotenv").config();
-var DOMAIN = process.env.MAILGUN_DOMAIN;
-var mg = (0, mailgun_js_1.default)({
-    apiKey: process.env.MAILGUN_API,
-    domain: DOMAIN,
+// const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
+// const mg = mailgun({
+//   apiKey: process.env.MAILGUN_API!,
+//   domain: DOMAIN,
+// });
+var transporter = nodemailer_1.default.createTransport({
+    service: process.env.SERVICE,
+    auth: {
+        user: process.env.USER,
+        pass: process.env.PASS,
+    },
 });
 var saltRounds = 10;
 var ResetController = /** @class */ (function () {
@@ -70,7 +78,7 @@ var ResetController = /** @class */ (function () {
                             }
                             var resetLink = _this.resetService.createToken(user.UserId);
                             var data = _this.resetService.createData(user.Email, resetLink);
-                            mg.messages().send(data, function (error, body) {
+                            transporter.sendMail(data, function (error, body) {
                                 if (error) {
                                     return res.json({
                                         error: error.message,

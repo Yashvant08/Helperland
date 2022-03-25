@@ -54,6 +54,7 @@ var FavoriteProsRepository = /** @class */ (function () {
             var _a;
             return __generator(this, function (_b) {
                 return [2 /*return*/, index_1.db.User.findAll({
+                        attributes: ['UserId', 'FirstName', 'LastName'],
                         where: { UserTypeId: 3, UserId: (_a = {},
                                 _a[sequelize_1.Op.or] = userId,
                                 _a) },

@@ -299,7 +299,7 @@ var BookService = /** @class */ (function () {
             });
         });
     };
-    BookService.prototype.createServiceRequestAddress = function (requestId, addressId) {
+    BookService.prototype.createServiceRequestAddress = function (requestId, addressId, userId) {
         return __awaiter(this, void 0, void 0, function () {
             var alreadyAvailAddress, address, srAddress;
             return __generator(this, function (_a) {
@@ -313,7 +313,7 @@ var BookService = /** @class */ (function () {
                     case 2: return [4 /*yield*/, this.bookServiceRepository.getUserAddressById(addressId)];
                     case 3:
                         address = _a.sent();
-                        if (address) {
+                        if (address && address.UserId === userId) {
                             srAddress = JSON.parse(JSON.stringify(address));
                             srAddress.ServiceRequestId = requestId;
                             return [2 /*return*/, this.bookServiceRepository.createSRAddress(srAddress)];

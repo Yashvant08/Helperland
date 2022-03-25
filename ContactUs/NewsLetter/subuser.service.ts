@@ -70,7 +70,7 @@ export class SubUserService{
         const data = {
             from: 'yashvantdesai7@gmail.com',
             to: userEmail,
-            subject: 'Newsletter confirmation, entry in our mailing list',
+            subject: 'Message from helperland',
             html: `
                 <h1>Hello,</h1>
                 `

@@ -86,6 +86,20 @@ var ServiceHistoryRepository = /** @class */ (function () {
         });
     };
     ;
+    ServiceHistoryRepository.prototype.getSPDetailById = function (helperId) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, index_1.db.User.findOne({ where: { UserId: helperId, UserTypeId: 3 } })];
+            });
+        });
+    };
+    ServiceHistoryRepository.prototype.getRequestAddress = function (requestId) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, index_1.db.SRAddress.findOne({ where: { ServiceRequestId: requestId } })];
+            });
+        });
+    };
     return ServiceHistoryRepository;
 }());
 exports.ServiceHistoryRepository = ServiceHistoryRepository;

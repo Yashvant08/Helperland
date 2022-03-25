@@ -1,18 +1,13 @@
 import { db } from "../../models/index";
 import { User } from "../../models/user";
 import { ServiceRequest } from "../../models/servicerequest";
+import { SRAddress } from "../../models/servicerequestaddress";
+import { Op } from "sequelize";
 
 
 export class DashboardRepository {
   public async getAllServiceRequestByUserId(userId: number): Promise<ServiceRequest[] | null> {
-    return db.ServiceRequest.findAll({where: { UserId: userId, Status:1 },
-      include: [
-        "HelperRequest",
-        "UserRequest",
-        "ExtraService",
-        "UserRequest",
-        "ServiceRequestAddress",
-      ],
+    return db.ServiceRequest.findAll({where: { UserId: userId, Status:{[Op.or]:[1,2]}}
     });
   }
 
@@ -42,5 +37,13 @@ export class DashboardRepository {
 
   public async getHelperById(helperId:number):Promise<User | null>{
     return db.User.findOne({where:{UserId:helperId, UserTypeId:3}});
+  }
+
+  public async getUserDetailById(helperId:number): Promise<User | null>{
+    return db.User.findOne({where:{UserId:helperId, UserTypeId:3}});
+  }
+
+  public async getRequestAddress(requestId:number): Promise<SRAddress | null>{
+    return db.SRAddress.findOne({where:{ServiceRequestId:requestId}});
   }
 }

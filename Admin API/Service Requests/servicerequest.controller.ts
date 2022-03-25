@@ -1,14 +1,23 @@
 import { Request, Response, RequestHandler } from "express";
 import { ServiceRequestService } from "./servicerequest.service";
-import mailgun from "mailgun-js";
+import nodemailer from "nodemailer"
+// import mailgun from "mailgun-js";
 import { displayRequest, filters } from "./types";
 
 require("dotenv").config();
 
-const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
-const mg = mailgun({
-  apiKey: process.env.MAILGUN_API!,
-  domain: DOMAIN,
+// const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
+// const mg = mailgun({
+//   apiKey: process.env.MAILGUN_API!,
+//   domain: DOMAIN,
+// });
+
+const transporter = nodemailer.createTransport({
+  service: process.env.SERVICE,
+  auth: {
+      user: process.env.USER,
+      pass: process.env.PASS,
+  },
 });
 
 export class ServiceRequestController {
@@ -112,7 +121,7 @@ export class ServiceRequestController {
                           email[e],
                           serviceRequest.ServiceRequestId
                         );
-                        mg.messages().send(data, (error, body) => {
+                        transporter.sendMail(data, (error, body) => {
                           if (error) {
                             return res.json({ error: error.message });
                           }
@@ -218,7 +227,7 @@ export class ServiceRequestController {
               if(req.body.updatedAddress){
                   for (let e in email) {
                     const data = this.serviceRequestService.createDataForUpdatedServiceRequest(email[e],req.body);
-                    mg.messages().send(data, (error, body) => {
+                    transporter.sendMail(data, (error, body) => {
                       if (error) {
                         return res.json({ error: error.message });
                       }
@@ -227,7 +236,7 @@ export class ServiceRequestController {
               }else{
                 for (let e in email) {
                   const data = this.serviceRequestService.createDataForRescheduleSR(email[e],req.body);
-                  mg.messages().send(data, (error, body) => {
+                  transporter.sendMail(data, (error, body) => {
                     if (error) {
                       return res.json({ error: error.message });
                     }
@@ -251,7 +260,7 @@ export class ServiceRequestController {
         const email = await this.serviceRequestService.getEmailAddressOfCustAndSP(req.body.serviceRequest);
           for (let e in email) {
             const data = this.serviceRequestService.createDataForUpdatedAddress(email[e],req.body);
-            mg.messages().send(data, (error, body) => {
+            transporter.sendMail(data, (error, body) => {
               if (error) {
                 return res.json({ error: error.message });
               }

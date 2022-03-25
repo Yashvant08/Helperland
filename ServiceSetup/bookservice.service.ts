@@ -209,14 +209,14 @@ export class BookService {
     }
   }
 
-  public async createServiceRequestAddress(requestId:number,addressId:number):Promise<SRAddress | null>{
+  public async createServiceRequestAddress(requestId:number,addressId:number,userId:number):Promise<SRAddress | null>{
     const alreadyAvailAddress = await this.bookServiceRepository.getServiceRequestAddress(requestId);
     console.log(alreadyAvailAddress);
     if(alreadyAvailAddress){
       return null;
     }else{
       const address = await this.bookServiceRepository.getUserAddressById(addressId);
-      if(address){
+      if(address && address.UserId === userId){
         var srAddress:serviceRequestAddress = JSON.parse(JSON.stringify(address));
         srAddress.ServiceRequestId = requestId;
         return this.bookServiceRepository.createSRAddress(srAddress);

@@ -1,16 +1,11 @@
 import { Request, Response, RequestHandler } from "express";
 import { ServiceHistoryService } from "./servicehistory.service";
-import mailgun from "mailgun-js";
 import exceljs from "exceljs";
 
 
 require("dotenv").config();
 
-const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
-const mg = mailgun({
-  apiKey: process.env.MAILGUN_API!,
-  domain: DOMAIN,
-});
+
 
 export class ServiceHistoryController {
   public constructor(private readonly serviceHistoryService: ServiceHistoryService) {

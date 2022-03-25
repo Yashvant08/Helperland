@@ -5,14 +5,22 @@ import bcrypt from "bcrypt";
 import { User } from "../../models/user";
 import { ResetService } from "./resetPassword.service";
 
-import mailgun from "mailgun-js";
-import { json } from "sequelize";
+import nodemailer from "nodemailer";
+// import mailgun from "mailgun-js";
 
 require("dotenv").config();
-const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
-const mg = mailgun({
-  apiKey: process.env.MAILGUN_API!,
-  domain: DOMAIN,
+// const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
+// const mg = mailgun({
+//   apiKey: process.env.MAILGUN_API!,
+//   domain: DOMAIN,
+// });
+
+const transporter = nodemailer.createTransport({
+  service: process.env.SERVICE,
+  auth: {
+      user: process.env.USER,
+      pass: process.env.PASS,
+  },
 });
 
 const saltRounds: number = 10;
@@ -38,7 +46,7 @@ export class ResetController {
           }
           const resetLink = this.resetService.createToken(user.UserId);
           const data = this.resetService.createData(user.Email!, resetLink);
-          mg.messages().send(data, function (error, body) {
+          transporter.sendMail(data, function (error, body) {
             if (error) {
               return res.json({
                 error: error.message,

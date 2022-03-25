@@ -1,14 +1,23 @@
 import { Request, Response, RequestHandler } from "express";
 import { ServiceRequestService } from "./servicerequest.service";
-import mailgun from "mailgun-js";
+// import mailgun from "mailgun-js";
+import nodemailer from "nodemailer";
 
 
 require("dotenv").config();
 
-const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
-const mg = mailgun({
-  apiKey: process.env.MAILGUN_API!,
-  domain: DOMAIN,
+// const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
+// const mg = mailgun({
+//   apiKey: process.env.MAILGUN_API!,
+//   domain: DOMAIN,
+// });
+
+const transporter = nodemailer.createTransport({
+  service: process.env.SERVICE,
+  auth: {
+      user: process.env.USER,
+      pass: process.env.PASS,
+  },
 });
 
 export class ServiceRequestController {
@@ -192,7 +201,12 @@ export class ServiceRequestController {
                     req.params.requestId!
                   );
                   console.log(data);
-                  mg.messages().send(data, (error, body) => {
+                  // mg.messages().send(data, (error, body) => {
+                  //   if (error) {
+                  //     return res.json({ error: error.message });
+                  //   }
+                  // });
+                  transporter.sendMail(data, (error, body) => {
                     if (error) {
                       return res.json({ error: error.message });
                     }

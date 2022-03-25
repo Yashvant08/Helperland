@@ -41,13 +41,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookServiceController = void 0;
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-var mailgun_js_1 = __importDefault(require("mailgun-js"));
+var nodemailer_1 = __importDefault(require("nodemailer"));
+// import mailgun from "mailgun-js";
 var email = [];
 require("dotenv").config();
-var DOMAIN = process.env.MAILGUN_DOMAIN;
-var mg = (0, mailgun_js_1.default)({
-    apiKey: process.env.MAILGUN_API,
-    domain: DOMAIN,
+// const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
+// const mg = mailgun({
+//   apiKey: process.env.MAILGUN_API!,
+//   domain: DOMAIN,
+// });
+var transporter = nodemailer_1.default.createTransport({
+    service: process.env.SERVICE,
+    auth: {
+        user: process.env.USER,
+        pass: process.env.PASS,
+    },
 });
 var BookServiceController = /** @class */ (function () {
     function BookServiceController(bookService) {
@@ -86,7 +94,8 @@ var BookServiceController = /** @class */ (function () {
                                             var token_1 = _this.bookService.createToken(userEmail, postalCode);
                                             return res
                                                 .status(200)
-                                                .cookie("token", token_1, { httpOnly: true });
+                                                .setHeader("token", token_1);
+                                            // .cookie("token", token, { httpOnly: true });
                                         }
                                     });
                                     return res.status(200).json({ message: "found" });
@@ -318,7 +327,7 @@ var BookServiceController = /** @class */ (function () {
         //               .then(helper => {
         //                 if(helper){
         //                   const data = this.bookService.createData(helper.Email!, request.ServiceRequestId);
-        //                   mg.messages().send(data, (error, user) => {
+        //                   transporter.sendMail(data, (error, user) => {
         //                     if(error){
         //                       return res.json({
         //                         error: error.message,
@@ -360,7 +369,7 @@ var BookServiceController = /** @class */ (function () {
         //                       const data = await this.bookService.createDataForAll(
         //                         email[e]
         //                       );
-        //                       await mg.messages().send(data, function (error, body) {
+        //                       transporter.sendMail(data, function (error, body) {
         //                         if (error) {
         //                           return res.json({
         //                             error: error.message,
@@ -426,7 +435,7 @@ var BookServiceController = /** @class */ (function () {
             return __generator(this, function (_a) {
                 if (req.body.userId && req.body.userTypeId === 4) {
                     if (req.body.ServiceRequestId && req.body.AddressId) {
-                        return [2 /*return*/, this.bookService.createServiceRequestAddress(req.body.ServiceRequestId, req.body.AddressId)
+                        return [2 /*return*/, this.bookService.createServiceRequestAddress(req.body.ServiceRequestId, req.body.AddressId, req.body.userId)
                                 .then(function (srAddress) {
                                 if (srAddress) {
                                     if (req.body.ServiceProviderId) {
@@ -436,7 +445,7 @@ var BookServiceController = /** @class */ (function () {
                                                 .then(function (completeSR) {
                                                 if (completeSR[0] === 1) {
                                                     var data = _this.bookService.createData(helper === null || helper === void 0 ? void 0 : helper.Email, req.body.ServiceRequestId);
-                                                    mg.messages().send(data, function (error, user) {
+                                                    transporter.sendMail(data, function (error, user) {
                                                         if (error) {
                                                             return res.json({ error: error.message });
                                                         }
@@ -478,7 +487,7 @@ var BookServiceController = /** @class */ (function () {
                                                                 return __generator(this, function (_c) {
                                                                     switch (_c.label) {
                                                                         case 0:
-                                                                            if (!blockedHelper) return [3 /*break*/, 6];
+                                                                            if (!blockedHelper) return [3 /*break*/, 5];
                                                                             console.log(blockedHelper);
                                                                             return [4 /*yield*/, this.bookService.removeBlockedHelper(hp_1, blockedHelper)];
                                                                         case 1:
@@ -491,24 +500,22 @@ var BookServiceController = /** @class */ (function () {
                                                                             _i = 0;
                                                                             _c.label = 2;
                                                                         case 2:
-                                                                            if (!(_i < _a.length)) return [3 /*break*/, 6];
+                                                                            if (!(_i < _a.length)) return [3 /*break*/, 5];
                                                                             e = _a[_i];
                                                                             console.log(email[e]);
                                                                             return [4 /*yield*/, this.bookService.createDataForAll(email[e])];
                                                                         case 3:
                                                                             data = _c.sent();
-                                                                            return [4 /*yield*/, mg.messages().send(data, function (error, body) {
-                                                                                    if (error) {
-                                                                                        return res.json({ error: error.message });
-                                                                                    }
-                                                                                })];
+                                                                            transporter.sendMail(data, function (error, body) {
+                                                                                if (error) {
+                                                                                    return res.json({ error: error.message });
+                                                                                }
+                                                                            });
+                                                                            _c.label = 4;
                                                                         case 4:
-                                                                            _c.sent();
-                                                                            _c.label = 5;
-                                                                        case 5:
                                                                             _i++;
                                                                             return [3 /*break*/, 2];
-                                                                        case 6: return [2 /*return*/, res.status(200)
+                                                                        case 5: return [2 /*return*/, res.status(200)
                                                                                 .json({ message: "service booked successfully" })];
                                                                     }
                                                                 });
@@ -528,7 +535,7 @@ var BookServiceController = /** @class */ (function () {
                                     }
                                 }
                                 else {
-                                    return res.status(401).json({ message: 'address already available or error in creating address' });
+                                    return res.status(401).json({ message: 'address already available or error in creating address or this addess id is not belongs to you' });
                                 }
                             })
                                 .catch(function (error) {

@@ -71,7 +71,7 @@ var UserManagementService = /** @class */ (function () {
                             UserType: userType,
                             Phone: users[us].Mobile,
                             PostalCode: users[us].ZipCode,
-                            Status: users[us].Status
+                            Status: users[us].IsActive
                         });
                         _c.label = 4;
                     case 4:

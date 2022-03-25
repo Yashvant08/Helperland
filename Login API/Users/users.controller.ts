@@ -3,14 +3,23 @@ import jwt from "jsonwebtoken";
 import { User } from "../../models/user";
 import { UsersService } from "./users.service";
 import bcrypt from "bcrypt";
-import mailgun from "mailgun-js";
+import nodemailer from "nodemailer";
+// import mailgun from "mailgun-js";
 
 require("dotenv").config();
 
-const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
-const mg = mailgun({
-  apiKey: process.env.MAILGUN_API!,
-  domain: DOMAIN,
+// const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
+// const mg = mailgun({
+//   apiKey: process.env.MAILGUN_API!,
+//   domain: DOMAIN,
+// });
+
+const transporter = nodemailer.createTransport({
+  service: process.env.SERVICE,
+  auth: {
+      user: process.env.USER,
+      pass: process.env.PASS,
+  },
 });
 
 const saltRounds: number = 10;
@@ -48,7 +57,7 @@ export class UsersController {
                 .then((user: User) => {
                   const token = this.usersService.createToken(user.Email!);
                   const data = this.usersService.createData(user.Email!, token);
-                  mg.messages().send(data, function (error, body) {
+                  transporter.sendMail(data, function (error, body) {
                     if (error) {
                       return res.json({
                         error: error.message,

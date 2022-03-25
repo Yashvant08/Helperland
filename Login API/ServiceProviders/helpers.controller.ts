@@ -8,11 +8,20 @@ require("dotenv").config();
 const saltRounds = 10;
 const UserTypeId: number = 3;
 
-import mailgun from "mailgun-js";
-const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
-const mg = mailgun({
-  apiKey: process.env.MAILGUN_API!,
-  domain: DOMAIN,
+// import mailgun from "mailgun-js";
+// const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
+// const mg = mailgun({
+//   apiKey: process.env.MAILGUN_API!,
+//   domain: DOMAIN,
+// });
+
+import nodemailer from "nodemailer";
+const transporter = nodemailer.createTransport({
+  service: process.env.SERVICE,
+  auth: {
+      user: process.env.USER,
+      pass: process.env.PASS,
+  },
 });
 
 export class HelpersController {
@@ -56,7 +65,7 @@ export class HelpersController {
                     helper.Email!,
                     token
                   );
-                  mg.messages().send(data, function (error, body) {
+                  transporter.sendMail(data, function (error, body) {
                     if (error) {
                       return res.json({
                         error: error.message,

@@ -41,12 +41,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersController = void 0;
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-var mailgun_js_1 = __importDefault(require("mailgun-js"));
+var nodemailer_1 = __importDefault(require("nodemailer"));
+// import mailgun from "mailgun-js";
 require("dotenv").config();
-var DOMAIN = process.env.MAILGUN_DOMAIN;
-var mg = (0, mailgun_js_1.default)({
-    apiKey: process.env.MAILGUN_API,
-    domain: DOMAIN,
+// const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
+// const mg = mailgun({
+//   apiKey: process.env.MAILGUN_API!,
+//   domain: DOMAIN,
+// });
+var transporter = nodemailer_1.default.createTransport({
+    service: process.env.SERVICE,
+    auth: {
+        user: process.env.USER,
+        pass: process.env.PASS,
+    },
 });
 var UsersController = /** @class */ (function () {
     function UsersController(usersService) {
@@ -80,34 +88,23 @@ var UsersController = /** @class */ (function () {
                 return [2 /*return*/, this.usersService
                         .createUsers(req.body)
                         .then(function (user) { return __awaiter(_this, void 0, void 0, function () {
-                        var adminEmails, _a, _b, _i, e, data;
-                        return __generator(this, function (_c) {
-                            switch (_c.label) {
+                        var adminEmails, e, data;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
                                 case 0: return [4 /*yield*/, this.usersService.getAllAdminEmails()];
                                 case 1:
-                                    adminEmails = _c.sent();
-                                    if (!(adminEmails.length > 0)) return [3 /*break*/, 5];
-                                    _a = [];
-                                    for (_b in adminEmails)
-                                        _a.push(_b);
-                                    _i = 0;
-                                    _c.label = 2;
-                                case 2:
-                                    if (!(_i < _a.length)) return [3 /*break*/, 5];
-                                    e = _a[_i];
-                                    data = this.usersService.createData(adminEmails[e], Name, req.body.Email, req.body.Subject, req.body.PhoneNumber, req.body.Message);
-                                    return [4 /*yield*/, mg.messages().send(data, function (error, body) {
-                                            if (error) {
-                                                return res.json({ error: error.message });
-                                            }
-                                        })];
-                                case 3:
-                                    _c.sent();
-                                    _c.label = 4;
-                                case 4:
-                                    _i++;
-                                    return [3 /*break*/, 2];
-                                case 5: return [2 /*return*/, res.status(200).json({ user: user })];
+                                    adminEmails = _a.sent();
+                                    if (adminEmails.length > 0) {
+                                        for (e in adminEmails) {
+                                            data = this.usersService.createData(adminEmails[e], Name, req.body.Email, req.body.Subject, req.body.PhoneNumber, req.body.Message);
+                                            transporter.sendMail(data, function (error, body) {
+                                                if (error) {
+                                                    return res.json({ error: error.message });
+                                                }
+                                            });
+                                        }
+                                    }
+                                    return [2 /*return*/, res.status(200).json({ user: user })];
                             }
                         });
                     }); })

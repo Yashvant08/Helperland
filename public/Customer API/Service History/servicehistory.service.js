@@ -168,6 +168,70 @@ var ServiceHistoryService = /** @class */ (function () {
             });
         });
     };
+    ServiceHistoryService.prototype.gethistoryForDisplay = function (serviceRequest) {
+        return __awaiter(this, void 0, void 0, function () {
+            var historyData, _a, _b, _i, sr, user, address, ratings, startTimeArray, endTimeInt, sp;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        historyData = [];
+                        _a = [];
+                        for (_b in serviceRequest)
+                            _a.push(_b);
+                        _i = 0;
+                        _c.label = 1;
+                    case 1:
+                        if (!(_i < _a.length)) return [3 /*break*/, 6];
+                        sr = _a[_i];
+                        return [4 /*yield*/, this.serviceHistoryRepository.getSPDetailById(serviceRequest[sr].ServiceProviderId)];
+                    case 2:
+                        user = _c.sent();
+                        return [4 /*yield*/, this.serviceHistoryRepository.getRequestAddress(serviceRequest[sr].ServiceRequestId)];
+                    case 3:
+                        address = _c.sent();
+                        return [4 /*yield*/, this.serviceHistoryRepository.getRatingsByServiceRequestId(serviceRequest[sr].ServiceRequestId)];
+                    case 4:
+                        ratings = _c.sent();
+                        startTimeArray = serviceRequest[sr].ServiceStartTime.toString().split(":");
+                        endTimeInt = (parseFloat(startTimeArray[0]) +
+                            parseFloat(startTimeArray[1]) / 60 +
+                            serviceRequest[sr].ServiceHours +
+                            serviceRequest[sr].ExtraHours)
+                            .toString()
+                            .split(".");
+                        if (endTimeInt[1]) {
+                            endTimeInt[1] = (parseInt(endTimeInt[1]) * 6).toString();
+                        }
+                        else {
+                            endTimeInt[1] = "00";
+                        }
+                        sp = void 0;
+                        if (user) {
+                            sp = user.FirstName + " " + user.LastName;
+                        }
+                        else {
+                            sp = null;
+                        }
+                        if (address) {
+                            historyData.push({
+                                ServiceId: serviceRequest[sr].ServiceRequestId,
+                                StartDate: serviceRequest[sr].ServiceStartDate.toString().split("-").reverse()
+                                    .join("-"),
+                                Time: startTimeArray[0] + ":" + startTimeArray[1] + "-" + endTimeInt[0] + ":" + endTimeInt[1],
+                                ServiceProvider: sp,
+                                Ratings: ratings === null || ratings === void 0 ? void 0 : ratings.Ratings,
+                                Status: serviceRequest[sr].Status
+                            });
+                        }
+                        _c.label = 5;
+                    case 5:
+                        _i++;
+                        return [3 /*break*/, 1];
+                    case 6: return [2 /*return*/, historyData];
+                }
+            });
+        });
+    };
     return ServiceHistoryService;
 }());
 exports.ServiceHistoryService = ServiceHistoryService;

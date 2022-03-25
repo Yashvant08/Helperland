@@ -51,13 +51,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubUserController = void 0;
-var mailgun_js_1 = __importDefault(require("mailgun-js"));
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+var nodemailer_1 = __importDefault(require("nodemailer"));
+// import mailgun from "mailgun-js";
 require("dotenv").config();
-var DOMAIN = process.env.MAILGUN_DOMAIN;
-var mg = (0, mailgun_js_1.default)({
-    apiKey: process.env.MAILGUN_API,
-    domain: DOMAIN,
+// const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
+// const mg = mailgun({
+//   apiKey: process.env.MAILGUN_API!,
+//   domain: DOMAIN,
+// });
+var transporter = nodemailer_1.default.createTransport({
+    service: process.env.SERVICE,
+    auth: {
+        user: process.env.USER,
+        pass: process.env.PASS,
+    },
 });
 var SubUserController = /** @class */ (function () {
     function SubUserController(subUserService) {
@@ -77,7 +85,7 @@ var SubUserController = /** @class */ (function () {
                                     .then(function (user) {
                                     var token = _this.subUserService.createToken(user.Email);
                                     var data = _this.subUserService.createData(user.Email, token);
-                                    mg.messages().send(data, function (error, body) {
+                                    transporter.sendMail(data, function (error, body) {
                                         if (error) {
                                             return res.json({
                                                 error: error.message,
@@ -167,46 +175,34 @@ var SubUserController = /** @class */ (function () {
                 return [2 /*return*/, this.subUserService
                         .getSubUsers()
                         .then(function (SubUser) { return __awaiter(_this, void 0, void 0, function () {
-                        var user, email, subUser, _a, _b, _i, e, data;
-                        return __generator(this, function (_c) {
-                            switch (_c.label) {
-                                case 0:
-                                    if (!(SubUser.length <= 0)) return [3 /*break*/, 1];
-                                    return [2 /*return*/, res.status(200).json({ message: 'user not found' })];
-                                case 1:
-                                    user = __assign({}, __assign({}, SubUser));
-                                    email = [];
-                                    for (subUser in user) {
-                                        if (user[subUser].IsConfirmedSub === true) {
-                                            email.push((user[subUser].Email));
-                                        }
-                                    }
-                                    ;
-                                    console.log(email);
-                                    _a = [];
-                                    for (_b in email)
-                                        _a.push(_b);
-                                    _i = 0;
-                                    _c.label = 2;
-                                case 2:
-                                    if (!(_i < _a.length)) return [3 /*break*/, 5];
-                                    e = _a[_i];
-                                    data = this.subUserService.createDataForAll(email[e]);
-                                    return [4 /*yield*/, mg.messages().send(data, function (error, body) {
-                                            if (error) {
-                                                return res.json({
-                                                    error: error.message,
-                                                });
-                                            }
-                                        })];
-                                case 3:
-                                    _c.sent();
-                                    _c.label = 4;
-                                case 4:
-                                    _i++;
-                                    return [3 /*break*/, 2];
-                                case 5: return [2 /*return*/, res.status(200).json({ message: 'mail sent successfully' })];
+                        var user, email, subUser, e, data;
+                        return __generator(this, function (_a) {
+                            if (SubUser.length <= 0) {
+                                return [2 /*return*/, res.status(200).json({ message: 'user not found' })];
                             }
+                            else {
+                                user = __assign({}, __assign({}, SubUser));
+                                email = [];
+                                for (subUser in user) {
+                                    if (user[subUser].IsConfirmedSub === true) {
+                                        email.push((user[subUser].Email));
+                                    }
+                                }
+                                ;
+                                console.log(email);
+                                for (e in email) {
+                                    data = this.subUserService.createDataForAll(email[e]);
+                                    transporter.sendMail(data, function (error, body) {
+                                        if (error) {
+                                            return res.json({
+                                                error: error.message,
+                                            });
+                                        }
+                                    });
+                                }
+                                return [2 /*return*/, res.status(200).json({ message: 'mail sent successfully' })];
+                            }
+                            return [2 /*return*/];
                         });
                     }); })
                         .catch(function (error) {

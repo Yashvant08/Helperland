@@ -1,16 +1,9 @@
 import { Request, Response, RequestHandler } from "express";
 
 import { MySettingsService } from "./mysettings.service";
-import mailgun from "mailgun-js";
 import bcrypt from "bcrypt";
 
 require("dotenv").config();
-
-const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
-const mg = mailgun({
-  apiKey: process.env.MAILGUN_API!,
-  domain: DOMAIN,
-});
 
 export class MySettingsController {
   public constructor(private readonly mySettingsService: MySettingsService) {

@@ -45,11 +45,19 @@ var bcrypt_1 = __importDefault(require("bcrypt"));
 require("dotenv").config();
 var saltRounds = 10;
 var UserTypeId = 3;
-var mailgun_js_1 = __importDefault(require("mailgun-js"));
-var DOMAIN = process.env.MAILGUN_DOMAIN;
-var mg = (0, mailgun_js_1.default)({
-    apiKey: process.env.MAILGUN_API,
-    domain: DOMAIN,
+// import mailgun from "mailgun-js";
+// const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
+// const mg = mailgun({
+//   apiKey: process.env.MAILGUN_API!,
+//   domain: DOMAIN,
+// });
+var nodemailer_1 = __importDefault(require("nodemailer"));
+var transporter = nodemailer_1.default.createTransport({
+    service: process.env.SERVICE,
+    auth: {
+        user: process.env.USER,
+        pass: process.env.PASS,
+    },
 });
 var HelpersController = /** @class */ (function () {
     function HelpersController(helpersService) {
@@ -97,7 +105,7 @@ var HelpersController = /** @class */ (function () {
                                                     .then(function (helper) {
                                                     var token = _this.helpersService.createToken(helper.Email);
                                                     var data = _this.helpersService.createData(helper.Email, token);
-                                                    mg.messages().send(data, function (error, body) {
+                                                    transporter.sendMail(data, function (error, body) {
                                                         if (error) {
                                                             return res.json({
                                                                 error: error.message,

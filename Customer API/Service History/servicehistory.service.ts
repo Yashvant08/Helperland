@@ -101,5 +101,52 @@ export class ServiceHistoryService {
     const time = startTime+" - "+endTimeArray[0]+":"+endTimeArray[1];
     return time;
   }
+
+  public async gethistoryForDisplay(serviceRequest: ServiceRequest[]) {
+    let historyData: Object[] = [];
+    for (let sr in serviceRequest) {
+      let user = await this.serviceHistoryRepository.getSPDetailById(
+        serviceRequest[sr].ServiceProviderId
+      );
+      let address = await this.serviceHistoryRepository.getRequestAddress(
+        serviceRequest[sr].ServiceRequestId
+      );
+      let ratings = await this.serviceHistoryRepository.getRatingsByServiceRequestId(serviceRequest[sr].ServiceRequestId);
+
+      const startTimeArray =
+        serviceRequest[sr].ServiceStartTime.toString().split(":")!;
+      const endTimeInt = (
+        parseFloat(startTimeArray[0]) +
+        parseFloat(startTimeArray[1]) / 60 +
+        serviceRequest[sr].ServiceHours! +
+        serviceRequest[sr].ExtraHours!
+      )
+        .toString()
+        .split(".");
+      if (endTimeInt[1]) {
+        endTimeInt[1] = (parseInt(endTimeInt[1]) * 6).toString();
+      } else {
+        endTimeInt[1] = "00";
+      }
+      let sp:string|null;
+      if (user) {
+        sp = user.FirstName + " " + user.LastName;
+      }else{
+        sp = null;
+      }
+        if (address) {
+          historyData.push({
+            ServiceId: serviceRequest[sr].ServiceRequestId,
+            StartDate: serviceRequest[sr].ServiceStartDate.toString().split("-").reverse()
+              .join("-"),
+            Time:startTimeArray[0]+":"+startTimeArray[1]+"-"+endTimeInt[0]+":"+endTimeInt[1],
+            ServiceProvider: sp,
+            Ratings: ratings?.Ratings,
+            Status: serviceRequest[sr].Status
+          });
+        }
+    }
+    return historyData;
+  }
   
 }

@@ -3,6 +3,7 @@ import { ServiceRequest } from "../../models/servicerequest";
 import { Rating } from "../../models/rating";
 import { User } from "../../models/user";
 import { Op } from "sequelize";
+import { SRAddress } from "../../models/servicerequestaddress";
 
 export class ServiceHistoryRepository {
 
@@ -33,4 +34,12 @@ export class ServiceHistoryRepository {
   {
     return db.User.findOne({where:{UserId:userId}});
   };
+
+  public async getSPDetailById(helperId:number): Promise<User | null>{
+    return db.User.findOne({where:{UserId:helperId, UserTypeId:3}});
+  }
+
+  public async getRequestAddress(requestId:number): Promise<SRAddress | null>{
+    return db.SRAddress.findOne({where:{ServiceRequestId:requestId}});
+  }
 }

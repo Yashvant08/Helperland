@@ -40,12 +40,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DashboardController = void 0;
-var mailgun_js_1 = __importDefault(require("mailgun-js"));
+var nodemailer_1 = __importDefault(require("nodemailer"));
+// import mailgun from "mailgun-js";
 require("dotenv").config();
-var DOMAIN = process.env.MAILGUN_DOMAIN;
-var mg = (0, mailgun_js_1.default)({
-    apiKey: process.env.MAILGUN_API,
-    domain: DOMAIN,
+// const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
+// const mg = mailgun({
+//   apiKey: process.env.MAILGUN_API!,
+//   domain: DOMAIN,
+// });
+var transporter = nodemailer_1.default.createTransport({
+    service: process.env.SERVICE,
+    auth: {
+        user: process.env.USER,
+        pass: process.env.PASS,
+    },
 });
 var DashboardController = /** @class */ (function () {
     function DashboardController(dashboardService) {
@@ -53,29 +61,35 @@ var DashboardController = /** @class */ (function () {
         this.dashboardService = dashboardService;
         this.getServiceRequest = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
             var request;
+            var _this = this;
             return __generator(this, function (_a) {
                 console.log(req.body);
                 request = [];
                 if (req.body.userTypeId === 4) {
                     return [2 /*return*/, this.dashboardService
                             .getAllServiceRequestByUserId(req.body.userId)
-                            .then(function (serviceRequest) {
-                            if (serviceRequest) {
-                                if (serviceRequest.length > 0) {
-                                    return res.status(200).json(serviceRequest);
+                            .then(function (serviceRequest) { return __awaiter(_this, void 0, void 0, function () {
+                            var displayServiceRequest;
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0:
+                                        if (!serviceRequest) return [3 /*break*/, 4];
+                                        if (!(serviceRequest.length > 0)) return [3 /*break*/, 2];
+                                        return [4 /*yield*/, this.dashboardService.displayRequestDetail(serviceRequest)];
+                                    case 1:
+                                        displayServiceRequest = _a.sent();
+                                        return [2 /*return*/, res.status(200).json(displayServiceRequest)];
+                                    case 2: return [2 /*return*/, res
+                                            .status(404)
+                                            .json({ message: "No pending service request found" })];
+                                    case 3: return [3 /*break*/, 5];
+                                    case 4: return [2 /*return*/, res
+                                            .status(404)
+                                            .json({ message: "No service request found for this user" })];
+                                    case 5: return [2 /*return*/];
                                 }
-                                else {
-                                    return res
-                                        .status(404)
-                                        .json({ message: "No pending service request found" });
-                                }
-                            }
-                            else {
-                                return res
-                                    .status(404)
-                                    .json({ message: "No service request found for this user" });
-                            }
-                        })
+                            });
+                        }); })
                             .catch(function (error) {
                             console.log(error);
                             return res.status(500).json({
@@ -145,9 +159,10 @@ var DashboardController = /** @class */ (function () {
                                                     switch (_b.label) {
                                                         case 0:
                                                             if (!serviceRequest) return [3 /*break*/, 2];
-                                                            return [4 /*yield*/, this.dashboardService.helperHasFutureSameDateAndTime(req.body.date, serviceRequest, req.body.totalHour, req.body.time)];
+                                                            return [4 /*yield*/, this.dashboardService.helperHasFutureSameDateAndTime(req.body.date, serviceRequest, req.body.totalHour, req.body.time, parseInt(serviceId))];
                                                         case 1:
                                                             _a = _b.sent(), srDate = _a.srDate, matched = _a.matched, startTime = _a.startTime, endTime = _a.endTime;
+                                                            console.log(matched);
                                                             if (matched) {
                                                                 return [2 /*return*/, res.status(200).json({
                                                                         message: "Another service request has been assigned to the service provider on " + srDate + " from " + startTime +
@@ -208,6 +223,7 @@ var DashboardController = /** @class */ (function () {
                 d = req.body.date;
                 date = d.split("-").reverse().join("-");
                 spId = req.body.spId;
+                console.log(spId);
                 if (req.params.serviceId) {
                     return [2 /*return*/, this.dashboardService
                             .rescheduleServiceRequest(new Date(date), req.body.time, parseInt(req.params.serviceId), req.body.userId)
@@ -219,7 +235,7 @@ var DashboardController = /** @class */ (function () {
                                         .then(function (helper) {
                                         if (helper === null || helper === void 0 ? void 0 : helper.Email) {
                                             var data = _this.dashboardService.createData(d, req.body.time, helper.Email, req.params.serviceId);
-                                            mg.messages().send(data, function (error, body) {
+                                            transporter.sendMail(data, function (error, body) {
                                                 if (error) {
                                                     return res.json({
                                                         error: error.message,
@@ -290,7 +306,7 @@ var DashboardController = /** @class */ (function () {
                                                         .then(function (helper) {
                                                         if (helper === null || helper === void 0 ? void 0 : helper.Email) {
                                                             var data = _this.dashboardService.cancelRequestData(helper.Email, srId);
-                                                            mg.messages().send(data, function (error, body) {
+                                                            transporter.sendMail(data, function (error, body) {
                                                                 if (error) {
                                                                     return res.json({
                                                                         error: error.message,

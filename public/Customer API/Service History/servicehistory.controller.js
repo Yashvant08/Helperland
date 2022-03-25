@@ -40,14 +40,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ServiceHistoryController = void 0;
-var mailgun_js_1 = __importDefault(require("mailgun-js"));
 var exceljs_1 = __importDefault(require("exceljs"));
 require("dotenv").config();
-var DOMAIN = process.env.MAILGUN_DOMAIN;
-var mg = (0, mailgun_js_1.default)({
-    apiKey: process.env.MAILGUN_API,
-    domain: DOMAIN,
-});
 var ServiceHistoryController = /** @class */ (function () {
     function ServiceHistoryController(serviceHistoryService) {
         var _this = this;
@@ -56,25 +50,28 @@ var ServiceHistoryController = /** @class */ (function () {
             var _this = this;
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.serviceHistoryService.getServiceRequestHistoryOfUser(parseInt(req.body.userId))
-                        .then(function (requestHistory) {
-                        if (requestHistory) {
-                            if (requestHistory.length > 0) {
-                                var pastDateHistory = _this.serviceHistoryService.compareDateWithCurrentDate(requestHistory);
-                                if (requestHistory.length > 0) {
-                                    return res.status(200).json(pastDateHistory);
-                                }
-                                else {
-                                    return res.status(404).json({ message: 'Service request history not found in past' });
-                                }
+                        .then(function (requestHistory) { return __awaiter(_this, void 0, void 0, function () {
+                        var pastDateHistory, displayHistory;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    if (!requestHistory) return [3 /*break*/, 6];
+                                    if (!(requestHistory.length > 0)) return [3 /*break*/, 4];
+                                    pastDateHistory = this.serviceHistoryService.compareDateWithCurrentDate(requestHistory);
+                                    if (!(pastDateHistory.length > 0)) return [3 /*break*/, 2];
+                                    return [4 /*yield*/, this.serviceHistoryService.gethistoryForDisplay(pastDateHistory)];
+                                case 1:
+                                    displayHistory = _a.sent();
+                                    return [2 /*return*/, res.status(200).json(displayHistory)];
+                                case 2: return [2 /*return*/, res.status(404).json({ message: 'Service request history not found in past' })];
+                                case 3: return [3 /*break*/, 5];
+                                case 4: return [2 /*return*/, res.status(404).json({ message: 'Service request history not found' })];
+                                case 5: return [3 /*break*/, 7];
+                                case 6: return [2 /*return*/, res.status(404).json({ message: 'Service request history not found' })];
+                                case 7: return [2 /*return*/];
                             }
-                            else {
-                                return res.status(404).json({ message: 'Service request history not found' });
-                            }
-                        }
-                        else {
-                            return res.status(404).json({ message: 'Service request history not found' });
-                        }
-                    })
+                        });
+                    }); })
                         .catch(function (error) {
                         console.log(error);
                         return res.status(500).json({

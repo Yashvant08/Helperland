@@ -12,6 +12,7 @@ export class FavoriteProsRepository {
 
   public async getAllHelperWorkedWithCustomerInPast(userId: number[]): Promise<User[] | null> {
     return db.User.findAll({
+      attributes:['UserId', 'FirstName', 'LastName'],
       where: { UserTypeId: 3 ,  UserId: {
         [Op.or]: userId
       }}, 

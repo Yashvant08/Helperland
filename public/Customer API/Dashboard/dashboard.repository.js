@@ -38,20 +38,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DashboardRepository = void 0;
 var index_1 = require("../../models/index");
+var sequelize_1 = require("sequelize");
 var DashboardRepository = /** @class */ (function () {
     function DashboardRepository() {
     }
     DashboardRepository.prototype.getAllServiceRequestByUserId = function (userId) {
         return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, index_1.db.ServiceRequest.findAll({ where: { UserId: userId, Status: 1 },
-                        include: [
-                            "HelperRequest",
-                            "UserRequest",
-                            "ExtraService",
-                            "UserRequest",
-                            "ServiceRequestAddress",
-                        ],
+            var _a;
+            return __generator(this, function (_b) {
+                return [2 /*return*/, index_1.db.ServiceRequest.findAll({ where: { UserId: userId, Status: (_a = {}, _a[sequelize_1.Op.or] = [1, 2], _a) }
                     })];
             });
         });
@@ -93,6 +88,20 @@ var DashboardRepository = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, index_1.db.User.findOne({ where: { UserId: helperId, UserTypeId: 3 } })];
+            });
+        });
+    };
+    DashboardRepository.prototype.getUserDetailById = function (helperId) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, index_1.db.User.findOne({ where: { UserId: helperId, UserTypeId: 3 } })];
+            });
+        });
+    };
+    DashboardRepository.prototype.getRequestAddress = function (requestId) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, index_1.db.SRAddress.findOne({ where: { ServiceRequestId: requestId } })];
             });
         });
     };

@@ -5,5 +5,5 @@
             UserType:string;
             Phone: string,
             PostalCode : string | null,
-            Status: number
+            Status: boolean
         }

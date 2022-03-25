@@ -40,12 +40,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ServiceRequestController = void 0;
-var mailgun_js_1 = __importDefault(require("mailgun-js"));
+var nodemailer_1 = __importDefault(require("nodemailer"));
 require("dotenv").config();
-var DOMAIN = process.env.MAILGUN_DOMAIN;
-var mg = (0, mailgun_js_1.default)({
-    apiKey: process.env.MAILGUN_API,
-    domain: DOMAIN,
+// const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
+// const mg = mailgun({
+//   apiKey: process.env.MAILGUN_API!,
+//   domain: DOMAIN,
+// });
+var transporter = nodemailer_1.default.createTransport({
+    service: process.env.SERVICE,
+    auth: {
+        user: process.env.USER,
+        pass: process.env.PASS,
+    },
 });
 var ServiceRequestController = /** @class */ (function () {
     function ServiceRequestController(serviceRequestService) {
@@ -155,7 +162,7 @@ var ServiceRequestController = /** @class */ (function () {
                                                                 console.log(email);
                                                                 for (e in email) {
                                                                     data = this.serviceRequestService.createData(email[e], serviceRequest.ServiceRequestId);
-                                                                    mg.messages().send(data, function (error, body) {
+                                                                    transporter.sendMail(data, function (error, body) {
                                                                         if (error) {
                                                                             return res.json({ error: error.message });
                                                                         }
@@ -292,7 +299,7 @@ var ServiceRequestController = /** @class */ (function () {
                                                 if (req.body.updatedAddress) {
                                                     for (e in email) {
                                                         data = this.serviceRequestService.createDataForUpdatedServiceRequest(email[e], req.body);
-                                                        mg.messages().send(data, function (error, body) {
+                                                        transporter.sendMail(data, function (error, body) {
                                                             if (error) {
                                                                 return res.json({ error: error.message });
                                                             }
@@ -302,7 +309,7 @@ var ServiceRequestController = /** @class */ (function () {
                                                 else {
                                                     for (e in email) {
                                                         data = this.serviceRequestService.createDataForRescheduleSR(email[e], req.body);
-                                                        mg.messages().send(data, function (error, body) {
+                                                        transporter.sendMail(data, function (error, body) {
                                                             if (error) {
                                                                 return res.json({ error: error.message });
                                                             }
@@ -330,7 +337,7 @@ var ServiceRequestController = /** @class */ (function () {
                         email = _a.sent();
                         for (e in email) {
                             data = this.serviceRequestService.createDataForUpdatedAddress(email[e], req.body);
-                            mg.messages().send(data, function (error, body) {
+                            transporter.sendMail(data, function (error, body) {
                                 if (error) {
                                     return res.json({ error: error.message });
                                 }

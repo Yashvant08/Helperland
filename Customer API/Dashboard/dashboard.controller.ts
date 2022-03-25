@@ -1,14 +1,23 @@
 import { Request, Response, RequestHandler } from "express";
 import { DashboardService } from "./dashboard.service";
-import mailgun from "mailgun-js";
 import { ServiceRequest } from "../../models/servicerequest";
+import nodemailer from "nodemailer";
+// import mailgun from "mailgun-js";
 
 require("dotenv").config();
 
-const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
-const mg = mailgun({
-  apiKey: process.env.MAILGUN_API!,
-  domain: DOMAIN,
+// const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
+// const mg = mailgun({
+//   apiKey: process.env.MAILGUN_API!,
+//   domain: DOMAIN,
+// });
+
+const transporter = nodemailer.createTransport({
+  service: process.env.SERVICE,
+  auth: {
+      user: process.env.USER,
+      pass: process.env.PASS,
+  },
 });
 
 export class DashboardController {
@@ -25,10 +34,11 @@ export class DashboardController {
     if (req.body.userTypeId === 4) {
       return this.dashboardService
         .getAllServiceRequestByUserId(req.body.userId)
-        .then((serviceRequest) => {
+        .then(async (serviceRequest) => {
           if (serviceRequest) {
             if (serviceRequest.length > 0) {
-              return res.status(200).json(serviceRequest);
+              const displayServiceRequest = await this.dashboardService.displayRequestDetail(serviceRequest);
+              return res.status(200).json(displayServiceRequest);
             } else {
               return res
                 .status(404)
@@ -104,8 +114,10 @@ export class DashboardController {
                             req.body.date,
                             serviceRequest,
                             req.body.totalHour,
-                            req.body.time
+                            req.body.time,
+                            parseInt(serviceId)
                           );
+                          console.log(matched);
                         if (matched) {
                           return res.status(200).json({
                               message:
@@ -150,9 +162,11 @@ export class DashboardController {
   };
 
   public rescheduleIfTimeSlotNotConflicts: RequestHandler = async (req,res): Promise<Response> => {
+    
     const d: string = req.body.date;
     const date = d.split("-").reverse().join("-");
     const { spId } = req.body;
+    console.log(spId);
     if (req.params.serviceId) {
       return this.dashboardService
         .rescheduleServiceRequest(new Date(date),req.body.time,parseInt(req.params.serviceId),req.body.userId)
@@ -169,7 +183,7 @@ export class DashboardController {
                       helper.Email,
                       req.params.serviceId
                     );
-                    mg.messages().send(data, function (error, body) {
+                    transporter.sendMail(data, function (error, body) {
                       if (error) {
                         return res.json({
                           error: error.message,
@@ -232,7 +246,7 @@ export class DashboardController {
                             if (helper?.Email) {
                               const data = this.dashboardService.cancelRequestData(
                                 helper.Email,srId);
-                              mg.messages().send(data, function (error, body) {
+                              transporter.sendMail(data, function (error, body) {
                                 if (error) {
                                   return res.json({
                                     error: error.message,

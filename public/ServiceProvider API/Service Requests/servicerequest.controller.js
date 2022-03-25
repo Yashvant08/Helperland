@@ -40,12 +40,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ServiceRequestController = void 0;
-var mailgun_js_1 = __importDefault(require("mailgun-js"));
+// import mailgun from "mailgun-js";
+var nodemailer_1 = __importDefault(require("nodemailer"));
 require("dotenv").config();
-var DOMAIN = process.env.MAILGUN_DOMAIN;
-var mg = (0, mailgun_js_1.default)({
-    apiKey: process.env.MAILGUN_API,
-    domain: DOMAIN,
+// const DOMAIN: string = process.env.MAILGUN_DOMAIN!;
+// const mg = mailgun({
+//   apiKey: process.env.MAILGUN_API!,
+//   domain: DOMAIN,
+// });
+var transporter = nodemailer_1.default.createTransport({
+    service: process.env.SERVICE,
+    auth: {
+        user: process.env.USER,
+        pass: process.env.PASS,
+    },
 });
 var ServiceRequestController = /** @class */ (function () {
     function ServiceRequestController(serviceRequestService) {
@@ -230,7 +238,12 @@ var ServiceRequestController = /** @class */ (function () {
                                         }
                                         var data = _this.serviceRequestService.createData(helpers[hp].Email, req.params.requestId);
                                         console.log(data);
-                                        mg.messages().send(data, function (error, body) {
+                                        // mg.messages().send(data, (error, body) => {
+                                        //   if (error) {
+                                        //     return res.json({ error: error.message });
+                                        //   }
+                                        // });
+                                        transporter.sendMail(data, function (error, body) {
                                             if (error) {
                                                 return res.json({ error: error.message });
                                             }
