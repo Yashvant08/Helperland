@@ -33,4 +33,5 @@ router.post('/service-request/edit', (0, celebrate_1.celebrate)(EditRescheduleSR
 // User Management
 router.get('/users', loginController.validateToken, userManagementController.getAllUsers);
 router.put('/active-inactive-user/:userId', loginController.validateToken, userManagementController.activeInactiveUser);
+router.post('/refund-amount', loginController.validateToken, userManagementController.refundAmount);
 module.exports = router;

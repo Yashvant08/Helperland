@@ -99,7 +99,7 @@ var LoginController = /** @class */ (function () {
                                 case 2: return [2 /*return*/, res.json({ message: "Active your account" })];
                                 case 3: return [2 /*return*/, res
                                         .status(401)
-                                        .json({ message: "Invalid Username or Password" })];
+                                        .json({ message: "Account is not active" })];
                             }
                         });
                     }); })

@@ -125,14 +125,14 @@ var ServiceHistoryController = /** @class */ (function () {
                 exportHistory = [];
                 return [2 /*return*/, this.serviceHistoryService.getServiceRequestHistoryOfHelper(parseInt(req.body.userId))
                         .then(function (requestHistory) { return __awaiter(_this, void 0, void 0, function () {
-                        var pastDateHistory, workbook, worksheet;
+                        var pastDateHistory, workbook, worksheet, data;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0:
-                                    if (!requestHistory) return [3 /*break*/, 6];
-                                    if (!(requestHistory.length > 0)) return [3 /*break*/, 4];
+                                    if (!requestHistory) return [3 /*break*/, 7];
+                                    if (!(requestHistory.length > 0)) return [3 /*break*/, 5];
                                     pastDateHistory = this.serviceHistoryService.compareDateWithCurrentDate(requestHistory);
-                                    if (!(requestHistory.length > 0)) return [3 /*break*/, 2];
+                                    if (!(requestHistory.length > 0)) return [3 /*break*/, 3];
                                     return [4 /*yield*/, this.serviceHistoryService.getDatForExport(pastDateHistory)];
                                 case 1:
                                     exportHistory = _a.sent();
@@ -147,24 +147,22 @@ var ServiceHistoryController = /** @class */ (function () {
                                     worksheet.addRows(exportHistory);
                                     res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
                                     res.setHeader("Content-Disposition", "attachment; filename=" + "history.xlsx");
-                                    // console.log(workbook);
-                                    //   const data = await workbook.xlsx.writeFile(`../Service History`)
-                                    //    .then(() => {
-                                    //      res.send({
-                                    //        status: "success",
-                                    //        message: "file successfully downloaded",
-                                    //        path: `C:/Users/hp/download`,
-                                    //       });
-                                    //    });
-                                    return [2 /*return*/, workbook.xlsx.write(res).then(function (err) {
-                                            res.status(200).end();
+                                    return [4 /*yield*/, workbook.xlsx.writeFile("../history.xlsx")
+                                            .then(function () {
+                                            res.send({
+                                                status: "success",
+                                                message: "file successfully downloaded"
+                                            });
                                         })];
-                                case 2: return [2 /*return*/, res.status(404).json({ message: 'No data to export' })];
-                                case 3: return [3 /*break*/, 5];
-                                case 4: return [2 /*return*/, res.status(404).json({ message: 'No data to export' })];
-                                case 5: return [3 /*break*/, 7];
-                                case 6: return [2 /*return*/, res.status(404).json({ message: 'No data to export' })];
-                                case 7: return [2 /*return*/];
+                                case 2:
+                                    data = _a.sent();
+                                    return [3 /*break*/, 4];
+                                case 3: return [2 /*return*/, res.status(404).json({ message: 'No data to export' })];
+                                case 4: return [3 /*break*/, 6];
+                                case 5: return [2 /*return*/, res.status(404).json({ message: 'No data to export' })];
+                                case 6: return [3 /*break*/, 8];
+                                case 7: return [2 /*return*/, res.status(404).json({ message: 'No data to export' })];
+                                case 8: return [2 /*return*/];
                             }
                         });
                     }); })

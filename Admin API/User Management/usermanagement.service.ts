@@ -2,6 +2,7 @@ import { User } from "../../models/user";
 import { UserManagementRepository } from "./usermanagement.repository";
 
 import { displayUsers} from "./types";
+import { ServiceRequest } from "../../models/servicerequest";
 
 export class UserManagementService {
   public constructor(
@@ -36,7 +37,7 @@ export class UserManagementService {
       }else{
         return null;
       }
-    }
+    };
 
     public async getUserType(typeId:number):Promise<string | null>{
       let statusString:(string | null);
@@ -54,7 +55,7 @@ export class UserManagementService {
         statusString = 'Invalid Status';
       }
       return statusString;
-    }
+    };
 
     public async activeUser(userId:string):Promise<[number, User[]] | null>{
       const user = await this.userManagementRepository.getUserDetailById(parseInt(userId));
@@ -68,7 +69,7 @@ export class UserManagementService {
       }else{
         return null;
       }
-    }
+    };
 
     public async inActiveUser(userId:string):Promise<[number, User[]] | null>{
       const user = await this.userManagementRepository.getUserDetailById(parseInt(userId));
@@ -82,5 +83,17 @@ export class UserManagementService {
       }else{
         return null;
       }
-    }  
+    };
+
+    public async refundAmount(srId:number, refundedAmount:number, userId:number):Promise<[number, ServiceRequest[]] | null>{
+      const serviceRequest = await this.userManagementRepository.getServiceRequestDetailById(srId);
+      if(serviceRequest && serviceRequest.HasIssue === true){
+        return this.userManagementRepository.refundAmount(srId, refundedAmount, userId);
+      }else{
+        return null;
+      }
+
+    }
+    
+    
 }

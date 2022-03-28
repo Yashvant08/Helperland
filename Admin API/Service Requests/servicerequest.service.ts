@@ -126,6 +126,7 @@ export class ServiceRequestService {
     }
 
     public async filterData(requests:displayRequest[], filters:filters){
+      console.log(filters);
 
       let filterData;
       if(filters.ServiceRequestId){
@@ -135,6 +136,7 @@ export class ServiceRequestService {
       }
 
       if(filters.Status){
+        console.log("Status");
         if(filterData){
           filterData = filterData.filter(element => {
             return element.Status === filters.Status
@@ -147,6 +149,7 @@ export class ServiceRequestService {
       }
 
       if(filters.PostalCode){
+        console.log("postal");
         if(filterData){
           console.log(filters.PostalCode);
           filterData = filterData.filter(element => {
@@ -159,31 +162,34 @@ export class ServiceRequestService {
         }
       }
 
-      if(filters.UserId){
+      if(filters.CustomerName){
+        console.log("UserId");
         if(filterData){
           filterData = filterData.filter(element => {
-            return element.CustomerDetails.UserId === filters.UserId
+            return element.CustomerDetails.Name === filters.CustomerName
           });
         }else{
           filterData = requests.filter(element => {
-            return element.CustomerDetails.UserId === filters.UserId
+            return element.CustomerDetails.Name === filters.CustomerName
           });
         }
       }
 
-      if(filters.ServiceProviderId){
+      if(filters.ServiceProviderName){
+        console.log("BySPId");
         if(filterData){
           filterData = filterData.filter(element => {
-            return element.ServiceProvider.ServiceProviderId === filters.ServiceProviderId
+            return element.ServiceProvider.Name === filters.ServiceProviderName
           });
         }else{
           filterData = requests.filter(element => {
-            return element.ServiceProvider.ServiceProviderId === filters.ServiceProviderId
+            return element.ServiceProvider.Name === filters.ServiceProviderName
           });
         }
       }
 
-      if(filters.HasIssue !== null){
+      if(filters.HasIssue != null){
+        console.log("HasIssue");
         if(filterData){
           filterData = filterData.filter(element => {
             return element.HasIssue === filters.HasIssue
@@ -196,6 +202,7 @@ export class ServiceRequestService {
       }
 
       if(filters.FromDate){
+        console.log("From");
         const fromDate = new Date(filters.FromDate.split('-').reverse().join('-'));
         if(filterData){
           console.log(fromDate);
@@ -210,6 +217,7 @@ export class ServiceRequestService {
       }
 
       if(filters.ToDate){
+        console.log("to");
         const toDate = new Date(filters.ToDate.split('-').reverse().join('-'));
         if(filterData){
           filterData = filterData.filter(element => {
@@ -223,7 +231,9 @@ export class ServiceRequestService {
       }
 
       if(filters.Email){
+        console.log("Email");
         const user = await this.serviceRequestRepository.getUserByEmail(filters.Email);
+        console.log(user?.UserId);
         if(user){
           if(filterData){
             filterData = filterData.filter(element => {
@@ -240,7 +250,6 @@ export class ServiceRequestService {
           filterData = [];
         }
       }
-      
       return filterData;
 
     }

@@ -197,12 +197,14 @@ var ServiceRequestService = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        console.log(filters);
                         if (filters.ServiceRequestId) {
                             filterData = requests.filter(function (element) {
                                 return element.ServiceId === filters.ServiceRequestId;
                             });
                         }
                         if (filters.Status) {
+                            console.log("Status");
                             if (filterData) {
                                 filterData = filterData.filter(function (element) {
                                     return element.Status === filters.Status;
@@ -215,6 +217,7 @@ var ServiceRequestService = /** @class */ (function () {
                             }
                         }
                         if (filters.PostalCode) {
+                            console.log("postal");
                             if (filterData) {
                                 console.log(filters.PostalCode);
                                 filterData = filterData.filter(function (element) {
@@ -227,31 +230,34 @@ var ServiceRequestService = /** @class */ (function () {
                                 });
                             }
                         }
-                        if (filters.UserId) {
+                        if (filters.CustomerName) {
+                            console.log("UserId");
                             if (filterData) {
                                 filterData = filterData.filter(function (element) {
-                                    return element.CustomerDetails.UserId === filters.UserId;
+                                    return element.CustomerDetails.Name === filters.CustomerName;
                                 });
                             }
                             else {
                                 filterData = requests.filter(function (element) {
-                                    return element.CustomerDetails.UserId === filters.UserId;
+                                    return element.CustomerDetails.Name === filters.CustomerName;
                                 });
                             }
                         }
-                        if (filters.ServiceProviderId) {
+                        if (filters.ServiceProviderName) {
+                            console.log("BySPId");
                             if (filterData) {
                                 filterData = filterData.filter(function (element) {
-                                    return element.ServiceProvider.ServiceProviderId === filters.ServiceProviderId;
+                                    return element.ServiceProvider.Name === filters.ServiceProviderName;
                                 });
                             }
                             else {
                                 filterData = requests.filter(function (element) {
-                                    return element.ServiceProvider.ServiceProviderId === filters.ServiceProviderId;
+                                    return element.ServiceProvider.Name === filters.ServiceProviderName;
                                 });
                             }
                         }
-                        if (filters.HasIssue !== null) {
+                        if (filters.HasIssue != null) {
+                            console.log("HasIssue");
                             if (filterData) {
                                 filterData = filterData.filter(function (element) {
                                     return element.HasIssue === filters.HasIssue;
@@ -264,6 +270,7 @@ var ServiceRequestService = /** @class */ (function () {
                             }
                         }
                         if (filters.FromDate) {
+                            console.log("From");
                             fromDate_1 = new Date(filters.FromDate.split('-').reverse().join('-'));
                             if (filterData) {
                                 console.log(fromDate_1);
@@ -278,6 +285,7 @@ var ServiceRequestService = /** @class */ (function () {
                             }
                         }
                         if (filters.ToDate) {
+                            console.log("to");
                             toDate_1 = new Date(filters.ToDate.split('-').reverse().join('-'));
                             if (filterData) {
                                 filterData = filterData.filter(function (element) {
@@ -291,9 +299,11 @@ var ServiceRequestService = /** @class */ (function () {
                             }
                         }
                         if (!filters.Email) return [3 /*break*/, 2];
+                        console.log("Email");
                         return [4 /*yield*/, this.serviceRequestRepository.getUserByEmail(filters.Email)];
                     case 1:
                         user_1 = _a.sent();
+                        console.log(user_1 === null || user_1 === void 0 ? void 0 : user_1.UserId);
                         if (user_1) {
                             if (filterData) {
                                 filterData = filterData.filter(function (element) {

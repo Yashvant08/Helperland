@@ -66,6 +66,7 @@ export class ServiceRequestController {
               serviceRequests,
               filters
             );
+            console.log(filteredArray);
             return res.status(200).json(filteredArray);
           } else {
             return res

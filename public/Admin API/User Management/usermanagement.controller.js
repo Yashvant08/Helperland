@@ -116,6 +116,40 @@ var UserManagementController = /** @class */ (function () {
                 return [2 /*return*/];
             });
         }); };
+        this.refundAmount = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                console.log(req.body);
+                if (req.body.userTypeId === 2) {
+                    if (req.body.PaidAmount > req.body.RefundedAmount) {
+                        return [2 /*return*/, this.userManagementService.refundAmount(req.body.ServiceRequestId, req.body.RefundedAmount, req.body.userId)
+                                .then(function (serviceRequest) {
+                                if (serviceRequest) {
+                                    if (serviceRequest[0] === 1) {
+                                        return res.status(422).json({ message: "service request refunded successfully" });
+                                    }
+                                    else {
+                                        return res.status(422).json({ message: "amount not refunded" });
+                                    }
+                                }
+                                else {
+                                    return res.status(404).json({ message: "service request not found or service request not completed" });
+                                }
+                            })
+                                .catch(function (error) {
+                                console.log(error);
+                                return res.status(500).json({ error: error });
+                            })];
+                    }
+                    else {
+                        return [2 /*return*/, res.status(401).json({ message: "refund amount must be less than paid amount" })];
+                    }
+                }
+                else {
+                    return [2 /*return*/, res.status(401).json({ message: "unauthorised User" })];
+                }
+                return [2 /*return*/];
+            });
+        }); };
         this.userManagementService = userManagementService;
     }
     return UserManagementController;

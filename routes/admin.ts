@@ -76,6 +76,12 @@ router.put(
     userManagementController.activeInactiveUser
 );
 
+router.post(
+    '/refund-amount',
+    loginController.validateToken,
+    userManagementController.refundAmount
+);
+
 
 
 /**
@@ -164,6 +170,29 @@ router.put(
  *     type: string
  *     description: service start time
  *     example: "17:30" 
+ *  RefundAmount:
+ *   type: object
+ *   properties:
+ *    ServiceRequestId:
+ *     type: integer
+ *     description: service request id
+ *     example: 9
+ *    PaidAmount:
+ *     type: integer
+ *     description: service request id
+ *     example: 74
+ *    RefundedAmount:
+ *     type: integer
+ *     description: service request id
+ *     example: 40
+ *    Comment:
+ *     type: string
+ *     description: notes
+ *     example: 'comment'
+ *    Notes:
+ *     type: string
+ *     description: notes
+ *     example: 'notes'
  */
 
 
@@ -350,6 +379,37 @@ router.put(
  *     description: user account already active/inactive or user not found.
  *    422: 
  *     description: error in  activating/inactivating user.
+ *    500:
+ *     description: internal server error.
+ */
+
+  /**
+ * @swagger
+ * /trainee2021/admin/refund-amount:
+ *  post:
+ *   summary: Refund amaount
+ *   description: refunds
+ *   tags: 
+ *    - Admin Screens 
+ *   parameters:
+ *    - in: header
+ *      name: auth
+ *      schema:
+ *       type: string
+ *   requestBody:
+ *    content:
+ *     application/json:
+ *      schema:
+ *       $ref: '#/definitions/RefundAmount'
+ *   responses:
+ *    200:
+ *     description: service request refunded successfully.
+ *    401:
+ *     description: invalid login credential or unauthorised user or invalid or expired token / refund amount must be less than paid amount.
+ *    404:
+ *     description: service request not found or service request not completed.
+ *    422: 
+ *     description: amount not refunded.
  *    500:
  *     description: internal server error.
  */

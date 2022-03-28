@@ -60,7 +60,7 @@ export class LoginController {
         }
         return res
           .status(401)
-          .json({ message: "Invalid Username or Password" });
+          .json({ message: "Account is not active" });
       })
       .catch((error: Error) => {
         console.log(error);

@@ -74,4 +74,33 @@ export class UserManagementController {
       return res.status(401).json({ message: "Unauthorised User" });
     }
   };
+
+  public refundAmount: RequestHandler = async (req,res): Promise<Response> => 
+  {
+    console.log(req.body);
+    if (req.body.userTypeId === 2) {
+      if(req.body.PaidAmount>req.body.RefundedAmount){
+        return  this.userManagementService.refundAmount(req.body.ServiceRequestId,req.body.RefundedAmount, req.body.userId)
+        .then(serviceRequest => {
+          if(serviceRequest){
+            if(serviceRequest[0] === 1){
+              return res.status(422).json({ message: "service request refunded successfully"});
+            }else{
+              return res.status(422).json({ message: "amount not refunded"});
+            }
+          }else{
+            return res.status(404).json({ message: "service request not found or service request not completed"});
+          }
+        })
+        .catch((error: Error) => {
+          console.log(error);
+          return res.status(500).json({ error: error });
+        });
+      }else{
+        return res.status(401).json({ message: "refund amount must be less than paid amount"});
+      }
+    } else {
+      return res.status(401).json({ message: "unauthorised User" });
+    }
+  };
 }

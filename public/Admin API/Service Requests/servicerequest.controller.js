@@ -101,6 +101,7 @@ var ServiceRequestController = /** @class */ (function () {
                                         return [4 /*yield*/, this.serviceRequestService.filterData(serviceRequests, filters)];
                                     case 1:
                                         filteredArray = _a.sent();
+                                        console.log(filteredArray);
                                         return [2 /*return*/, res.status(200).json(filteredArray)];
                                     case 2: return [2 /*return*/, res
                                             .status(404)

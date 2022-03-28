@@ -87,6 +87,7 @@ var UserManagementService = /** @class */ (function () {
             });
         });
     };
+    ;
     UserManagementService.prototype.getUserType = function (typeId) {
         return __awaiter(this, void 0, void 0, function () {
             var statusString;
@@ -113,6 +114,7 @@ var UserManagementService = /** @class */ (function () {
             });
         });
     };
+    ;
     UserManagementService.prototype.activeUser = function (userId) {
         return __awaiter(this, void 0, void 0, function () {
             var user, activatedUser;
@@ -135,6 +137,7 @@ var UserManagementService = /** @class */ (function () {
             });
         });
     };
+    ;
     UserManagementService.prototype.inActiveUser = function (userId) {
         return __awaiter(this, void 0, void 0, function () {
             var user, inActivatedUser;
@@ -153,6 +156,26 @@ var UserManagementService = /** @class */ (function () {
                     case 4: return [3 /*break*/, 6];
                     case 5: return [2 /*return*/, null];
                     case 6: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    UserManagementService.prototype.refundAmount = function (srId, refundedAmount, userId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var serviceRequest;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.userManagementRepository.getServiceRequestDetailById(srId)];
+                    case 1:
+                        serviceRequest = _a.sent();
+                        if (serviceRequest && serviceRequest.HasIssue === true) {
+                            return [2 /*return*/, this.userManagementRepository.refundAmount(srId, refundedAmount, userId)];
+                        }
+                        else {
+                            return [2 /*return*/, null];
+                        }
+                        return [2 /*return*/];
                 }
             });
         });

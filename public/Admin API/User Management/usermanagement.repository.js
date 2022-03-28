@@ -72,6 +72,28 @@ var UserManagementRepository = /** @class */ (function () {
             });
         });
     };
+    UserManagementRepository.prototype.getServiceRequestDetailById = function (srId) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, index_1.db.ServiceRequest.findOne({ where: { ServiceRequestId: srId, Status: 3 } })];
+            });
+        });
+    };
+    UserManagementRepository.prototype.refundAmount = function (srId, refundedAmount, userId) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, index_1.db.ServiceRequest.update({
+                        RefundedAmount: refundedAmount,
+                        Status: 5,
+                        ModifiedBy: userId
+                    }, {
+                        where: {
+                            ServiceRequestId: srId
+                        }
+                    })];
+            });
+        });
+    };
     return UserManagementRepository;
 }());
 exports.UserManagementRepository = UserManagementRepository;

@@ -97,19 +97,17 @@ export class ServiceHistoryController {
               "Content-Disposition",
               "attachment; filename=" + "history.xlsx"
             ); 
-            // console.log(workbook);
-            //   const data = await workbook.xlsx.writeFile(`../Service History`)
-            //    .then(() => {
-            //      res.send({
-            //        status: "success",
-            //        message: "file successfully downloaded",
-            //        path: `C:/Users/hp/download`,
-            //       });
-            //    });
-            
-            return workbook.xlsx.write(res).then(function (err) {
-              res.status(200).end();
+            const data = await workbook.xlsx.writeFile(`../history.xlsx`)
+            .then(() => {
+              res.send({
+                status: "success",
+                message: "file successfully downloaded"
+               });
             });
+            
+            // return workbook.xlsx.write(res).then(function (err) {
+            //   res.status(200).end();
+            // });
           }else{
             return res.status(404).json({message:'No data to export'});
           }
