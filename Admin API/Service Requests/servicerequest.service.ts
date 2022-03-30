@@ -176,7 +176,7 @@ export class ServiceRequestService {
       }
 
       if(filters.ServiceProviderName){
-        console.log("BySPId");
+        console.log("BySPName");
         if(filterData){
           filterData = filterData.filter(element => {
             return element.ServiceProvider.Name === filters.ServiceProviderName
@@ -186,19 +186,7 @@ export class ServiceRequestService {
             return element.ServiceProvider.Name === filters.ServiceProviderName
           });
         }
-      }
-
-      if(filters.HasIssue != null){
-        console.log("HasIssue");
-        if(filterData){
-          filterData = filterData.filter(element => {
-            return element.HasIssue === filters.HasIssue
-          });
-        }else{
-          filterData = requests.filter(element => {
-            return element.HasIssue === filters.HasIssue
-          });
-        }
+        console.log(filterData);
       }
 
       if(filters.FromDate){

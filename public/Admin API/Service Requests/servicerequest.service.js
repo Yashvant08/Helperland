@@ -244,7 +244,7 @@ var ServiceRequestService = /** @class */ (function () {
                             }
                         }
                         if (filters.ServiceProviderName) {
-                            console.log("BySPId");
+                            console.log("BySPName");
                             if (filterData) {
                                 filterData = filterData.filter(function (element) {
                                     return element.ServiceProvider.Name === filters.ServiceProviderName;
@@ -255,19 +255,7 @@ var ServiceRequestService = /** @class */ (function () {
                                     return element.ServiceProvider.Name === filters.ServiceProviderName;
                                 });
                             }
-                        }
-                        if (filters.HasIssue != null) {
-                            console.log("HasIssue");
-                            if (filterData) {
-                                filterData = filterData.filter(function (element) {
-                                    return element.HasIssue === filters.HasIssue;
-                                });
-                            }
-                            else {
-                                filterData = requests.filter(function (element) {
-                                    return element.HasIssue === filters.HasIssue;
-                                });
-                            }
+                            console.log(filterData);
                         }
                         if (filters.FromDate) {
                             console.log("From");

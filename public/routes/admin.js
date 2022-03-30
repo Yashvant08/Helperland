@@ -15,6 +15,8 @@ var login_service_1 = require("../Login API/Login/login.service");
 var login_controller_1 = require("../Login API/Login/login.controller");
 var servicerequest_model_1 = require("../Admin API/Service Requests/servicerequest.model");
 var EditRescheduleSR = servicerequest_model_1.NewServiceRequestSchema.EditRescheduleSR;
+var usermanagement_model_1 = require("../Admin API/User Management/usermanagement.model");
+var RefundAmount = usermanagement_model_1.UserManagementSchema.RefundAmount;
 var router = express_1.default.Router();
 var serviceRequestRepo = new servicerequest_repository_1.ServiceRequestRepository();
 var serviceRequestService = new servicerequest_service_1.ServiceRequestService(serviceRequestRepo);
@@ -33,5 +35,7 @@ router.post('/service-request/edit', (0, celebrate_1.celebrate)(EditRescheduleSR
 // User Management
 router.get('/users', loginController.validateToken, userManagementController.getAllUsers);
 router.put('/active-inactive-user/:userId', loginController.validateToken, userManagementController.activeInactiveUser);
-router.post('/refund-amount', loginController.validateToken, userManagementController.refundAmount);
+router.post('/refund-amount', 
+/*celebrate(RefundAmount),*/
+loginController.validateToken, userManagementController.refundAmount);
 module.exports = router;

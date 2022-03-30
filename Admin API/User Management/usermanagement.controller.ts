@@ -1,3 +1,4 @@
+import { equal } from "assert";
 import { Request, Response, RequestHandler } from "express";
 import { UserManagementService } from "./usermanagement.service";
 
@@ -77,10 +78,18 @@ export class UserManagementController {
 
   public refundAmount: RequestHandler = async (req,res): Promise<Response> => 
   {
-    console.log(req.body);
+    let refundamount:number;
     if (req.body.userTypeId === 2) {
-      if(req.body.PaidAmount>req.body.RefundedAmount){
-        return  this.userManagementService.refundAmount(req.body.ServiceRequestId,req.body.RefundedAmount, req.body.userId)
+      if(req.body.Percentage){
+        refundamount = (req.body.RefundedAmount * req.body.Percentage)/100;
+      }else{
+        refundamount = req.body.RefundedAmount;
+      }
+      if(refundamount === null){
+        return res.status(401).json( {message: "refund amount can not be null"})
+      }else{
+        if(req.body.PaidAmount>refundamount){
+          return  this.userManagementService.refundAmount(req.body.ServiceRequestId,refundamount, req.body.userId)
         .then(serviceRequest => {
           if(serviceRequest){
             if(serviceRequest[0] === 1){
@@ -89,15 +98,16 @@ export class UserManagementController {
               return res.status(422).json({ message: "amount not refunded"});
             }
           }else{
-            return res.status(404).json({ message: "service request not found or service request not completed"});
+            return res.status(404).json({ message: "service request not found or service request not completed or service request already refunded"});
           }
         })
         .catch((error: Error) => {
           console.log(error);
           return res.status(500).json({ error: error });
         });
-      }else{
-        return res.status(401).json({ message: "refund amount must be less than paid amount"});
+        }else{
+          return res.status(401).json({ message: "refund amount must be less than paid amount"});
+        }
       }
     } else {
       return res.status(401).json({ message: "unauthorised User" });

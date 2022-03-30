@@ -23,7 +23,7 @@ export class UserManagementRepository {
   }
 
   public async getServiceRequestDetailById(srId:number): Promise<ServiceRequest | null>{
-    return db.ServiceRequest.findOne({where:{ServiceRequestId:srId, Status:3}});
+    return db.ServiceRequest.findOne({where:{ServiceRequestId:srId, Status:{[Op.or]:[3,4]}}});
   }
 
   public async refundAmount(srId:number, refundedAmount:number, userId:number):Promise<[number, ServiceRequest[]]>{

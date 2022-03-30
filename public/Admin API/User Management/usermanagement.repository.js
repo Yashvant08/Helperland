@@ -74,8 +74,9 @@ var UserManagementRepository = /** @class */ (function () {
     };
     UserManagementRepository.prototype.getServiceRequestDetailById = function (srId) {
         return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, index_1.db.ServiceRequest.findOne({ where: { ServiceRequestId: srId, Status: 3 } })];
+            var _a;
+            return __generator(this, function (_b) {
+                return [2 /*return*/, index_1.db.ServiceRequest.findOne({ where: { ServiceRequestId: srId, Status: (_a = {}, _a[sequelize_1.Op.or] = [3, 4], _a) } })];
             });
         });
     };

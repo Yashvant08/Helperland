@@ -17,6 +17,9 @@ import { LoginController } from "../Login API/Login/login.controller";
 import { NewServiceRequestSchema} from "../Admin API/Service Requests/servicerequest.model";
 const {EditRescheduleSR} = NewServiceRequestSchema
 
+import { UserManagementSchema } from "../Admin API/User Management/usermanagement.model";
+const {RefundAmount} = UserManagementSchema;
+
 
 const router: express.Router = express.Router();
 
@@ -78,6 +81,7 @@ router.put(
 
 router.post(
     '/refund-amount',
+    /*celebrate(RefundAmount),*/
     loginController.validateToken,
     userManagementController.refundAmount
 );
